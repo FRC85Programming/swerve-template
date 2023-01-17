@@ -161,6 +161,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
+//   sets all wheel positions to 40 degrees to prevent movement
+  public void brakeWheels(){
+
+  m_backLeftModule.set(0, 45);
+  }
   public Rotation2d getGyroscopeRotation() {
     
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
@@ -171,8 +176,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
+  private boolean lock = false;
   @Override
   public void periodic() {
+    if (lock == false){
+    m_frontLeftModule.set(0, -45);
+    m_frontRightModule.set(0, 45);
+    m_backLeftModule.set(0, -45);
+    m_backRightModule.set(0, 45);
+    }
+    else{
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
@@ -180,5 +193,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+    }     
+  }
+  
+  public void setLock(boolean value){
+        lock = value;
   }
 }
