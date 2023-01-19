@@ -80,7 +80,7 @@ public class RobotContainer {
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
+      if (value > 0.07) {
         return (value - deadband) / (1.0 - deadband);
       } else {
         return (value + deadband) / (1.0 - deadband);
