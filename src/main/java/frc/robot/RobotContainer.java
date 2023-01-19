@@ -62,9 +62,10 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getStartButton)
-            .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-    
+    new Trigger(m_controller::getAButtonPressed)
+              .toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
+    new Trigger(m_controller::getBButtonPressed)
+              .toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
   }
 
   /**
