@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.BrakeWheelsCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ZeroGyroscopeCommand;
+import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
@@ -61,11 +62,14 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+              .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getAButtonPressed)
               .toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
     new Trigger(m_controller::getBButtonPressed)
               .toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+
+    new Trigger(m_controller::getStartButton)
+              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
   }
 
   /**

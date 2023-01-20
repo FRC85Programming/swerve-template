@@ -14,9 +14,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -66,6 +68,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
   private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
+  double[] ypr = new double[3];
+
  
 
   // These are our modules. We initialize them in the constructor.
@@ -155,10 +159,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently facing to the
    * 'forwards' direction.
    */
+  public double pitchOffset;
+  public double rollOffset;
+
+
   public void zeroGyroscope() {
    
     m_pigeon.setYaw(0.0);
 
+  }
+
+  public void zeroPitchRoll()
+  {
+        pitchOffset = ypr[1];
+        rollOffset = ypr[2];
+  }
+
+  public double[] GetPitchRoll()
+  {
+        return new double[] {ypr[1] - pitchOffset, ypr[2] - rollOffset};
   }
 
 //   sets all wheel positions to 40 degrees to prevent movement
@@ -177,6 +196,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private boolean lock = false;
+  private boolean tipped = false;
   @Override
   public void periodic() {
     if (lock == true){
@@ -189,11 +209,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
+    if(ypr[2] < -10)
+    {
+        tipped = true;
+    }
+
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
     }     
+    m_pigeon.getYawPitchRoll(ypr);
+    double[] PitchRoll = GetPitchRoll();
+    SmartDashboard.putNumber("Gyro Yaw", ypr[0]);
+    SmartDashboard.putNumber("Gyro Pitch", PitchRoll[0]);
+    SmartDashboard.putNumber("Gyro Roll", PitchRoll[1]);
+
   }
   
   public void setLock(boolean value){
