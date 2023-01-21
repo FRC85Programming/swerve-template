@@ -20,18 +20,20 @@ public class TrackAprilTagCommand extends CommandBase
     @Override
     public void execute()
     {   
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table = inst.getTable("limelight");
+        NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
         if (wheelReset == true){
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, wheelAngle));
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
+            ledModeEntry.setNumber(1);
             wheelReset = false;
         }
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
         // get a reference to the subtable called "datatable"
-        NetworkTable table = inst.getTable("limelight");
         NetworkTableEntry xEntry = table.getEntry("tx");
         double tx = xEntry.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
 
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, wheelAngle));
-        wheelAngle += 1; 
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, tx));
+        //wheelAngle += 1; 
 
         }
 
