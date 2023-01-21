@@ -9,14 +9,16 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class BrakeWheelsCommand extends CommandBase
  {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public BrakeWheelsCommand(DrivetrainSubsystem driveTrain)
+    private final boolean m_brakesOn;
+    public BrakeWheelsCommand(DrivetrainSubsystem driveTrain, boolean brakesOn)
     {
         this.m_drivetrainSubsystem = driveTrain;
-    }
+        this.m_brakesOn = brakesOn;
+        }
 
     @Override
     public void execute()
     {
-        m_drivetrainSubsystem.setLock(true);
+        m_drivetrainSubsystem.setLock(m_brakesOn);
     }
 }
