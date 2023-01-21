@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -196,15 +197,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } 
   }
 
-  public void aprilTagTrack(){
-        boolean tag = new TrackAprilTagCommand().getTracktag();
-
-        if (tag == true){
-                SmartDashboard.putNumber("Tracking Active", 1)
-        }
-
-  }
-  
   public void setLock(boolean value){
         lock = value;
   }
