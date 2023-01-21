@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
 
@@ -22,6 +22,7 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final VisionTracking m_visionTracking = new VisionTracking();
 
   private final XboxController m_controller = new XboxController(0);
 
@@ -58,7 +59,7 @@ public class RobotContainer {
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
 
     new Trigger(m_controller::getYButton)
-            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
+            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
