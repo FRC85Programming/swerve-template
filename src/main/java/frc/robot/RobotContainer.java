@@ -58,10 +58,15 @@ public class RobotContainer {
 
     new Trigger(m_controller::getYButton)
             .onTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
+    // a button activates brake wheels command
     new Trigger(m_controller::getAButtonPressed)
-              .toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
-    new Trigger(m_controller::getBButtonPressed)
-              .toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+            .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
+    // b button deactivates brake wheels command
+    new Trigger(m_controller::getAButtonReleased)
+            .onFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+
+    // sets tank drive
+    
   }
 
   /**
@@ -76,7 +81,7 @@ public class RobotContainer {
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
-      if (value > 0.07) {
+      if (value > 0.00) {
         return (value - deadband) / (1.0 - deadband);
       } else {
         return (value + deadband) / (1.0 - deadband);
@@ -88,11 +93,16 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, 0.12);
 
     // Square the axis
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  public XboxController getController()
+  {
+    return m_controller;
   }
 }
