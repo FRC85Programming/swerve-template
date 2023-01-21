@@ -64,6 +64,8 @@ public class RobotContainer {
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getStartButton)
             .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getYButton)
+            .onTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
     
   }
 
