@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.commands.DefaultDriveCommand;
 import static frc.robot.Constants.*;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -196,7 +198,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private boolean lock = false;
-  private boolean tipped = false;
+  private boolean stationState = false;
+
+
+
   @Override
   public void periodic() {
     if (lock == true){
@@ -209,10 +214,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    if(ypr[2] < -10)
-    {
-        tipped = true;
-    }
+
 
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
@@ -229,5 +231,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   
   public void setLock(boolean value){
         lock = value;
+  }
+
+  public void setStationState(boolean value)
+  {
+        stationState = value;
   }
 }

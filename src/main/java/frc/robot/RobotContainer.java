@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoLevelCommand;
 import frc.robot.commands.BrakeWheelsCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ZeroGyroscopeCommand;
@@ -68,8 +69,11 @@ public class RobotContainer {
     new Trigger(m_controller::getBButtonPressed)
               .toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
-    new Trigger(m_controller::getStartButton)
+    new Trigger(m_controller::getYButtonPressed)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+              
+    new Trigger(m_controller::getXButton)
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem,true));
   }
 
   /**

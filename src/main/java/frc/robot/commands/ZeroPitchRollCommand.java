@@ -15,4 +15,10 @@ public class ZeroPitchRollCommand extends CommandBase
     {
         m_drivetrainSubsystem.zeroPitchRoll();
     }
+
+    @Override
+    public boolean isFinished()
+    {
+        return true;
+    }
 }
