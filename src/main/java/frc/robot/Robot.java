@@ -132,9 +132,8 @@ public class Robot extends TimedRobot {
     // double getpipe = getpipe // True active pipeline index of the camera (0 .. 9)
     // double camtran = camtran // Results of a 3D position solution, 6 numbers:
     // Translation (x,y,y) Rotation(pitch,yaw,roll)
-    
+    ledModeEntry.setNumber(1);
     //ledModeEntry.setNumber(0); // use the LED Mode set in the current pipeline
-    ledModeEntry.setNumber(0); // force off
     //ledModeEntry.setNumber(2); // force blink
     //ledModeEntry.setNumber(3); // force on
     
@@ -153,8 +152,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Limelight Valid Target", tv);
     SmartDashboard.putNumber("Limelight Skew", ts);
     SmartDashboard.putNumber("April Tag ID", tid);
-    
-    
     // Limelight Data End
 
     

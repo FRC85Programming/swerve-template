@@ -28,7 +28,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 12.0;
+  public static final double MAX_VOLTAGE = 1.0;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -162,11 +162,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-//   sets all wheel positions to 40 degrees to prevent movement
-  public void brakeWheels(){
-
-  m_backLeftModule.set(0, 45);
-  }
   public Rotation2d getGyroscopeRotation() {
     
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
@@ -181,10 +176,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (lock == true){
-    m_frontLeftModule.set(0, 45);
-    m_frontRightModule.set(0, -45);
-    m_backLeftModule.set(0, -45);
-    m_backRightModule.set(0, 45);
+        m_frontLeftModule.set(0, 45);
+        m_frontRightModule.set(0, -45);
+        m_backLeftModule.set(0, -45);
+        m_backRightModule.set(0, 45);
     }
     else{
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);

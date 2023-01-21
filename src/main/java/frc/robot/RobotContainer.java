@@ -57,13 +57,10 @@ public class RobotContainer {
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
 
     new Trigger(m_controller::getYButton)
-            .onTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
+            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
     // a button activates brake wheels command
-    new Trigger(m_controller::getAButtonPressed)
-            .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
-    // b button deactivates brake wheels command
-    new Trigger(m_controller::getAButtonReleased)
-            .onFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+    new Trigger(m_controller::getAButton)
+            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // sets tank drive
     
