@@ -3,7 +3,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-
 public class TrackAprilTagCommand extends CommandBase
 {
     double wheelAngle = 0.0;
@@ -17,8 +16,8 @@ public class TrackAprilTagCommand extends CommandBase
     }
 
     @Override
-    public void execute()
-    {   
+    public void execute(){   
+
         if (wheelReset == true){
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
             m_visionTracking.setLED(0);
@@ -26,12 +25,18 @@ public class TrackAprilTagCommand extends CommandBase
         }
         // get a reference to the subtable called "datatable"
         double tx = m_visionTracking.getX();
-
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, tx));
-        //wheelAngle += 1; 
-
+        double area = m_visionTracking.getArea();
+        double tagID = m_visionTracking.getTag();
+        if (tagID > -1){
+            if (area < 4){
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(-12*area+40, 0.0, -tx));
+            } else if (area > 7){
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(2.5*-area+2.5, 0.0, -tx));
+            } else {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, -tx));
+            }
         }
-
+    }
     @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));

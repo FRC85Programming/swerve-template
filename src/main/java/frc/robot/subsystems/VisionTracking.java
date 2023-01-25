@@ -21,11 +21,6 @@ public class VisionTracking extends SubsystemBase {
   /** Creates a new VisionTracking. */
   public VisionTracking() {
     
-   
-
-
-
-
   }
 
   @Override
@@ -51,6 +46,14 @@ if (validTarget == 1); {
   }
   public double getX(){
     return tx.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+  }
+
+  public double getArea(){
+    return ta.getDouble(0.0); // Size of target
+  }
+
+  public double getTag(){
+    return aprilEntry.getDouble(0.0); // Size of target
   }
 
   public void setLED(int LEDMode){
