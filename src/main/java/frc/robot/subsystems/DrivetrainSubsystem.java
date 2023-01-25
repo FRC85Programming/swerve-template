@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 
@@ -30,7 +31,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 1.0;
+  public static final double MAX_VOLTAGE = 4.0;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -198,13 +199,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backRightModule.set(0, 45);
   }
 
-  public void tankState(RobotContainer controller)
+  public void tankState(XboxController controller)
   {
-    
-    m_frontLeftModule.set(controller.getController().getLeftY(), 0);
-    m_frontRightModule.set(controller.getController().getLeftX(), 0);
-    m_backLeftModule.set(controller.getController().getLeftY(), 0);
-    m_backRightModule.set(controller.getController().getLeftX(), 0);
+    m_frontLeftModule.set(-controller.getLeftY(), 0);
+    m_frontRightModule.set(-controller.getRightY(), 0);
+    m_backLeftModule.set(-controller.getLeftY(), 0);
+    m_backRightModule.set(-controller.getRightY(), 0);
   }
 
   public void swerveState()

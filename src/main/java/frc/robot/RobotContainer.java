@@ -63,8 +63,10 @@ public class RobotContainer {
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // sets tank drive
-    
+    new Trigger(m_controller::getRightBumper)
+            .whileTrue(new TankdriveCommand(m_drivetrainSubsystem, m_controller));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
