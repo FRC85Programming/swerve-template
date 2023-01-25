@@ -22,36 +22,44 @@ public class AutoLevelCommand extends CommandBase
     {
     
     //Code to AutoLevel the Robot Forwards and Backwards if the Robot drives onto the Charging Station Facing Forward
-       double[] ypr = m_drivetrainSubsystem.GetPitchRoll();
+       double[] pr = m_drivetrainSubsystem.GetPitchRoll();
+       double p = pr[0];
+       double r = pr[1];
 
-       if (ypr[1] > 10) 
+    if (p > -5 && p < 5 && r > -5 && r < 5) 
     {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(-.5,0,0));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0,0));
     }
-    else if (ypr[1] < -10) 
+    else 
     {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(.5,0,0));
-    }
+        double total = Math.abs(p) + Math.abs(r); 
+        double x = (-2 * r) / total;
+        double y = (2 * p) / total;
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(x,y,0));
+
     }
 
+    }
     //Code to AutoLevel the Robot Forwards and Backwards if the Robot drives onto the Charging Station Facing The Front Right Module
     
 
 
+
     @Override
+
     public boolean isFinished()
     {
         double[] ypr = m_drivetrainSubsystem.GetPitchRoll();
-        
+        return false;
         
     //Code to stop the Robot from AutoLeveling when Leveled facing forwards
-        if (ypr[1] < -5 || ypr[1] > 5) {
+        /*if (ypr[1] < -5 || ypr[1] > 5) {
             return false;
         }
         else
         {
             return true;
-        }
+        }*/
     }
 
     @Override
