@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +16,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 
 import static frc.robot.Constants.*;
 
@@ -27,7 +30,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 12.0;
+  public static final double MAX_VOLTAGE = 3;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -161,11 +164,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-//   sets all wheel positions to 40 degrees to prevent movement
-  public void brakeWheels(){
-
-  m_backLeftModule.set(0, 45);
-  }
   public Rotation2d getGyroscopeRotation() {
     
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
@@ -176,16 +174,41 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
-  private boolean lock = false;
+  private boolean brakeLock = false;
+  private boolean tankLock = false;
   @Override
   public void periodic() {
-    if (lock == true){
+    if (brakeLock == true){
+      brakeState();
+    }
+    else if(tankLock == true)
+    {
+      // tankState();
+    }
+    else{
+      swerveState();
+    }     
+  }
+
+  public void brakeState()
+  {
     m_frontLeftModule.set(0, 45);
     m_frontRightModule.set(0, -45);
     m_backLeftModule.set(0, -45);
     m_backRightModule.set(0, 45);
-    }
-    else{
+  }
+
+  public void tankState(RobotContainer controller)
+  {
+    
+    m_frontLeftModule.set(controller.getController().getLeftY(), 0);
+    m_frontRightModule.set(controller.getController().getLeftX(), 0);
+    m_backLeftModule.set(controller.getController().getLeftY(), 0);
+    m_backRightModule.set(controller.getController().getLeftX(), 0);
+  }
+
+  public void swerveState()
+  {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
@@ -193,10 +216,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
-    }     
   }
-  
+  // sets true or false for brake command  
   public void setLock(boolean value){
-        lock = value;
+    brakeLock = value;
   }
+
+  
 }

@@ -15,4 +15,10 @@ public class ZeroGyroscopeCommand extends CommandBase
     {
         m_drivetrainSubsystem.zeroGyroscope();
     }
+    @Override
+
+    public boolean isFinished(){
+        return true;
+    }
+
 }
