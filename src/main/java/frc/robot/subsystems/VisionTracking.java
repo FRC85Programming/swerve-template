@@ -13,12 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionTracking extends SubsystemBase {
   /** Creates a new VisionTracking. */
   public VisionTracking() {
-    
-   
-
-
-
-
+ 
   }
 
   @Override
@@ -44,8 +39,16 @@ SmartDashboard.putNumber("LimelightArea", area);
 SmartDashboard.putNumber("LimelightValidTarget", validTarget);
 
 //Aims towards target if there is a valid one
-if (validTarget == 1); {
-  
+if (validTarget == 1) {
+  if (x <= 2 && x >= -2) {
+//put in stop motion?
+  } 
+else if (x > 2 && x < 30) {
+  //put in turn negative direction
+} 
+else if (x < -2 && x > -30) {
+// put in turn positive direction
+}
 }
   }
 }
