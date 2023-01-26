@@ -1,29 +1,24 @@
 package frc.robot.commands;
 
-import javax.swing.text.AbstractDocument.BranchElement;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class BrakeWheelsCommand extends CommandBase
- {
+public class TankdriveCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public BrakeWheelsCommand(DrivetrainSubsystem driveTrain)
+    public TankdriveCommand (DrivetrainSubsystem driveTrain)
     {
         this.m_drivetrainSubsystem = driveTrain;
-        
-        }
-
-    @Override
-    public void execute()
-    {
-        m_drivetrainSubsystem.setLock(true);
     }
 
+    @Override
+    public void execute(){
+        
+    }
+
+    @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-        m_drivetrainSubsystem.setLock(false);
+
     }
 }

@@ -6,12 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-
-import com.swervedrivespecialties.swervelib.DriveController;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoLevelCommand;
@@ -20,6 +15,9 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ZeroGyroscopeCommand;
 import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.*;
+import frc.robot.commands.*;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,6 +28,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final VisionTracking m_visionTracking = new VisionTracking();
 
   private final XboxController m_controller = new XboxController(0);
 
@@ -74,6 +73,14 @@ public class RobotContainer {
               
     new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem,true));
+
+    new Trigger(m_controller::getYButton)
+            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+    // a button activates brake wheels command
+    new Trigger(m_controller::getAButton)
+            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+
+    // sets tank drive
   }
 
   /**
@@ -88,7 +95,7 @@ public class RobotContainer {
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
-      if (value > 0.07) {
+      if (value > 0.00) {
         return (value - deadband) / (1.0 - deadband);
       } else {
         return (value + deadband) / (1.0 - deadband);
@@ -100,11 +107,16 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, 0.12);
 
     // Square the axis
     value = Math.copySign(value * value, value);
 
     return value;
+  }
+
+  public XboxController getController()
+  {
+    return m_controller;
   }
 }
