@@ -9,11 +9,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoLevelCommand;
-import frc.robot.commands.BrakeWheelsCommand;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.ZeroGyroscopeCommand;
-import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -29,7 +24,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final VisionTracking m_visionTracking = new VisionTracking();
-
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
 
   /**
@@ -89,6 +84,10 @@ public class RobotContainer {
     // Cuts robot speed in half 
     new Trigger(m_controller::getLeftBumper)
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+
+    // Intake roller speed/ button config
+    new Trigger(m_controller::getBackButton)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, 1));
   }
   
 
