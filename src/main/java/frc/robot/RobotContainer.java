@@ -56,8 +56,10 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
 
+    // tracks april tag using limelight
     new Trigger(m_controller::getYButton)
             .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
+
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
@@ -65,6 +67,10 @@ public class RobotContainer {
     // sets tank drive
     new Trigger(m_controller::getRightBumper)
             .whileTrue(new TankdriveCommand(m_drivetrainSubsystem, m_controller));
+
+    // Cuts robot speed in half 
+    new Trigger(m_controller::getLeftBumper)
+            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
   }
   
 
