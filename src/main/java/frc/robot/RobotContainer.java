@@ -37,14 +37,42 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(getY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(getX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     // Configure the button bindings
     configureButtonBindings();
   }
+
+  public double getX()
+  {
+
+    if (m_controller.getPOV() == 90) {
+      return 1;
+    } else if (m_controller.getPOV() == 270){
+      return -1;
+    }
+    else {
+      return m_controller.getLeftX();
+    }
+  }
+
+  public double getY()
+  {
+
+    if (m_controller.getPOV() == 0) {
+      return -1;
+    } else if (m_controller.getPOV() == 180){
+      return 1;
+    }
+    else {
+      return m_controller.getLeftY();
+    }
+  }
+
+  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
