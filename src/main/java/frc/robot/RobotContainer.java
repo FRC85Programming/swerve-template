@@ -48,6 +48,8 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
+    m_drivetrainSubsystem.zeroPitchRoll();
+    
     // Configure the button bindings
     configureButtonBindings();
   }

@@ -4,16 +4,15 @@ import com.ctre.phoenix.sensors.Pigeon2;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoLevelCommand extends CommandBase
 {
 
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    private final boolean m_stationStateOn;
     public AutoLevelCommand(DrivetrainSubsystem drivetrain, boolean stationStateOn)
     {
         this.m_drivetrainSubsystem = drivetrain;
-        this.m_stationStateOn = stationStateOn;
     }
 
 
@@ -32,9 +31,21 @@ public class AutoLevelCommand extends CommandBase
     }
     else 
     {
+        double maxSpeed = SmartDashboard.getNumber("AutoLevel Max Speed", .2);
+        double constant = SmartDashboard.getNumber("AutoLevel Constant", 0.5);
         double total = Math.abs(p) + Math.abs(r); 
-        double x = (-2 * r) / total;
-        double y = (2 * p) / total;
+        double x = (-constant * Math.abs(r)*r) / total;
+        double y = (constant * Math.abs(p)*p) / total;
+
+        if(Math.abs(x) > maxSpeed)
+        {
+            x = Math.copySign(maxSpeed, x);
+        }
+
+        if(Math.abs(y) > maxSpeed)
+        {
+            y = Math.copySign(maxSpeed, y);
+        }
         m_drivetrainSubsystem.drive(new ChassisSpeeds(x,y,0));
 
     }
