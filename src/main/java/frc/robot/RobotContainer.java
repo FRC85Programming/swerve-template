@@ -9,8 +9,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoLevelCommand;
+import frc.robot.commands.BrakeWheelsCommand;
+import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.ZeroGyroscopeCommand;
+import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.*;
 import frc.robot.commands.*;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,6 +28,7 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final VisionTracking m_visionTracking = new VisionTracking();
 
   private final XboxController m_controller = new XboxController(0);
 
@@ -54,11 +62,21 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+              .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+    //new Trigger(m_controller::getAButtonPressed)
+              //.toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
+    //new Trigger(m_controller::getBButtonPressed)
+              //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+
+    new Trigger(m_controller::getYButtonPressed)
+              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+              
+    new Trigger(m_controller::getXButton)
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem,true));
 
     // tracks april tag using limelight
     new Trigger(m_controller::getYButton)
-            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem));
+            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
@@ -70,7 +88,7 @@ public class RobotContainer {
 
     // Cuts robot speed in half 
     new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+            .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
   }
   
 

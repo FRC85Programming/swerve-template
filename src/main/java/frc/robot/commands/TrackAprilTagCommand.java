@@ -1,10 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.*;
 
 
 public class TrackAprilTagCommand extends CommandBase
@@ -12,26 +9,26 @@ public class TrackAprilTagCommand extends CommandBase
     double wheelAngle = 0.0;
     boolean wheelReset = true;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public TrackAprilTagCommand(DrivetrainSubsystem driveTrain)
+    private final VisionTracking m_visionTracking;
+    public TrackAprilTagCommand(DrivetrainSubsystem driveTrain, VisionTracking visionTracking)
     {
-        this.m_drivetrainSubsystem = driveTrain;
+        m_drivetrainSubsystem = driveTrain;
+        m_visionTracking = visionTracking;
     }
 
     @Override
     public void execute()
     {   
         if (wheelReset == true){
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, wheelAngle));
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
+            m_visionTracking.setLED(0);
             wheelReset = false;
         }
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
         // get a reference to the subtable called "datatable"
-        NetworkTable table = inst.getTable("limelight");
-        NetworkTableEntry xEntry = table.getEntry("tx");
-        double tx = xEntry.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+        double tx = m_visionTracking.getX();
 
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, wheelAngle));
-        wheelAngle += 1; 
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, tx));
+        //wheelAngle += 1; 
 
         }
 
@@ -40,5 +37,6 @@ public class TrackAprilTagCommand extends CommandBase
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         wheelAngle = 0;
         wheelReset = true;
+        m_visionTracking.setLED(1);
     }
 }
