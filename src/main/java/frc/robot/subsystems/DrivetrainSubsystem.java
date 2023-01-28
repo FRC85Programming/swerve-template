@@ -30,7 +30,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 3;
+  public static final double MAX_VOLTAGE = 12;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -175,6 +175,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private boolean brakeLock = false;
+  private boolean resetWheels = false;
   private boolean tankLock = false;
   @Override
   public void periodic() {
@@ -197,6 +198,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeftModule.set(0, -45);
     m_backRightModule.set(0, 45);
   }
+
 
   public void tankState(RobotContainer controller)
   {
