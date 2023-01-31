@@ -48,6 +48,6 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210); // FIXME Measure and set front right steer offset
 
-    public static final int UPPER_INTAKE_ROLLER_MOTOR1 = 41;
-    public static final int LOWER_INTAKE_ROLLER_MOTOR2 = 42;
+    public static final int UPPER_INTAKE_ROLLER_MOTOR1 = 42;
+    public static final int LOWER_INTAKE_ROLLER_MOTOR2 = 43;
 }
