@@ -74,7 +74,10 @@ public class RobotContainer {
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
               
     new Trigger(m_controller::getXButton)
-              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem,true));
+              .whileTrue(new AutoLevelPIDPitchCommand(m_drivetrainSubsystem));
+
+    new Trigger(m_controller::getBButton)
+              .whileTrue(new AutoLevelPIDRollCommand(m_drivetrainSubsystem));
 
     new Trigger(m_controller::getYButton)
             .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));

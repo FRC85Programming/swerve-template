@@ -15,32 +15,23 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoLevelPIDCommand extends PIDCommand {
+public class AutoLevelPIDPitchCommand extends PIDCommand {
 
-    static double usfullDrivePower = .30;
-    DrivetrainSubsystem m_drive;
+    public static double usfullDrivePower = .30;
+    public DrivetrainSubsystem m_DrivetrainSubsystem;
 
-    public AutoLevelPIDCommand(double targetLevel, DrivetrainSubsystem drive)
-    {
+    public AutoLevelPIDPitchCommand(DrivetrainSubsystem drivetrainSubsystem){
         super(
             // The controller that the command will use
         new PIDController(0.045, 0, 0),
         // This should return the measurement
-        () -> DrivetrainSubsystem.GetPitchRoll()[0],
+        () -> drivetrainSubsystem.GetPitchRoll()[0],
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
         output -> {
           // Use the output here
-          if(Math.abs(output) < usfullDrivePower){
-            if(output > 0){
-              DrivetrainSubsystem.ChassisSpeeds(-usfullDrivePower, -usfullDrivePower, 0.0);
-            }else {
-              drive.tankDrive(usfullDrivePower, usfullDrivePower);
-            }
-          }else{
-            DRIVE.tankDrive(-output, -output);
-          }
+        drivetrainSubsystem.drive(new ChassisSpeeds(-usfullDrivePower, -usfullDrivePower, 0));
         });
     }
 
