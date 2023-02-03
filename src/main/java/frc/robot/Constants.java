@@ -26,7 +26,7 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = .4953; 
 
-    public static final double DEFAULT_ANGLE_SCALE_FACTOR = 1.0;
+    public static final double DEFAULT_ANGLE_SCALE_FACTOR = 0.9;
 
     public static final int DRIVETRAIN_PIGEON_ID = 41; // FIXME Set Pigeon ID
 

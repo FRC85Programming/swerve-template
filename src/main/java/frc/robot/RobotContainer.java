@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,7 +18,6 @@ import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,11 +45,17 @@ public class RobotContainer {
             m_drivetrainSubsystem,
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  private double getRightX()
+  {
+    double angleScale = SmartDashboard.getNumber("Angle scale factor", Constants.DEFAULT_ANGLE_SCALE_FACTOR);
+    return m_controller.getRightX() * angleScale;
   }
 
   /**
