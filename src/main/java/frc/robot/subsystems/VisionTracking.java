@@ -20,7 +20,6 @@ public class VisionTracking extends SubsystemBase {
   NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
   /** Creates a new VisionTracking. */
   public VisionTracking() {
-    
   }
 
   @Override
@@ -40,8 +39,16 @@ public class VisionTracking extends SubsystemBase {
     SmartDashboard.putNumber("April Tag ID", tid);
 
 //Aims towards target if there is a valid one
-if (validTarget == 1); {
-  
+if (validTarget == 1) {
+  if (x <= 2 && x >= -2) {
+//put in stop motion?
+  } 
+else if (x > 2 && x < 30) {
+  //put in turn negative direction
+} 
+else if (x < -2 && x > -30) {
+// put in turn positive direction
+}
 }
   }
   public double getX(){

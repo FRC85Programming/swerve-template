@@ -91,12 +91,8 @@ public class RobotContainer {
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getXButton)
-            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-    // x button resets wheels
-    /*new Trigger(m_controller::getXButton)
-            .onTrue(new ResetWheelsCommand(m_drivetrainSubsystem));
-   */
+    new Trigger(m_controller::getBButton)
+            .whileTrue(new TrackReflective(m_drivetrainSubsystem, m_visionTracking));
   }
 
   /**
