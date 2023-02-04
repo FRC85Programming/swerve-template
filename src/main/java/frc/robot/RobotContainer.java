@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
@@ -26,6 +25,7 @@ public class RobotContainer {
   private final VisionTracking m_visionTracking = new VisionTracking();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
+  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -86,8 +86,12 @@ public class RobotContainer {
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // Intake roller speed/ button config
-    new Trigger(m_controller::getBackButton)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, 1));
+    new Trigger(m_controller::getBButton)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem));
+
+    // Extends the extendo arm 
+    new Trigger(m_controller::getRightBumper)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem));
   }
   
 

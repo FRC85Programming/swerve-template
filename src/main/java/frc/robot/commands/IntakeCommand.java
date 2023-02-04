@@ -10,20 +10,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeCommand extends CommandBase{
     IntakeSubsystem intake;
-    double speed;
 
-    public IntakeCommand(IntakeSubsystem intake, double speed){
+    public IntakeCommand(IntakeSubsystem intake){
         this.intake = intake;
-        this.speed = speed;
     }
 
     @Override
     public void initialize() {
-        intake.setRollerSpeed(speed);
+        intake.setRollerSpeed();
     }
 
     @Override
     public void end(boolean interrupted) {
-        intake.setRollerSpeed(0);
+        intake.StopRollers();
     }
 }
