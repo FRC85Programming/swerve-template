@@ -33,7 +33,7 @@ public class TrackAprilTagCommand extends CommandBase {
         double area = m_visionTracking.getArea();
         double tagID = m_visionTracking.getTag();
         if (tagID > -1) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(-1.5 * area + 5, 0.0, -tx * 0.1)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(-1.5 * area + 5, 0.0, -tx * 0.2)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
         }
     }
 
