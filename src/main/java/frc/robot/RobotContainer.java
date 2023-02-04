@@ -63,7 +63,8 @@ public class RobotContainer {
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-
+    new Trigger(m_controller::getBButton)
+            .whileTrue(new TrackReflective(m_drivetrainSubsystem, m_visionTracking));
     // sets tank drive
     
   }

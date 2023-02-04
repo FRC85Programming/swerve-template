@@ -21,10 +21,29 @@ public class TrackReflective extends CommandBase
 
     @Override
     public void execute() {
-     
+        m_visionTracking.setLED(0);
+        double tx = m_visionTracking.getX();
+        double area = m_visionTracking.getArea();
+        if (area >= 1) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * .08));
+        }
+         else if (area < 1 && area >= .1) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * 2));
+        } 
+        else if (area < .1 && area > 0) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * 11));
+        } 
+        else {}
+        
+
+        
+         
     }
+
+
     @Override
     public void end(boolean interrupted)  {
+        m_visionTracking.setLED(1);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 }
