@@ -1,19 +1,23 @@
 package frc.robot.commands;
 
-import java.time.chrono.ThaiBuddhistChronology;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubystem;
 
 public class PivotCommand extends CommandBase{
-    PivotCommand Pivot;
+    private final ExtendoSubystem m_ExtendoSubsystem;
 
-    public PivotCommand(PivotCommand Pivot){
-        this.Pivot = Pivot;
+    public PivotCommand(ExtendoSubystem pivot){
+        this.m_ExtendoSubsystem = pivot;
     }
 
     @Override
     public void initialize() {
-        pivot.PivotTelescope();
+        // m_ExtendoSubsystem.PivotArmTelescope(0.1);
+        m_ExtendoSubsystem.Pivot(0.1);
     }   
+
+    @Override
+    public void end(boolean interrupted) {
+        m_ExtendoSubsystem.Pivot(0.0);;
+    }
 }

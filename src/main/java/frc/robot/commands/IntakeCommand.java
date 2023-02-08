@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
 public class IntakeCommand extends CommandBase{
-    IntakeSubsystem intake;
+    private final IntakeSubsystem intake;
 
     public IntakeCommand(IntakeSubsystem intake){
         this.intake = intake;

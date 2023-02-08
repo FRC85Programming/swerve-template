@@ -77,10 +77,6 @@ public class RobotContainer {
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
-    // sets tank drive
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new TankdriveCommand(m_drivetrainSubsystem, m_controller));
-
     // Cuts robot speed in half 
     new Trigger(m_controller::getLeftBumper)
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
@@ -92,6 +88,10 @@ public class RobotContainer {
     // Extends the extendo arm 
     new Trigger(m_controller::getRightBumper)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem));
+
+    // pivots intake arm
+    new Trigger(m_controller::getStartButton)
+            .whileTrue(new PivotCommand(m_ExtendoSubystem));
   }
   
 

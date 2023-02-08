@@ -201,16 +201,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private boolean brakeLock = false;
-  private boolean tankLock = false;
   private boolean halfSpeedLock = false;
   @Override
   public void periodic() {
     if (brakeLock == true){
       brakeState();
-    }
-    else if(tankLock == true)
-    {
-      // tankState();
     }
     else if(halfSpeedLock == true)
     {
@@ -227,14 +222,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(0, -45);
     m_backLeftModule.set(0, -45);
     m_backRightModule.set(0, 45);
-  }
-
-  public void tankState(XboxController controller)
-  {
-    m_frontLeftModule.set(-controller.getLeftY(), 0);
-    m_frontRightModule.set(-controller.getRightY(), 0);
-    m_backLeftModule.set(-controller.getLeftY(), 0);
-    m_backRightModule.set(-controller.getRightY(), 0);
   }
 
   public void swerveState()

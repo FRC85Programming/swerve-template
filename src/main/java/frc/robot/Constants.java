@@ -54,5 +54,6 @@ public final class Constants {
     public static final int LOWER_INTAKE_ROLLER_MOTOR2 = 43;
 
     public static final int EXTENDO_EXTEND_MOTOR = 51;
-    public static final int EXTENDO_PIVOT_MOTOR = 52;
+    public static final int EXTENDO_ARM_PIVOT_MOTOR = 52;
+    public static final int EXTENDO_INTAKE_PIVOT_MOTOR = 53;
 }
