@@ -34,6 +34,12 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
     SmartDashboard.putNumber("AutoLevel Max Speed", .2);
+    
+    SmartDashboard.putNumber("kp", 2.1);
+    SmartDashboard.putNumber("ki", 1);
+    SmartDashboard.putNumber("kd", 0.3);
+
+    
   }
 
   /**

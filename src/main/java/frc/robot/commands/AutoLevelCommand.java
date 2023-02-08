@@ -13,7 +13,7 @@ public class AutoLevelCommand extends CommandBase
 {
 
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public AutoLevelCommand(DrivetrainSubsystem drivetrain, boolean stationStateOn)
+    public AutoLevelCommand(DrivetrainSubsystem drivetrain)
     {
         this.m_drivetrainSubsystem = drivetrain;
     }
@@ -35,7 +35,7 @@ public class AutoLevelCommand extends CommandBase
     else 
     {
         PIDController test = new PIDController(p, r, r);
-        /*double pi = Math.PI;
+
         double maxSpeed = SmartDashboard.getNumber("AutoLevel Max Speed", .2);
         double constant = SmartDashboard.getNumber("AutoLevel Constant", 0.5);
         double total = Math.abs(p) + Math.abs(r); 
@@ -51,7 +51,7 @@ public class AutoLevelCommand extends CommandBase
         {
             y = Math.copySign(maxSpeed, y);
         }
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(x,y,0)); */
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(x,y,0)); 
 
     }
 

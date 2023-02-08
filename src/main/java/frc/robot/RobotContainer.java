@@ -48,6 +48,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
+    m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
     
     // Configure the button bindings
@@ -65,22 +66,21 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getStartButton)
+              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
     //new Trigger(m_controller::getAButtonPressed)
               //.toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
     //new Trigger(m_controller::getBButtonPressed)
               //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
-    new Trigger(m_controller::getYButtonPressed)
-              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getYButton)
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
               
     new Trigger(m_controller::getXButton)
-              .whileTrue(new AutoLevelPIDPitchCommand(m_drivetrainSubsystem));
+              .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
-    new Trigger(m_controller::getBButton)
-              .whileTrue(new AutoLevelPIDRollCommand(m_drivetrainSubsystem));
-
-    new Trigger(m_controller::getYButton)
-            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+    //new Trigger(m_controller::getYButton)
+            //whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));

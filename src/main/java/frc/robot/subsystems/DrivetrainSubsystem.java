@@ -5,9 +5,12 @@
 package frc.robot.subsystems;
 
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,7 +36,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 9.0;
+  public static final double MAX_VOLTAGE = 12.0;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -73,6 +76,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // cause the angle reading to increase until it wraps back over to zero.
   private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
   static double[] ypr = new double[3];
+  PIDController pitchPIDController = new PIDController(1.5, .5, .2);
+  PIDController rollPIDController = new PIDController(1.5, .5, .2);
 
  
 
@@ -260,5 +265,47 @@ public class DrivetrainSubsystem extends SubsystemBase {
     brakeLock = value;
   }
 
+
+  public void AutoLevelPIDController()
+  {
+
+    double kp = SmartDashboard.getNumber("kp", 0);
+    double ki = SmartDashboard.getNumber("ki", 0);
+    double kd = SmartDashboard.getNumber("kd", 0);
+
+    double[] pr = GetPitchRoll();
+    double maxSpeed = .7;
+
+
+    pitchPIDController.setPID(kp, ki, kd);
+    rollPIDController.setPID(kp, ki, kd);
+
+    double x = pitchPIDController.calculate(pr[0],0);
+    double y = rollPIDController.calculate(pr[1],0);
+
+      if(Math.abs(x) > maxSpeed)
+      {
+          x = Math.copySign(maxSpeed, x);
+      }
+
+      if(Math.abs(y) > maxSpeed)
+      {
+          y = Math.copySign(maxSpeed, y);
+      }
+
+      SmartDashboard.putNumber("AutoLevelPID x", x);
+      SmartDashboard.putNumber("AutoLevelPID y", y);
+
+      if (pr[0] > -5 && pr[0] < 5 ) 
+      {
+        x = 0;
+      }
+
+      if (pr[1] > -5 && pr[1] < 5) 
+      {
+        y = 0;
+      }
+      drive(new ChassisSpeeds(y,-x,0));
+  }
 
 }
