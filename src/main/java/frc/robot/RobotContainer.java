@@ -73,7 +73,7 @@ public class RobotContainer {
   }
 
   
-
+ 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -87,12 +87,12 @@ public class RobotContainer {
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
 
     new Trigger(m_controller::getYButton)
-            .toggleOnTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getBButton)
-            .whileTrue(new TrackReflective(m_drivetrainSubsystem, m_visionTracking));
+            .whileTrue(new AutoLineup(m_drivetrainSubsystem, m_visionTracking));
   }
 
   /**

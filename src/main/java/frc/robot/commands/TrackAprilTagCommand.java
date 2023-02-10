@@ -19,7 +19,7 @@ public class TrackAprilTagCommand extends CommandBase {
 
     @Override
     public void execute() {
-
+        m_visionTracking.setPipeline(0);
         if (wheelReset == true) {
             // Stops the robot so that nobody dies
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));

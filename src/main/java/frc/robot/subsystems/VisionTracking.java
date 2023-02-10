@@ -16,8 +16,10 @@ public class VisionTracking extends SubsystemBase {
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry thor = table.getEntry("thor");
   NetworkTableEntry aprilEntry = table.getEntry("tid");
   NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
+  NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
   /** Creates a new VisionTracking. */
   public VisionTracking() {
   }
@@ -28,8 +30,10 @@ public class VisionTracking extends SubsystemBase {
     double x = tx.getDouble(0.0);
     double y = ty.getDouble(0.0);
     double area = ta.getDouble(0.0);
+    double hori = thor.getDouble(0.0);
     double validTarget = tv.getDouble(0.0);
     double tid = aprilEntry.getDouble(0.0); // April Tag Number
+    double pipeLine = pipelineEntry.getDouble(0.0);
 
     //posts to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
@@ -37,6 +41,8 @@ public class VisionTracking extends SubsystemBase {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("LimelightValidTarget", validTarget);
     SmartDashboard.putNumber("April Tag ID", tid);
+    SmartDashboard.putNumber("Pipeline:", pipeLine);
+    SmartDashboard.putNumber("HorizontaL Length:", hori);
 
 //Aims towards target if there is a valid one
 if (validTarget == 1) {
@@ -59,11 +65,23 @@ else if (x < -2 && x > -30) {
     return ta.getDouble(0.0); // Size of target
   }
 
+  public double getThor(){
+    return thor.getDouble(0.0); // Size of target horizontal
+  }
+
   public double getTag(){
     return aprilEntry.getDouble(0.0); // Size of target
   }
 
   public void setLED(int LEDMode){
     ledModeEntry.setNumber(LEDMode);
+  }
+
+  public double getPipeline() {
+    return pipelineEntry.getDouble(0.0);
+  }
+
+  public void setPipeline(int pipeline) {
+    pipelineEntry.setNumber(pipeline);
   }
 }

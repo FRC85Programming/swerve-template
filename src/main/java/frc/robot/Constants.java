@@ -27,6 +27,7 @@ public final class Constants {
     public static final double DRIVETRAIN_WHEELBASE_METERS = .4953; 
 
     public static final int DRIVETRAIN_PIGEON_ID = 41; // FIXME Set Pigeon ID
+    public static final int PDP_ID = 58; // PDP id number
 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1; 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2; 
