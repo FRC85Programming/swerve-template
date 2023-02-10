@@ -17,6 +17,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private CANSparkMax extendExtendoMotor = new CANSparkMax(Constants.EXTENDO_EXTEND_MOTOR, MotorType.kBrushless);
     private CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR, MotorType.kBrushless);
     private CANSparkMax pivotTelescopeIntakemotor = new CANSparkMax(Constants.EXTENDO_INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
+    // private DigitalInput PivotArmLimitSwitch = new DigitalInput(0);
     private PIDController pid = new PIDController(0, 0, 0);
 
     public ExtendoSubystem ()
@@ -30,18 +31,31 @@ public class ExtendoSubystem extends SubsystemBase {
         // uses pid controller to get position that is then set to motor
         // extendExtendoMotor.set(pid.calculate(extendExtendoMotor.getEncoder().getPosition(), setPoint));
         extendExtendoMotor.set(speed);
+
+        if (speed > 0) {
+            if (extendExtendoMotor.getPosition() > 45) {
+                // stops motor with upper limit switch
+                extendExtendoMotor.set(0);
+            } else {
+                // doesnt stop if limit switch isnt pressed
+                extendExtendoMotor.set(speed);
+            }
+        }
     }
 
     public void Pivot(double speed)
     {
-        pivotTelescopeArmMotor.set(speed);
-    }
+        // working command for setting pivot speed
+        // pivotTelescopeArmMotor.set(speed);
 
-    /**
-    * @param position takes in a position setter for location of arm 
-    // **/ 
-    // public void PivotArmTelescope(double position)
-    // {
-    //     pivotTelescopeArmMotor.set(pid.calculate(pivotTelescopeArmMotor.getEncoder().getPosition(), position));
-    // }
+        if (speed > 0) {
+            if (pivotTelescopeArmMotor.getPosition() > 45) {
+                // stops motor with upper limit switch
+                pivotTelescopeArmMotor.set(0);
+            } else {
+                // doesnt stop if limit switch isnt pressed
+                pivotTelescopeArmMotor.set(speed);
+            }
+        }
+    }
 }
