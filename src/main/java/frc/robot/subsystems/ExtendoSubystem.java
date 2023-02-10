@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -20,8 +21,7 @@ public class ExtendoSubystem extends SubsystemBase {
     // private DigitalInput PivotArmLimitSwitch = new DigitalInput(0);
     private PIDController pid = new PIDController(0, 0, 0);
 
-    public ExtendoSubystem ()
-    {
+    public ExtendoSubystem () {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeIntakemotor.setIdleMode(IdleMode.kBrake);
@@ -33,7 +33,7 @@ public class ExtendoSubystem extends SubsystemBase {
         extendExtendoMotor.set(speed);
 
         if (speed > 0) {
-            if (extendExtendoMotor.getPosition() > 45) {
+            if (extendExtendoMotor.getEncoder().getPosition() > 45) {
                 // stops motor with upper limit switch
                 extendExtendoMotor.set(0);
             } else {
@@ -43,13 +43,12 @@ public class ExtendoSubystem extends SubsystemBase {
         }
     }
 
-    public void Pivot(double speed)
-    {
+    public void Pivot(double speed) {
         // working command for setting pivot speed
         // pivotTelescopeArmMotor.set(speed);
 
         if (speed > 0) {
-            if (pivotTelescopeArmMotor.getPosition() > 45) {
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 45) {
                 // stops motor with upper limit switch
                 pivotTelescopeArmMotor.set(0);
             } else {
