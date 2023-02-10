@@ -189,11 +189,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return new double[] {ypr[1] - pitchOffset, ypr[2] - rollOffset};
   }
 
-//   sets all wheel positions to 40 degrees to prevent movement
-  public void brakeWheels(){
+//   sets all wheel positions to 45 degrees to prevent movement
+  // public void brakeWheels(){
 
-  m_backLeftModule.set(0, 45);
-  }
+  // m_backLeftModule.set(0, 45);
+  // }
   public Rotation2d getGyroscopeRotation() {
     
     return Rotation2d.fromDegrees(m_pigeon.getYaw());
@@ -212,14 +212,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private boolean tankLock = false;
   @Override
   public void periodic() {
-    if (brakeLock == true){
+    if (brakeLock){
       brakeState();
-    }
-    else if(tankLock == true)
-    {
-      // tankState();
-    }
-    else{
+    } else{
       swerveState();
     }     
   }
@@ -227,8 +222,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void brakeState()
   {
     m_frontLeftModule.set(0, 45);
-    m_frontRightModule.set(0, -45);
-    m_backLeftModule.set(0, -45);
+    m_frontRightModule.set(0, 45);
+    m_backLeftModule.set(0, 45);
     m_backRightModule.set(0, 45);
   }
 
@@ -274,7 +269,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     double kd = SmartDashboard.getNumber("kd", 0);
 
     double[] pr = GetPitchRoll();
-    double maxSpeed = .7;
+    double maxSpeed = 1;
 
 
     pitchPIDController.setPID(kp, ki, kd);

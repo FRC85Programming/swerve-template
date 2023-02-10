@@ -36,7 +36,7 @@ public class AutoLevelCommand extends CommandBase
     {
         PIDController test = new PIDController(p, r, r);
 
-        double maxSpeed = SmartDashboard.getNumber("AutoLevel Max Speed", .2);
+        double maxSpeed = SmartDashboard.getNumber("AutoLevel Max Speed", .9);
         double constant = SmartDashboard.getNumber("AutoLevel Constant", 0.5);
         double total = Math.abs(p) + Math.abs(r); 
         double x = (-constant * Math.abs(r)*r) / total;
