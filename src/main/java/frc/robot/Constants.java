@@ -11,7 +11,7 @@ import org.opencv.ml.StatModel;
  * constants. This class should not be used for any other purpose. All constants should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -33,22 +33,22 @@ public final class Constants {
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1; 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2; 
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(190); // FIXME Measure and set back left steer offset
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(179.45); // FIXME Measure and set back left steer offset
 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 12; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 13; 
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(131); // FIXME Measure and set back right steer offset
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(213.17); // FIXME Measure and set back right steer offset
 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21; 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 22; 
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 23; 
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(51); // FIXME Measure and set front left steer offset
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(65.67); // FIXME Measure and set front left steer offset
 
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 31;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32; 
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210); // FIXME Measure and set front right steer offset
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(292.44); // FIXME Measure and set front right steer offset
 
     public static final int UPPER_INTAKE_ROLLER_MOTOR1 = 42;
     public static final int LOWER_INTAKE_ROLLER_MOTOR2 = 43;
