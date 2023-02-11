@@ -221,10 +221,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void brakeState()
   {
-    m_frontLeftModule.set(0, 45);
-    m_frontRightModule.set(0, 45);
-    m_backLeftModule.set(0, 45);
-    m_backRightModule.set(0, 45);
+    m_frontLeftModule.set(0, 0);
+    m_frontRightModule.set(0, 0);
+    m_backLeftModule.set(0, 0);
+    m_backRightModule.set(0, 0);
   }
 
   public void tankState(RobotContainer controller)
