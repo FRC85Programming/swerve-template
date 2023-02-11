@@ -28,29 +28,31 @@ public class TrackReflective extends CommandBase
 
     @Override
     public void execute() {
-        m_visionTracking.setLED(0);
-        m_visionTracking.setPipeline(1);
+        // Sets the limelight LEDs to "Force on"
         double tx = m_visionTracking.getX();
         double area = m_visionTracking.getArea();
-        double thor = m_visionTracking.getThor();
-        //double yaw = m_pigeon.getYaw();
+        // Grabs the tapes distance from the crosshair (tx) and the area the tape takes up on the screen (area) as a percentage
         if (area >= 1) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0, -tx * area * .08));
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * .08));
+            // Makes the robot drive slower when the tape is closer
         }
-        else if (area < 1 && area >= .1) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0, -tx * area * 2));
-        } 
+         else if (area < 1 && area >= .1) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * 2));
+            // Makes the robot drive a little faster when the tape is medium distance
+         }
         else if (area < .1 && area > 0) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0, -tx * area * 11));
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * 11));
+            // Makes the robot drive faster when the tape is very far away
         } 
     }
-
-
 
     @Override
-    public void end(boolean interrupted)  {
+    public void end (boolean interrupted)  {
         m_visionTracking.setLED(1);
+        // Sets limelight LEDs to "Force off"
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         lrDecided = false;
+        // Tells the robot to stop moving even if it detects someone
     }
 }
+ 
