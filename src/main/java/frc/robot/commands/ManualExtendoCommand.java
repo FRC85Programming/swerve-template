@@ -14,6 +14,8 @@ public class ManualExtendoCommand extends CommandBase {
         this.m_ExtendoSubystem = m_ExtendoSubystem;
         this.m_pivotSpeedSupplier = pivotSpeedSupplier;
         this.m_extendSpeedSupplier = extendSpeedSupplier;
+
+        addRequirements(m_ExtendoSubystem);
     }
 
     @Override

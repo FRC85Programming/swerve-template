@@ -12,6 +12,8 @@ public class ExtendCommand extends CommandBase{
     public ExtendCommand(ExtendoSubystem extendo, boolean direction){
         this.m_ExtendoSubystem = extendo;
         this.direction = direction;
+
+        addRequirements(extendo);
     }
 
 @Override

@@ -50,13 +50,6 @@ public class RobotContainer {
             () -> m_operatorController.getLeftY(), 
             () -> m_operatorController.getRightY()));
 
-    // Set up the default command for the Extendo.
-    // Left stick Y axis -> up and down movement
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-      m_drivetrainSubsystem,
-      () -> -modifyAxis(m_operatorController.getLeftY()),
-      () -> -modifyAxis(m_operatorController.getLeftX()),
-      () -> -modifyAxis(m_operatorController.getRightX())));
     // Configure the button bindings
     configureButtonBindings();
   }
