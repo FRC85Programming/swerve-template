@@ -53,8 +53,11 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotor.set(0);
             } else {
                 // doesnt stop if limit switch isnt pressed
-                pivotTelescopeArmMotor.set(speed);
+                pivotTelescopeArmMotor.set(speed * 0.1);
             }
+        }
+        else {
+            pivotTelescopeArmMotor.set(speed * 0.1);
         }
     }
 }
