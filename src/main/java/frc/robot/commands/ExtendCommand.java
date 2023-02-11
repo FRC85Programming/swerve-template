@@ -7,14 +7,22 @@ import frc.robot.subsystems.ExtendoSubystem;
 
 public class ExtendCommand extends CommandBase{
     private final ExtendoSubystem m_ExtendoSubystem;
+    private final boolean direction;
 
-    public ExtendCommand(ExtendoSubystem extendo){
+    public ExtendCommand(ExtendoSubystem extendo, boolean direction){
         this.m_ExtendoSubystem = extendo;
+        this.direction = direction;
     }
 
 @Override
 public void initialize() {
-    m_ExtendoSubystem.ExtendTelescope(0.1);
+    if(direction){
+        m_ExtendoSubystem.ExtendTelescope(0.1);
+    } else {
+        m_ExtendoSubystem.ExtendTelescope(-0.1);
+    }
+    
+
 }
 
 @Override

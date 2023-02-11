@@ -49,7 +49,7 @@ public class ExtendoSubystem extends SubsystemBase {
 
         if (speed > 0) {
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 45) {
-                // stops motor with upper limit switch
+        //         // stops motor with upper limit switch
                 pivotTelescopeArmMotor.set(0);
             } else {
                 // doesnt stop if limit switch isnt pressed

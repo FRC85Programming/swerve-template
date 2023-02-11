@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,7 @@ public class RobotContainer {
   private final VisionTracking m_visionTracking = new VisionTracking();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
+  private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem();
 
   /**
@@ -44,6 +46,17 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
+    m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
+            () -> m_operatorController.getLeftY(), 
+            () -> m_operatorController.getRightY()));
+
+    // Set up the default command for the Extendo.
+    // Left stick Y axis -> up and down movement
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+      m_drivetrainSubsystem,
+      () -> -modifyAxis(m_operatorController.getLeftY()),
+      () -> -modifyAxis(m_operatorController.getLeftX()),
+      () -> -modifyAxis(m_operatorController.getRightX())));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -88,11 +101,14 @@ public class RobotContainer {
 
     // Extends the extendo arm 
     new Trigger(m_controller::getRightBumper)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, true));
 
     // pivots intake arm
-    new Trigger(m_controller::getStartButton)
-            .whileTrue(new PivotCommand(m_ExtendoSubystem));
+    // new Trigger(m_operatorController::getAButton)
+    //         .whileTrue(new PivotCommand(m_ExtendoSubystem));
+
+    // new Trigger(m_operatorController::getBButton)
+    //         .whileTrue(new PivotCommand(m_ExtendoSubsystem));
   }
   
 
