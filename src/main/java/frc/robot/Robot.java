@@ -36,8 +36,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("AutoLevel Max Speed", .2);
     
     SmartDashboard.putNumber("kp", 2.1);
-    SmartDashboard.putNumber("ki", 1);
-    SmartDashboard.putNumber("kd", 0.3);
+    SmartDashboard.putNumber("ki", 0);
+    SmartDashboard.putNumber("kd", 0.5);
 
     
   }

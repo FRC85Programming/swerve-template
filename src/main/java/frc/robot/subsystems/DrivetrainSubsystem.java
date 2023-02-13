@@ -76,8 +76,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // cause the angle reading to increase until it wraps back over to zero.
   private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
   static double[] ypr = new double[3];
-  PIDController pitchPIDController = new PIDController(1.5, .5, .2);
-  PIDController rollPIDController = new PIDController(1.5, .5, .2);
+  PIDController pitchPIDController = new PIDController(0, 0, 0);
+  PIDController rollPIDController = new PIDController(0, 0, 0);
 
  
 
