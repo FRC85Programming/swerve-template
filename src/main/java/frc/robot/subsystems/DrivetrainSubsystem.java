@@ -174,6 +174,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
+  public SwerveModule getFrontLeft() {
+    return m_backLeftModule;
+  }
+
+  public SwerveModule getFrontRight() {
+    return m_frontRightModule;
+  }
+
+  public SwerveModule getBackRight() {
+    return m_backRightModule;
+  }
+
+  public SwerveModule getBackLeft() {
+    return m_backLeftModule;
+  }
+
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
   }
@@ -222,6 +238,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+  }
+
+  public void AutoMode(){
+    
   }
 
   // sets true or false for brake command  
