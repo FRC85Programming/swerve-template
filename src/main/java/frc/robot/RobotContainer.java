@@ -92,7 +92,7 @@ public class RobotContainer {
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getBButton)
-            .whileTrue(new AutoLineup(m_drivetrainSubsystem, m_visionTracking));
+            .whileTrue(new Drive(m_drivetrainSubsystem, 1, 0));
   }
 
   /**
@@ -103,6 +103,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return new InstantCommand();
+
   }
 
   private static double deadband(double value, double deadband) {
