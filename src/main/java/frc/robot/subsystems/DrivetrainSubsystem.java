@@ -4,10 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
+import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
-import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -21,17 +20,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 
-import frc.robot.commands.DefaultDriveCommand;
 import static frc.robot.Constants.*;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -97,27 +92,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    // There are 4 methods you can call to create your swerve modules.
-    // The method you use depends on what motors you are using.
-    //
-    // Mk3SwerveModuleHelper.createFalcon500(...)
-    //   Your module has two Falcon 500s on it. One for steering and one for driving.
-    //
-    // Mk3SwerveModuleHelper.createNeo(...)
-    //   Your module has two NEOs on it. One for steering and one for driving.
-    //
-    // Mk3SwerveModuleHelper.createFalcon500Neo(...)
-    //   Your module has a Falcon 500 and a NEO on it. The Falcon 500 is for driving and the NEO is for steering.
-    //
-    // Mk3SwerveModuleHelper.createNeoFalcon500(...)
-    //   Your module has a NEO and a Falcon 500 on it. The NEO is for driving and the Falcon 500 is for steering.
-    //
-    // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
-
-    // By default we will use Falcon 500s in standard configuration. But if you use a different configuration or motors
-    // you MUST change it. If you do not, your code will crash on startup.
-    
-    m_frontLeftModule = new MkSwerveModuleBuilder()
+    m_frontLeftModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
     .withDriveMotor(MotorType.NEO, FRONT_LEFT_MODULE_DRIVE_MOTOR)
     .withSteerMotor(MotorType.NEO, FRONT_LEFT_MODULE_STEER_MOTOR)
     .withLayout(tab.getLayout("Front Left Module", BuiltInLayouts.kList)
@@ -129,7 +104,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .build();
 
     // We will do the same for the other modules
-    m_frontRightModule = new MkSwerveModuleBuilder()
+    m_frontRightModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
     .withDriveMotor(MotorType.NEO, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
     .withSteerMotor(MotorType.NEO, FRONT_RIGHT_MODULE_STEER_MOTOR)
     .withLayout(tab.getLayout("Front Right Module", BuiltInLayouts.kList)
@@ -140,7 +115,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
     .build();
 
-    m_backLeftModule = new MkSwerveModuleBuilder()
+    m_backLeftModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
       .withDriveMotor(MotorType.NEO, BACK_LEFT_MODULE_DRIVE_MOTOR)
       .withSteerMotor(MotorType.NEO, BACK_LEFT_MODULE_STEER_MOTOR)
       .withLayout(tab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -151,7 +126,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
       .build();
 
-    m_backRightModule = new MkSwerveModuleBuilder()
+    m_backRightModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
     .withDriveMotor(MotorType.NEO, BACK_RIGHT_MODULE_DRIVE_MOTOR)
     .withSteerMotor(MotorType.NEO, BACK_RIGHT_MODULE_STEER_MOTOR)
     .withLayout(tab.getLayout("Back Right Module", BuiltInLayouts.kList)
@@ -179,15 +154,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double pitchOffset;
   public double rollOffset;
 
-
   public void zeroGyroscope() {
-   
     //m_pigeon.setYaw(0.0);
     odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
     }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
-
   }
 
   public void zeroPitchRoll()
@@ -207,7 +179,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // m_backLeftModule.set(0, 45);
   // }
   public Rotation2d getGyroscopeRotation() {
-    
     //return Rotation2d.fromDegrees(m_pigeon.getYaw());
     return odometry.getPoseMeters().getRotation();
   }
@@ -228,7 +199,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
       brakeState();
     } else{
       swerveState();
-    }     
+    }
+
+    SmartDashboard.putNumber("Front Left Steer Absolute Angle", m_frontLeftModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("Front Right Steer Absolute Angle", m_frontRightModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("Back Left Steer Absolute Angle", m_backLeftModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("Back Right Steer Absolute Angle", m_backRightModule.getSteerEncoder().getAbsoluteAngle());
   }
 
   public void brakeState()
@@ -241,7 +217,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void tankState(RobotContainer controller)
   {
-    
     m_frontLeftModule.set(controller.getController().getLeftY(), 0);
     m_frontRightModule.set(controller.getController().getLeftX(), 0);
     m_backLeftModule.set(controller.getController().getLeftY(), 0);
