@@ -38,8 +38,10 @@ public class ExtendoSubystem extends SubsystemBase {
                 extendExtendoMotor.set(0);
             } else {
                 // doesnt stop if limit switch isnt pressed
-                extendExtendoMotor.set(speed);
+                extendExtendoMotor.set(speed * 0.1);
             }
+        } else {
+            extendExtendoMotor.set(speed * 0.1);
         }
     }
 
