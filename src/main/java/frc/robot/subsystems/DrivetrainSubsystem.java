@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -98,7 +99,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withLayout(tab.getLayout("Front Left Module", BuiltInLayouts.kList)
                   .withSize(2, 4)
                   .withPosition(0, 0))
-    .withSteerOffset(FRONT_LEFT_MODULE_STEER_OFFSET)
+    .withSteerOffset(0)
     .withGearRatio(SdsModuleConfigurations.MK4_L2)
     .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
     .build();
@@ -110,7 +111,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withLayout(tab.getLayout("Front Right Module", BuiltInLayouts.kList)
                   .withSize(2, 4)
                   .withPosition(2, 0))
-    .withSteerOffset(FRONT_RIGHT_MODULE_STEER_OFFSET)
+    .withSteerOffset(0)
     .withGearRatio(SdsModuleConfigurations.MK4_L2)
     .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
     .build();
@@ -121,7 +122,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       .withLayout(tab.getLayout("Back Left Module", BuiltInLayouts.kList)
                     .withSize(2, 4)
                     .withPosition(4, 0))
-      .withSteerOffset(BACK_LEFT_MODULE_STEER_OFFSET)
+      .withSteerOffset(0)
       .withGearRatio(SdsModuleConfigurations.MK4_L2)
       .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
       .build();
@@ -132,7 +133,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withLayout(tab.getLayout("Back Right Module", BuiltInLayouts.kList)
                   .withSize(2, 4)
                   .withPosition(6, 0))
-    .withSteerOffset(BACK_RIGHT_MODULE_STEER_OFFSET)
+    .withSteerOffset(0)
     .withGearRatio(SdsModuleConfigurations.MK4_L2)
     .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
     .build();
@@ -201,18 +202,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
       swerveState();
     }
 
-    SmartDashboard.putNumber("Front Left Steer Absolute Angle", m_frontLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("Front Right Steer Absolute Angle", m_frontRightModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("Back Left Steer Absolute Angle", m_backLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("Back Right Steer Absolute Angle", m_backRightModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("Front Left Steer Absolute Angle", Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("Front Right Steer Absolute Angle", Units.radiansToDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("Back Left Steer Absolute Angle", Units.radiansToDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("Back Right Steer Absolute Angle", Units.radiansToDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
   }
 
   public void brakeState()
   {
-    m_frontLeftModule.set(0, 0);
-    m_frontRightModule.set(0, 0);
-    m_backLeftModule.set(0, 0);
-    m_backRightModule.set(0, 0);
+    m_frontLeftModule.set(0, -FRONT_LEFT_MODULE_STEER_OFFSET);
+    m_frontRightModule.set(0, -FRONT_RIGHT_MODULE_STEER_OFFSET);
+    m_backLeftModule.set(0, -BACK_LEFT_MODULE_STEER_OFFSET);
+    m_backRightModule.set(0, -BACK_RIGHT_MODULE_STEER_OFFSET);
   }
 
   public void tankState(RobotContainer controller)
@@ -233,10 +234,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
-    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
-    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
-    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians() - FRONT_LEFT_MODULE_STEER_OFFSET);
+    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians() - FRONT_RIGHT_MODULE_STEER_OFFSET);
+    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians() - BACK_LEFT_MODULE_STEER_OFFSET);
+    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians() - BACK_RIGHT_MODULE_STEER_OFFSET);
        
     m_pigeon.getYawPitchRoll(ypr);
     double[] PitchRoll = GetPitchRoll();
