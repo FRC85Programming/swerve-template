@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoLevelCommand;
+import frc.robot.commands.BrakeWheelsCommand;
+import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.ZeroGyroscopeCommand;
+import frc.robot.commands.ZeroPitchRollCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
@@ -30,6 +36,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_drivetrainSubsystem.register();
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -42,6 +50,9 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
+    //m_drivetrainSubsystem.zeroGyroscope();
+    m_drivetrainSubsystem.zeroPitchRoll();
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -84,10 +95,22 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+              .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getStartButton)
+              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+    // new Trigger(m_controller::getAButton)
+    //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+    //new Trigger(m_controller::getBButtonPressed)
+              //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
     new Trigger(m_controller::getYButton)
-            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
+              
+    new Trigger(m_controller::getXButton)
+              .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
+
+    //new Trigger(m_controller::getYButton)
+            //whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
