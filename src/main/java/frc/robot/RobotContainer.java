@@ -34,6 +34,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_drivetrainSubsystem.register();
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -50,6 +52,9 @@ public class RobotContainer {
             () -> m_operatorController.getLeftY(), 
             () -> m_operatorController.getRightY()));
 
+    //m_drivetrainSubsystem.zeroGyroscope();
+    m_drivetrainSubsystem.zeroPitchRoll();
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -65,16 +70,18 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    //new Trigger(m_controller::getAButtonPressed)
-              //.toggleOnTrue(new BrakeWheelsCommand(m_drivetrainSubsystem, true));
+    new Trigger(m_controller::getStartButton)
+              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+    // new Trigger(m_controller::getAButton)
+    //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
     //new Trigger(m_controller::getBButtonPressed)
               //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
-    new Trigger(m_controller::getYButtonPressed)
-              .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getYButton)
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
               
     new Trigger(m_controller::getXButton)
-              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem,true));
+              .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
     new Trigger(m_controller::getYButton)

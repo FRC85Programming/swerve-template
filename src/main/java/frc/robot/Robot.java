@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,8 +29,14 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putNumber("Upper Roller Speed", -1);
-    SmartDashboard.putNumber("Lower Roller Speed", -1);
+    SmartDashboard.putNumber("AutoLevel Constant", 0.2);
+    SmartDashboard.putNumber("AutoLevel Max Speed", .2);
+    
+    SmartDashboard.putNumber("kp", 2.1);
+    SmartDashboard.putNumber("ki", 0);
+    SmartDashboard.putNumber("kd", 0.5);
+
+    
   }
 
   /**
