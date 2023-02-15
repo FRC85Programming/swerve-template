@@ -114,7 +114,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     _frontLeftCalibrationValue = _frontLeftCalibration.getDouble(FRONT_LEFT_MODULE_STEER_OFFSET);
     _frontRightCalibrationValue = _frontRightCalibration.getDouble(FRONT_RIGHT_MODULE_STEER_OFFSET);
     _backLeftCalibrationValue = _backLeftCalibration.getDouble(BACK_LEFT_MODULE_STEER_OFFSET);
-    _backRightCalibrationValue = _backLeftCalibration.getDouble(BACK_RIGHT_MODULE_STEER_OFFSET);
+    _backRightCalibrationValue = _backRightCalibration.getDouble(BACK_RIGHT_MODULE_STEER_OFFSET);
 
     SmartDashboard.putBoolean("Swerve Calibrate", false); 
 
@@ -251,6 +251,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
       _frontRightCalibration.setDouble(_frontRightCalibrationValue);
       _backLeftCalibration.setDouble(_backLeftCalibrationValue);
       _backRightCalibration.setDouble(_backRightCalibrationValue);
+      _frontLeftCalibration.setPersistent();
+      _frontRightCalibration.setPersistent();
+      _backLeftCalibration.setPersistent();
+      _backRightCalibration.setPersistent();
       SmartDashboard.putBoolean("Swerve Calibrate", false);
     }
   }
