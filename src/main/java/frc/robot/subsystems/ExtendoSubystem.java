@@ -10,30 +10,34 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ExtendoSubystem extends SubsystemBase {
     private CANSparkMax extendExtendoMotor = new CANSparkMax(Constants.EXTENDO_EXTEND_MOTOR, MotorType.kBrushless);
-    private CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR, MotorType.kBrushless);
-    private CANSparkMax pivotTelescopeIntakemotor = new CANSparkMax(Constants.EXTENDO_INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
-    // private DigitalInput PivotArmLimitSwitch = new DigitalInput(0);
+    private CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,
+            MotorType.kBrushless);
+    private CANSparkMax pivotTelescopeIntakemotor = new CANSparkMax(Constants.EXTENDO_INTAKE_PIVOT_MOTOR,
+            MotorType.kBrushless);
+    private DigitalInput PivotArmLimitSwitch = new DigitalInput(0);
     private PIDController pid = new PIDController(0, 0, 0);
 
-    public ExtendoSubystem () {
+    public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeIntakemotor.setIdleMode(IdleMode.kBrake);
     }
 
-    public void ExtendTelescope(double speed){   
+    public void ExtendTelescope(double speed) {
         // uses pid controller to get position that is then set to motor
-        // extendExtendoMotor.set(pid.calculate(extendExtendoMotor.getEncoder().getPosition(), setPoint));
-        extendExtendoMotor.set(speed);
+        // extendExtendoMotor.set(pid.calculate(extendExtendoMotor.getEncoder().getPosition(),
+        // setPoint));
+        // extendExtendoMotor.set(speed);
 
         if (speed > 0) {
-            if (extendExtendoMotor.getEncoder().getPosition() > 45) {
+            if (extendExtendoMotor.getEncoder().getPosition() > 55) {
                 // stops motor with upper limit switch
                 extendExtendoMotor.set(0);
             } else {
@@ -47,19 +51,20 @@ public class ExtendoSubystem extends SubsystemBase {
 
     public void Pivot(double speed) {
         // working command for setting pivot speed
-        // pivotTelescopeArmMotor.set(speed);
 
         if (speed > 0) {
-            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 45) {
-        //         // stops motor with upper limit switch
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 95) {
                 pivotTelescopeArmMotor.set(0);
             } else {
-                // doesnt stop if limit switch isnt pressed
                 pivotTelescopeArmMotor.set(speed * 0.1);
             }
-        }
-        else {
-            pivotTelescopeArmMotor.set(speed * 0.1);
+        } else {
+            if (PivotArmLimitSwitch.get()){
+                pivotTelescopeArmMotor.set(0);
+            } else {
+                pivotTelescopeArmMotor.set(speed * 0.1);
+            }
+            
         }
     }
 }
