@@ -115,7 +115,7 @@ public class RobotContainer {
     new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getBButton)
-            .whileTrue(new MobilityAuto(m_drivetrainSubsystem));
+            .whileTrue(new DriveDistance(m_drivetrainSubsystem, 5, 0, 3));
   }
 
   /**
