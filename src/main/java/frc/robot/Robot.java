@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.*;
+import frc.robot.commands.MobilityAuto;
+import frc.robot.subsystems.DrivetrainSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -23,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private final DrivetrainSubsystem m_drivetrainSubsystem;
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
   String trajectoryJSON = "paths/Unnamed.wpilib.json";
@@ -80,7 +84,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -90,7 +93,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    //new MobilityAuto(m_drivetrainSubsystem);
   }
 
   @Override
