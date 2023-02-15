@@ -21,12 +21,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import static frc.robot.Constants.*;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -37,6 +39,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
   public static final double MAX_VOLTAGE = 5;
+
+  private NetworkTable _calibration = NetworkTableInstance.getDefault().getTable("SwerveCalibration");
+  private NetworkTableEntry _frontLeftCalibration;
+  private NetworkTableEntry _frontRightCalibration;
+  private NetworkTableEntry _backLeftCalibration;
+  private NetworkTableEntry _backRightCalibration;
+  private double _frontLeftCalibrationValue;
+  private double _frontRightCalibrationValue;
+  private double _backLeftCalibrationValue;
+  private double _backRightCalibrationValue;
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -90,6 +102,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   public DrivetrainSubsystem() {
+    _frontLeftCalibration = _calibration.getEntry("FrontLeft");
+    _frontRightCalibration = _calibration.getEntry("FrontRight");
+    _backLeftCalibration = _calibration.getEntry("BackLeft");
+    _backRightCalibration = _calibration.getEntry("BackRight");
+    _frontLeftCalibration.setPersistent();
+    _frontRightCalibration.setPersistent();
+    _backLeftCalibration.setPersistent();
+    _backRightCalibration.setPersistent();
+    _frontLeftCalibrationValue = _frontLeftCalibration.getDouble(FRONT_LEFT_MODULE_STEER_OFFSET);
+    _frontRightCalibrationValue = _frontRightCalibration.getDouble(FRONT_RIGHT_MODULE_STEER_OFFSET);
+    _backLeftCalibrationValue = _backLeftCalibration.getDouble(BACK_LEFT_MODULE_STEER_OFFSET);
+    _backRightCalibrationValue = _backLeftCalibration.getDouble(BACK_RIGHT_MODULE_STEER_OFFSET);
+
+    SmartDashboard.putBoolean("Swerve Calibrate", false); 
+
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     m_frontLeftModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
@@ -208,8 +235,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private boolean brakeLock = false;
-  //private boolean resetWheels = false;
-  private boolean tankLock = false;
   @Override
   public void periodic() {
     if (brakeLock){
@@ -222,23 +247,35 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Front Right Steer Absolute Angle", Units.radiansToDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Back Left Steer Absolute Angle", Units.radiansToDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Back Right Steer Absolute Angle", Units.radiansToDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
+
+    SmartDashboard.putNumber("Front Left Steer Calibration Angle", Units.radiansToDegrees(_frontLeftCalibrationValue));
+    SmartDashboard.putNumber("Front Right Steer Calibration Angle", Units.radiansToDegrees(_frontRightCalibrationValue));
+    SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
+    SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
+  }
+
+  public void checkCalibration() {
+    boolean calibrate = SmartDashboard.getBoolean("Swerve Calibrate", false);
+    if (calibrate) {
+      _frontLeftCalibrationValue = -m_frontLeftModule.getSteerEncoder().getAbsoluteAngle(); 
+      _frontRightCalibrationValue = -m_frontRightModule.getSteerEncoder().getAbsoluteAngle();
+      _backLeftCalibrationValue = -m_backLeftModule.getSteerEncoder().getAbsoluteAngle();
+      _backRightCalibrationValue = -m_backRightModule.getSteerEncoder().getAbsoluteAngle();
+      _frontLeftCalibration.setDouble(_frontLeftCalibrationValue);
+      _frontRightCalibration.setDouble(_frontRightCalibrationValue);
+      _backLeftCalibration.setDouble(_backLeftCalibrationValue);
+      _backRightCalibration.setDouble(_backRightCalibrationValue);
+      SmartDashboard.putBoolean("Swerve Calibrate", false);
+    }
   }
 
   public void brakeState()
   {
-    m_frontLeftModule.set(0, -FRONT_LEFT_MODULE_STEER_OFFSET);
-    m_frontRightModule.set(0, -FRONT_RIGHT_MODULE_STEER_OFFSET);
-    m_backLeftModule.set(0, -BACK_LEFT_MODULE_STEER_OFFSET);
-    m_backRightModule.set(0, -BACK_RIGHT_MODULE_STEER_OFFSET);
-  }
-
-
-  public void tankState(RobotContainer controller)
-  {
-    m_frontLeftModule.set(controller.getController().getLeftY(), 0);
-    m_frontRightModule.set(controller.getController().getLeftX(), 0);
-    m_backLeftModule.set(controller.getController().getLeftY(), 0);
-    m_backRightModule.set(controller.getController().getLeftX(), 0);
+    //TODO: Switch back to 45 degree thing
+    m_frontLeftModule.set(0, -_frontLeftCalibrationValue);
+    m_frontRightModule.set(0, -_frontRightCalibrationValue);
+    m_backLeftModule.set(0, -_backLeftCalibrationValue);
+    m_backRightModule.set(0, -_backRightCalibrationValue);
   }
 
   public void swerveState()
@@ -251,10 +288,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians() - FRONT_LEFT_MODULE_STEER_OFFSET);
-    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians() - FRONT_RIGHT_MODULE_STEER_OFFSET);
-    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians() - BACK_LEFT_MODULE_STEER_OFFSET);
-    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians() - BACK_RIGHT_MODULE_STEER_OFFSET);
+    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians() - _frontLeftCalibrationValue);
+    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians() - _frontRightCalibrationValue);
+    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians() - _backLeftCalibrationValue);
+    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians() - _backRightCalibrationValue);
        
     m_pigeon.getYawPitchRoll(ypr);
     double[] PitchRoll = GetPitchRoll();

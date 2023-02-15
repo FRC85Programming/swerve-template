@@ -155,4 +155,8 @@ public class RobotContainer {
   {
     return m_controller;
   }
+
+  public void checkCalibration() {
+    m_drivetrainSubsystem.checkCalibration();
+  }
 }
