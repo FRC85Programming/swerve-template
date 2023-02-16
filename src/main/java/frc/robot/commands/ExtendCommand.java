@@ -40,5 +40,6 @@ public void execute() {
 @Override
 public void end(boolean interrupted) {
     m_ExtendoSubystem.ExtendTelescope(0.0);
+    m_ExtendoSubystem.Pivot(0.0);
 }
 }
