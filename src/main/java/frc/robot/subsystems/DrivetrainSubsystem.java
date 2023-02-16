@@ -8,6 +8,8 @@ import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -131,6 +133,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
     .build();
 
+     
     // We will do the same for the other modules
     m_frontRightModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
     .withDriveMotor(MotorType.NEO, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
@@ -173,6 +176,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+
+    
+    SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
+    SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
+    SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
   }
 
   /**
@@ -241,6 +249,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Front Right Steer Calibration Angle", Units.radiansToDegrees(_frontRightCalibrationValue));
     SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
     SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
+
+    double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
+    double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
+    double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
+
+    setDrivePID(p, i, d);
   }
 
   public void checkCalibration() {
@@ -347,6 +361,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
         y = 0;
       }
       drive(new ChassisSpeeds(y,-x,0));
+  }
+  public SparkMaxPIDController getDrivePID(){
+    return ((CANSparkMax)m_frontLeftModule.getDriveMotor()).getPIDController();
+  }
+
+  public void setDrivePID(double p, double i, double d){
+    CANSparkMax frontLeft = (CANSparkMax)m_frontLeftModule.getDriveMotor();
+    frontLeft.getPIDController().setP(p);
+    frontLeft.getPIDController().setI(i);
+    frontLeft.getPIDController().setD(d);
+
+    CANSparkMax frontRight = (CANSparkMax)m_frontRightModule.getDriveMotor();
+    frontRight.getPIDController().setP(p);
+    frontRight.getPIDController().setI(i);
+    frontRight.getPIDController().setD(d);
+    
+    CANSparkMax backRight = (CANSparkMax)m_backRightModule.getDriveMotor();
+    backRight.getPIDController().setP(p);
+    backRight.getPIDController().setI(i);
+    backRight.getPIDController().setD(d);
+
+    CANSparkMax backLeft = (CANSparkMax)m_backLeftModule.getDriveMotor();
+    backLeft.getPIDController().setP(p);
+    backLeft.getPIDController().setI(i);
+    backLeft.getPIDController().setD(d);
   }
 
 }

@@ -99,16 +99,9 @@ public class RobotContainer {
     new Trigger(m_controller::getBButton)
             .whileTrue(new IntakeCommand(m_IntakeSubsystem));
 
-    // Extends the extendo arm 
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, true));
-
     // pivots intake arm
-    // new Trigger(m_operatorController::getAButton)
-    //         .whileTrue(new PivotCommand(m_ExtendoSubystem));
-
-    // new Trigger(m_operatorController::getBButton)
-    //         .whileTrue(new PivotCommand(m_ExtendoSubsystem));
+    new Trigger(m_operatorController::getAButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, 50.0, 50.0));
   }
   
 
