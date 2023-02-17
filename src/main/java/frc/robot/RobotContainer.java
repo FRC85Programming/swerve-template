@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -96,7 +95,7 @@ public class RobotContainer {
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // Intake roller speed/ button config
-    new Trigger(m_controller::getBButton)
+    new Trigger(m_operatorController::getBButton)
             .whileTrue(new IntakeCommand(m_IntakeSubsystem));
 
     // pivots intake arm
