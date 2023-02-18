@@ -11,12 +11,12 @@ public class ExtendCommand extends CommandBase {
     private final IntakeSubsystem m_IntakeSubsystem;
     private final double m_ExtendPosition;
     private final double m_PivotAngle;
-    private final double tolerancePivot = 10;
-    private final double toleranceExtend = 10;
-    private final double toleranceIntake = 10;
-    private final double extendSpeed = 0.5;
-    private final double pivotSpeed = 0.5;
-    private final double intakePivotSpeed = 0.5;
+    private final double tolerancePivot = 1;
+    private final double toleranceExtend = 1;
+    private final double toleranceIntake = 1;
+    private final double extendSpeed = 0.8;
+    private final double pivotSpeed = 0.8;
+    private final double intakePivotSpeed = 0.8;
     private final double m_intakeWrist;
 
     public ExtendCommand(ExtendoSubystem extendo, IntakeSubsystem intakeSubsystem, double extendPosition,

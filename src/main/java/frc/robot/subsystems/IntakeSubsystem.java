@@ -14,8 +14,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DigitalInput intakePivotLimitSwitch = new DigitalInput(Constants.INTAKE_PIVOT_LIMIT_SWITCH);
     private final double WristSpeedScale = 0.25;
 
-    public void setRollerSpeed() {
-        double speed = SmartDashboard.getNumber("Roller Speed", 1);
+    public void setRollerSpeed(double speed) {
+        //double speed = SmartDashboard.getNumber("Roller Speed", 1);
         intakeRollerMotor.set(speed);
     }
 

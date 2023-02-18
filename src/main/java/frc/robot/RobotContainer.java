@@ -81,15 +81,15 @@ public class RobotContainer {
     //new Trigger(m_controller::getBButtonPressed)
               //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
-    new Trigger(m_controller::getYButton)
-              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
+    //new Trigger(m_controller::getYButton)
+              //.whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
               
-    new Trigger(m_controller::getXButton)
+    new Trigger(m_controller::getYButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
-    new Trigger(m_controller::getYButton)
-            .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+    //new Trigger(m_controller::getYButton)
+            //.whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
@@ -100,16 +100,23 @@ public class RobotContainer {
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // Intake roller speed/ button config
-    new Trigger(m_operatorController::getBButton)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem));
+    new Trigger(m_controller::getLeftBumper)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, -1));
+            
+    new Trigger(m_controller::getRightBumper)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, 1));
 
     // cube pick up position
     new Trigger(m_operatorController::getAButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 10.0, 44.0, -40.0));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 47.0, 30.0, -23.0));
 
-    // cone pick up position
+    // cone pick up position (Tipped)
     new Trigger(m_operatorController::getXButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 10.0, 69.0, -77.0));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 52.0, 34.0, -44.0));
+
+    // cone pick up position (Upright)
+    new Trigger(m_operatorController::getBButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
   }
   
 

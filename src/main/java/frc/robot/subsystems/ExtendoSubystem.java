@@ -18,8 +18,8 @@ public class ExtendoSubystem extends SubsystemBase {
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
     private final PIDController pid = new PIDController(0, 0, 0);
-    private final double extendSpeedScale = 0.2;
-    private final double pivotSpeedScale = 0.3;
+    private final double extendSpeedScale = 0.4;
+    private final double pivotSpeedScale = 0.5;
 
     public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);

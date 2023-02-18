@@ -332,7 +332,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     double kd = SmartDashboard.getNumber("kd", 0);
 
     double[] pr = GetPitchRoll();
-    double maxSpeed = 1;
+    double maxSpeed = .6;
 
 
     pitchPIDController.setPID(kp, ki, kd);
