@@ -59,21 +59,21 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotor.set(speed * 0.1);
             }
         } else {
-            if (PivotArmLimitSwitch.get()){
+            if (PivotArmLimitSwitch.get()) {
                 pivotTelescopeArmMotor.getEncoder().setPosition(0);
                 pivotTelescopeArmMotor.set(0);
             } else {
                 pivotTelescopeArmMotor.set(speed * 0.1);
             }
-            
+
         }
     }
 
-    public double getExtendPosition(){
+    public double getExtendPosition() {
         return extendExtendoMotor.getEncoder().getPosition();
     }
 
-    public double getPivotAngle(){
+    public double getPivotAngle() {
         return pivotTelescopeArmMotor.getEncoder().getPosition();
     }
 }
