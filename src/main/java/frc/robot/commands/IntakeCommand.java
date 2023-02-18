@@ -4,19 +4,21 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends CommandBase{
-    private final IntakeSubsystem intake;
+    private final IntakeSubsystem m_intake;
 
-    public IntakeCommand(IntakeSubsystem intake){
-        this.intake = intake;
+    public IntakeCommand(IntakeSubsystem m_intake){
+        this.m_intake = m_intake;
+
+        addRequirements(m_intake);
     }
 
     @Override
-    public void initialize() {
-        intake.setRollerSpeed();
+    public void execute() {
+        m_intake.setRollerSpeed();
     }
 
     @Override
     public void end(boolean interrupted) {
-        intake.StopRollers();
+        m_intake.StopRollers();
     }
 }

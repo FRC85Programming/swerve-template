@@ -34,6 +34,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
+    m_ExtendoSubystem.register();
+    m_IntakeSubsystem.register();
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -50,6 +52,9 @@ public class RobotContainer {
     m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
             () -> m_operatorController.getLeftY(), 
             () -> m_operatorController.getRightY()));
+          
+    m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
+            () -> m_operatorController.getLeftX()));
 
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();

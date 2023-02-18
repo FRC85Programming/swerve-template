@@ -6,6 +6,8 @@ package frc.robot;
 
 import org.opencv.ml.StatModel;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -50,9 +52,14 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210.5);
 
-    public static final int INTAKE_ROLLERS_MOTOR = 54;
-
     public static final int EXTENDO_EXTEND_MOTOR = 51;
     public static final int EXTENDO_ARM_PIVOT_MOTOR = 52;
-    public static final int EXTENDO_INTAKE_PIVOT_MOTOR = 53;
+
+    public static final int INTAKE_ROLLERS_MOTOR = 54;
+    public static final int INTAKE_PIVOT_MOTOR = 53;
+
+    public static final int INTAKE_PIVOT_LIMIT_SWITCH = 2;
+    public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
+    public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;
+
 }

@@ -180,6 +180,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
     SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
     SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
+    SmartDashboard.putBoolean("Set drive PID", false);
   }
 
   /**
@@ -252,11 +253,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
     SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
 
-    double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
-    double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
-    double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
-
-    setDrivePID(p, i, d);
+    if (SmartDashboard.getBoolean("Set drive PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
+      setDrivePID(p, i, d);
+      SmartDashboard.putBoolean("Set drive PID", false);
+    }
   }
 
   public void checkCalibration() {
