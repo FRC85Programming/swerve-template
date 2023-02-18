@@ -176,7 +176,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
-
     
     SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
     SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
@@ -191,7 +190,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double rollOffset;
 
   public void zeroGyroscope() {
-    //m_pigeon.setYaw(0.0);
+    m_pigeon.setYaw(0.0);
+  }
+
+  public void resetOdometry() {
     odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
