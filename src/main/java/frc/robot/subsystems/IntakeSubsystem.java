@@ -20,23 +20,25 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void StopRollers() {
-        intakeRollerMotor.set(0);
+        intakeRollerMotor.stopMotor();
     }
 
     public void Pivot(double speed) {
         if (speed < 0) {
             if (intakePivotMotor.getEncoder().getPosition() < -82) {
-                intakePivotMotor.set(0);
+                intakePivotMotor.stopMotor();
+            } else {
+                intakePivotMotor.set(speed * WristSpeedScale);
+            }
+        } else if (speed > 0) {
+            if (intakePivotLimitSwitch.get()) {
+                intakePivotMotor.getEncoder().setPosition(0);
+                intakePivotMotor.stopMotor();
             } else {
                 intakePivotMotor.set(speed * WristSpeedScale);
             }
         } else {
-            if (intakePivotLimitSwitch.get()) {
-                intakePivotMotor.getEncoder().setPosition(0);
-                intakePivotMotor.set(0);
-            } else {
-                intakePivotMotor.set(speed * WristSpeedScale);
-            }
+            intakePivotMotor.stopMotor();
         }
     }
 

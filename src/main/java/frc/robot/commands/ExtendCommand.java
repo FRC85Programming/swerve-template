@@ -16,7 +16,7 @@ public class ExtendCommand extends CommandBase {
     private final double toleranceIntake = 10;
     private final double extendSpeed = 0.5;
     private final double pivotSpeed = 0.5;
-    private final double intakePivotSpeed = 0.0;
+    private final double intakePivotSpeed = 0.5;
     private final double m_intakeWrist;
 
     public ExtendCommand(ExtendoSubystem extendo, IntakeSubsystem intakeSubsystem, double extendPosition,
@@ -42,14 +42,14 @@ public class ExtendCommand extends CommandBase {
                         && m_IntakeSubsystem.getIntakeWrist() < m_intakeWrist + toleranceIntake) {
                     m_IntakeSubsystem.Pivot(0);
                 } else if (m_IntakeSubsystem.getIntakeWrist() > m_intakeWrist) {
-                    m_IntakeSubsystem.Pivot(intakePivotSpeed);
-                } else {
                     m_IntakeSubsystem.Pivot(-intakePivotSpeed);
+                } else {
+                    m_IntakeSubsystem.Pivot(intakePivotSpeed);
                 }
             } else if (m_ExtendoSubystem.getExtendPosition() > m_ExtendPosition) {
-                m_ExtendoSubystem.ExtendTelescope(extendSpeed);
-            } else {
                 m_ExtendoSubystem.ExtendTelescope(-extendSpeed);
+            } else {
+                m_ExtendoSubystem.ExtendTelescope(extendSpeed);
             }
         } else if (m_ExtendoSubystem.getPivotAngle() > m_PivotAngle) {
             m_ExtendoSubystem.Pivot(-pivotSpeed);

@@ -1,17 +1,13 @@
 // package frc.robot.subsystems;
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.SoftLimitDirection;
-import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,7 +19,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
     private final PIDController pid = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.2;
-    private final double pivotSpeedScale = 0.1;
+    private final double pivotSpeedScale = 0.3;
 
     public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
@@ -36,21 +32,22 @@ public class ExtendoSubystem extends SubsystemBase {
         // setPoint));
         // extendExtendoMotor.set(speed);
         if (speed > 0) {
-            if (extendExtendoMotor.getEncoder().getPosition() > 45) {
+            if (extendExtendoMotor.getEncoder().getPosition() > 135) {
                 // stops motor with upper limit switch
-                extendExtendoMotor.set(0);
+                extendExtendoMotor.stopMotor();
             } else {
                 // doesnt stop if limit switch isnt pressed
                 extendExtendoMotor.set(speed * extendSpeedScale);
             }
-        } else {
+        } else if (speed < 0){
             if (ExtendLimitSwitch.get()){
                 extendExtendoMotor.getEncoder().setPosition(0);
-                extendExtendoMotor.set(0);
+                extendExtendoMotor.stopMotor();
             } else {
                 extendExtendoMotor.set(speed * extendSpeedScale);
             }
-            
+        } else {
+            extendExtendoMotor.stopMotor();
         }
     }
 
@@ -59,18 +56,19 @@ public class ExtendoSubystem extends SubsystemBase {
 
         if (speed > 0) {
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {
-                pivotTelescopeArmMotor.set(0);
+                pivotTelescopeArmMotor.stopMotor();
+            } else {
+                pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+            }
+        } else if (speed < 0){
+            if (PivotArmLimitSwitch.get()) {
+                pivotTelescopeArmMotor.getEncoder().setPosition(0);
+                pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
             }
         } else {
-            if (PivotArmLimitSwitch.get()) {
-                pivotTelescopeArmMotor.getEncoder().setPosition(0);
-                pivotTelescopeArmMotor.set(0);
-            } else {
-                pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
-            }
-
+            pivotTelescopeArmMotor.stopMotor();
         }
     }
 
@@ -88,5 +86,8 @@ public class ExtendoSubystem extends SubsystemBase {
         SmartDashboard.putBoolean("Extendo extend limit switch", ExtendLimitSwitch.get());
         SmartDashboard.putNumber("Extendo extend position", extendExtendoMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Extendo pivot position", pivotTelescopeArmMotor.getEncoder().getPosition());
+
+        SmartDashboard.putString("Extendo Pivot Brake mode", pivotTelescopeArmMotor.getIdleMode().toString());
+        SmartDashboard.putString("Extendo extend Brake mode", extendExtendoMotor.getIdleMode().toString());
     }
 }

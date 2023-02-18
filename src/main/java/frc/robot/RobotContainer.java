@@ -50,11 +50,11 @@ public class RobotContainer {
     ));
 
     m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
-            () -> -m_operatorController.getLeftY(), 
-            () -> -m_operatorController.getRightY()));
+            () -> modifyAxis(-m_operatorController.getLeftY()), 
+            () -> modifyAxis(-m_operatorController.getRightY())));
           
     m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
-            () -> m_operatorController.getLeftX()));
+            () -> modifyAxis(m_operatorController.getLeftX())));
 
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -103,9 +103,13 @@ public class RobotContainer {
     new Trigger(m_operatorController::getBButton)
             .whileTrue(new IntakeCommand(m_IntakeSubsystem));
 
-    // pivots intake arm
+    // cube pick up position
     new Trigger(m_operatorController::getAButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 50.0, 50.0, 50.0));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 10.0, 44.0, -40.0));
+
+    // cone pick up position
+    new Trigger(m_operatorController::getXButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 10.0, 69.0, -77.0));
   }
   
 
