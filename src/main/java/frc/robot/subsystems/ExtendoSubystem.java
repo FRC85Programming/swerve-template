@@ -36,7 +36,7 @@ public class ExtendoSubystem extends SubsystemBase {
         // setPoint));
         // extendExtendoMotor.set(speed);
         if (speed > 0) {
-            if (extendExtendoMotor.getEncoder().getPosition() > 55) {
+            if (extendExtendoMotor.getEncoder().getPosition() > 45) {
                 // stops motor with upper limit switch
                 extendExtendoMotor.set(0);
             } else {
@@ -58,7 +58,7 @@ public class ExtendoSubystem extends SubsystemBase {
         // working command for setting pivot speed
 
         if (speed > 0) {
-            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 95) {
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {
                 pivotTelescopeArmMotor.set(0);
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);

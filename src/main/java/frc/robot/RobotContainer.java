@@ -50,8 +50,8 @@ public class RobotContainer {
     ));
 
     m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
-            () -> m_operatorController.getLeftY(), 
-            () -> m_operatorController.getRightY()));
+            () -> -m_operatorController.getLeftY(), 
+            () -> -m_operatorController.getRightY()));
           
     m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
             () -> m_operatorController.getLeftX()));
@@ -105,7 +105,7 @@ public class RobotContainer {
 
     // pivots intake arm
     new Trigger(m_operatorController::getAButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, 50.0, 50.0));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 50.0, 50.0, 50.0));
   }
   
 

@@ -7,14 +7,13 @@ package frc.robot.subsystems;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -91,7 +90,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
-  private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
+  private final Pigeon2 m_pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
   static double[] ypr = new double[3];
   PIDController pitchPIDController = new PIDController(0, 0, 0);
   PIDController rollPIDController = new PIDController(0, 0, 0); 
@@ -168,7 +167,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
     .build();
 
-    odometry = new SwerveDriveOdometry(m_kinematics, Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
+    odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation(), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
     });
@@ -194,12 +193,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_pigeon.setYaw(0.0);
   }
 
-  public void resetOdometry() {
-    odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
-    {
-      m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
-  }
+  // public void resetOdometry() {
+  //   odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
+  //   {
+  //     m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
+  //   }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
+  // }
 
   public void zeroPitchRoll()
   {
@@ -218,8 +217,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // m_backLeftModule.set(0, 45);
   // }
   public Rotation2d getGyroscopeRotation() {
-    //return Rotation2d.fromDegrees(m_pigeon.getYaw());
-    return odometry.getPoseMeters().getRotation();
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
@@ -292,10 +290,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void swerveState(boolean halfSpeed)
   {
-    odometry.update(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
-    {
-      m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    });
+    // odometry.update(getGyroscopeRotation(), new SwerveModulePosition[]
+    // {
+    //   m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
+    // });
     double scale = 1;
     if (halfSpeed){
       scale = 0.5;

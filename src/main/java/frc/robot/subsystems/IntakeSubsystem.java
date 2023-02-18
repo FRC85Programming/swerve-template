@@ -12,6 +12,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeRollerMotor = new CANSparkMax(Constants.INTAKE_ROLLERS_MOTOR, MotorType.kBrushless);
     private final CANSparkMax intakePivotMotor = new CANSparkMax(Constants.INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
     private final DigitalInput intakePivotLimitSwitch = new DigitalInput(Constants.INTAKE_PIVOT_LIMIT_SWITCH);
+    private final double WristSpeedScale = 0.25;
 
     public void setRollerSpeed() {
         double speed = SmartDashboard.getNumber("Roller Speed", 1);
@@ -24,19 +25,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void Pivot(double speed) {
         if (speed < 0) {
-            if (intakePivotMotor.getEncoder().getPosition() > 50) {
+            if (intakePivotMotor.getEncoder().getPosition() < -82) {
                 intakePivotMotor.set(0);
             } else {
-                intakePivotMotor.set(speed * 0.1);
+                intakePivotMotor.set(speed * WristSpeedScale);
             }
         } else {
             if (intakePivotLimitSwitch.get()) {
                 intakePivotMotor.getEncoder().setPosition(0);
                 intakePivotMotor.set(0);
             } else {
-                intakePivotMotor.set(speed * 0.1);
+                intakePivotMotor.set(speed * WristSpeedScale);
             }
         }
+    }
+
+    public double getIntakeWrist(){
+        return intakePivotMotor.getEncoder().getPosition();
     }
 
     @Override
