@@ -2,12 +2,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,6 +17,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private final CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,MotorType.kBrushless);
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
+    private final Servo pivotLockServo = new Servo(Constants.PIVOT_LOCK_SERVO);
     private final PIDController pid = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
@@ -55,12 +56,14 @@ public class ExtendoSubystem extends SubsystemBase {
         // working command for setting pivot speed
 
         if (speed > 0) {
+            pivotLockServo.set(0);
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {
                 pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
             }
         } else if (speed < 0){
+            pivotLockServo.set(0);
             if (PivotArmLimitSwitch.get()) {
                 pivotTelescopeArmMotor.getEncoder().setPosition(0);
                 pivotTelescopeArmMotor.stopMotor();
@@ -69,6 +72,7 @@ public class ExtendoSubystem extends SubsystemBase {
             }
         } else {
             pivotTelescopeArmMotor.stopMotor();
+            pivotLockServo.set(1);
         }
     }
 
