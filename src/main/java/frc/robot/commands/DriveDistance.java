@@ -10,17 +10,19 @@ public class DriveDistance extends CommandBase
 {
     private final SwerveModule m_frontLeftModule;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    private double wheelSpeed;
+    private double wheelSpeedX;
+    private double wheelSpeedY;
     private double wheelAngle;
     private double encoderTarget;
     private double constantFLDistance;
     private Boolean constantCalc;
     private double flTarget;
-    public DriveDistance(DrivetrainSubsystem driveTrain, double speed, double angle, double target) {
+    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double angle, double target) {
         // Sets up variables for each subsystem
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
-        wheelSpeed = speed;
+        wheelSpeedX = speedX;
+        wheelSpeedY = speedY;
         wheelAngle = angle;
         encoderTarget = target;
         constantCalc = false;
@@ -37,7 +39,7 @@ public class DriveDistance extends CommandBase
         }
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeed, 0, wheelAngle));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, wheelAngle));
         SmartDashboard.putNumber("Encoder FL", m_frontLeftModule.getDriveDistance());
     }
 

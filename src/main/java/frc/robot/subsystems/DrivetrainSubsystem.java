@@ -8,6 +8,7 @@ import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -16,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -24,11 +26,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import static frc.robot.Constants.*;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -38,6 +43,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
+
   public static final double MAX_VOLTAGE = 3;
 
   private NetworkTable _calibration = NetworkTableInstance.getDefault().getTable("SwerveCalibration");
@@ -50,6 +56,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private double _backLeftCalibrationValue;
   private double _backRightCalibrationValue;
 
+  
+
+  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(Constants.kDriveKinematics,
+           new Rotation2d(0), null);
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
   //  By default this value is setup for a Mk3 standard module using Falcon500s to drive.
@@ -114,6 +125,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     _frontRightCalibrationValue = _frontRightCalibration.getDouble(FRONT_RIGHT_MODULE_STEER_OFFSET);
     _backLeftCalibrationValue = _backLeftCalibration.getDouble(BACK_LEFT_MODULE_STEER_OFFSET);
     _backRightCalibrationValue = _backRightCalibration.getDouble(BACK_RIGHT_MODULE_STEER_OFFSET);
+
 
     SmartDashboard.putBoolean("Swerve Calibrate", false); 
 
@@ -180,6 +192,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public double pitchOffset;
   public double rollOffset;
+  
 
   public void zeroGyroscope() {
     //m_pigeon.setYaw(0.0);
@@ -234,9 +247,42 @@ public class DrivetrainSubsystem extends SubsystemBase {
     drive(m_chassisSpeeds);
   }
 
+  public double getHeading() {
+    return Math.IEEEremainder(gyro.getAngle(), 360);
+}
+
+  public Rotation2d getRotation2d() {
+    return Rotation2d.fromDegrees(getHeading());
+  }
+
+  public Pose2d getPose() {
+    // Gets the position of the bot on the field for the auto
+    return odometer.getPoseMeters();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    // Resets the gyro
+    SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
+    odometer.resetPosition(getRotation2d(), positions, pose);
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    // Sets the desired states of the modules (this is where the error is)
+    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
+    m_frontLeftModule.setDesiredState(desiredStates[0]);
+    m_frontRightModule.setDesiredState(desiredStates[1]);
+    m_backLeftModule.setDesiredState(desiredStates[2]);
+    m_backRightModule.setDesiredState(desiredStates[3]);
+}
+
   private boolean brakeLock = false;
+
   @Override
   public void periodic() {
+    SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
+    odometer.update(getRotation2d(), positions);
+    SmartDashboard.putNumber("Robot Heading", getHeading());
+    SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     if (brakeLock){
       brakeState();
     } else{
@@ -354,6 +400,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         y = 0;
       }
       drive(new ChassisSpeeds(y,-x,0));
+  }
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
 
 }
