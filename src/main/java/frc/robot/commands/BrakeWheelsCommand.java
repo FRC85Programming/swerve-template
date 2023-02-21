@@ -11,7 +11,7 @@ public class BrakeWheelsCommand extends CommandBase
     {
         this.m_drivetrainSubsystem = driveTrain;
         
-        }
+    }
 
     @Override
     public void execute()
