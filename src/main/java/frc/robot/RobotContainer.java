@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -23,7 +22,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final VisionTracking m_visionTracking = new VisionTracking();
-
   private final XboxController m_controller = new XboxController(0);
 
   /**
@@ -86,7 +84,7 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
 
-    new Trigger(m_controller::getYButton)
+    new Trigger(m_controller::getYButton) 
             .toggleOnTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
     new Trigger(m_controller::getAButton)
@@ -94,6 +92,7 @@ public class RobotContainer {
     new Trigger(m_controller::getBButton)
             .whileTrue(new TrackReflective(m_drivetrainSubsystem, m_visionTracking));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -105,6 +104,12 @@ public class RobotContainer {
     return new InstantCommand();
   }
 
+  /**
+   * 
+   * @param value
+   * @param deadband
+   * @return
+   */
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.00) {
@@ -117,6 +122,11 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * 
+   * @param value
+   * @return
+   */
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.12);
@@ -127,6 +137,10 @@ public class RobotContainer {
     return value;
   }
 
+  /**
+   * 
+   * @return the controller object
+   */
   public XboxController getController()
   {
     return m_controller;
