@@ -84,7 +84,7 @@ public class RobotContainer {
     //new Trigger(m_controller::getYButton)
               //.whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
               
-    new Trigger(m_controller::getYButton)
+    new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
