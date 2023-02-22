@@ -170,15 +170,13 @@ public class RobotContainer {
                 thetaController,
                 m_drivetrainSubsystem::setModuleStates,
                 m_drivetrainSubsystem);
-    return null;
     
     return new SequentialCommandGroup(
                 // Ask Poom what this error means
-                new InstantCommand(() -> DrivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
+                new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
                 swerveControllerCommand,
                 // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
-                new InstantCommand(() -> DrivetrainSubsystem.stopModules()));
-
+                new InstantCommand(() -> m_drivetrainSubsystem.stop()));
   }
 
   private static double deadband(double value, double deadband) {

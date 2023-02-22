@@ -9,6 +9,9 @@ import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -242,7 +245,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
   }
-
+// this sucks -matt
   public void setChassisSpeeds(double x, double y, double z) {
     drive(m_chassisSpeeds);
   }
@@ -405,4 +408,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
 
+  public void stop() {
+    drive(new ChassisSpeeds(0.0,0.0,0.0));
+  }
 }
