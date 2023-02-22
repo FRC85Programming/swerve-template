@@ -47,7 +47,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-    ));
+            ));
 
     m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
             () -> modifyAxis(-m_operatorController.getLeftY()), 
@@ -74,7 +74,7 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getStartButton)
+    new Trigger(m_operatorController::getStartButton)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
     // new Trigger(m_controller::getAButton)
     //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
@@ -92,30 +92,23 @@ public class RobotContainer {
             //.whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
-    new Trigger(m_controller::getAButton)
+    new Trigger(m_controller::getLeftBumper)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // Cuts robot speed in half 
-    new Trigger(m_controller::getLeftBumper)
+    new Trigger(m_controller::getRightBumper)
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
-    // Intake roller speed/ button config
-    new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, -1));
-            
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, 1));
-
     // cube pick up position
-    new Trigger(m_operatorController::getAButton)
+    new Trigger(m_controller::getBButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 47.0, 30.0, -23.0));
 
     // cone pick up position (Tipped)
-    new Trigger(m_operatorController::getXButton)
+    new Trigger(m_controller::getAButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 52.0, 34.0, -44.0));
 
     // cone pick up position (Upright)
-    new Trigger(m_operatorController::getBButton)
+    new Trigger(m_controller::getYButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
   }
   

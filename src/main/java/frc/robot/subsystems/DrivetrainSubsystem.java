@@ -282,10 +282,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void brakeState()
   {
     //TODO: Switch back to 45 degree thing
-    m_frontLeftModule.set(0, -_frontLeftCalibrationValue);
-    m_frontRightModule.set(0, -_frontRightCalibrationValue);
-    m_backLeftModule.set(0, -_backLeftCalibrationValue);
-    m_backRightModule.set(0, -_backRightCalibrationValue);
+    m_frontLeftModule.set(0, 45 - -_frontLeftCalibrationValue);
+    m_frontRightModule.set(0, 45 - -_frontRightCalibrationValue);
+    m_backLeftModule.set(0, 45 - -_backLeftCalibrationValue);
+    m_backRightModule.set(0, 45 - -_backRightCalibrationValue);
   }
 
   public void swerveState(boolean halfSpeed)
