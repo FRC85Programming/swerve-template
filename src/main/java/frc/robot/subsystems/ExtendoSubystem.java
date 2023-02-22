@@ -21,10 +21,15 @@ public class ExtendoSubystem extends SubsystemBase {
     private final PIDController pid = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
+    private final double PivotLockPosition = 0.3;
+    private final double PivotUnlockedPosition = 0;
 
     public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
+
+        SmartDashboard.putNumber("Pivot Lock Servo", PivotLockPosition);
+        SmartDashboard.putNumber("Pivot Lock Servo", PivotUnlockedPosition);
     }
 
     public void ExtendTelescope(double speed) {
@@ -56,14 +61,14 @@ public class ExtendoSubystem extends SubsystemBase {
         // working command for setting pivot speed
 
         if (speed > 0) {
-            pivotLockServo.set(0);
+            pivotLockServo.set(PivotLockPosition);
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {
                 pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
             }
         } else if (speed < 0){
-            pivotLockServo.set(0);
+            pivotLockServo.set(PivotUnlockedPosition);
             if (PivotArmLimitSwitch.get()) {
                 pivotTelescopeArmMotor.getEncoder().setPosition(0);
                 pivotTelescopeArmMotor.stopMotor();
@@ -72,7 +77,7 @@ public class ExtendoSubystem extends SubsystemBase {
             }
         } else {
             pivotTelescopeArmMotor.stopMotor();
-            pivotLockServo.set(1);
+            pivotLockServo.set(PivotLockPosition);
         }
     }
 

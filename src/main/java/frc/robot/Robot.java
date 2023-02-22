@@ -36,8 +36,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("kp", 2.1);
     SmartDashboard.putNumber("ki", 0);
     SmartDashboard.putNumber("kd", 0.5);
-
-    
   }
 
   /**
