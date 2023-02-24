@@ -72,6 +72,7 @@ public final class Constants {
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
     public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 4;
+    public static final double kPTurning = 0.5;
     public static final double kMaxAngularSpeedRadiansPerSecond = //
             Constants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //

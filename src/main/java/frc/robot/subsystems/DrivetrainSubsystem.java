@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -61,7 +61,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   
 
-  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
   private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(Constants.kDriveKinematics,
            new Rotation2d(0), null);
   //  The formula for calculating the theoretical maximum velocity is:
@@ -112,6 +111,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private final PIDController turningPidController;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -184,6 +184,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
     });
 
+    turningPidController = new PIDController(Constants.kPTurning, 0, 0);
+    turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+
+    
+
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
@@ -251,7 +256,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(gyro.getAngle(), 360);
+    return Math.IEEEremainder(m_pigeon.getFusedHeading(), 360);
 }
 
   public Rotation2d getRotation2d() {
@@ -268,14 +273,40 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
     odometer.resetPosition(getRotation2d(), positions, pose);
   }
-
+  
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    // Sets the desired states of the modules (this is where the error is)
-    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
-    m_frontLeftModule.setDesiredState(desiredStates[0]);
-    m_frontRightModule.setDesiredState(desiredStates[1]);
-    m_backLeftModule.setDesiredState(desiredStates[2]);
-    m_backRightModule.setDesiredState(desiredStates[3]);
+    // Sets the desired states of the modules (this is where the error is) 
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
+    setDesiredState(desiredStates[0], m_frontLeftModule);
+    setDesiredState(desiredStates[1], m_frontRightModule);
+    setDesiredState(desiredStates[2], m_backLeftModule);
+    setDesiredState(desiredStates[3], m_backRightModule);
+}
+
+public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+  if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+  }
+  state = SwerveModuleState.optimize(state, getState(module).angle);
+  m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
+}
+
+
+public SwerveModuleState getState(SwerveModule module) {
+  return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
+}
+
+public double getTurningPosition(SwerveModule module) {
+  return module.getSteerAngle();
+}
+
+public double getTurningVelocity(SwerveModule module) {
+  return module.getSteerMotor().get();
+}
+
+public double getDriveVelocity(SwerveModule module) {
+  return module.getDriveVelocity();
 }
 
   private boolean brakeLock = false;
@@ -407,7 +438,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
-
+    
   public void stop() {
     drive(new ChassisSpeeds(0.0,0.0,0.0));
   }
