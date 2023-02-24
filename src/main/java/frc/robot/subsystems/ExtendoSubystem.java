@@ -4,7 +4,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
@@ -18,7 +17,8 @@ public class ExtendoSubystem extends SubsystemBase {
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
     private final Servo pivotLockServo = new Servo(Constants.PIVOT_LOCK_SERVO);
-    private final PIDController pid = new PIDController(0, 0, 0);
+    private final PIDController pivotPID = new PIDController(0, 0, 0);
+    private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
     private final double PivotLockPosition = 0.3;
@@ -32,11 +32,16 @@ public class ExtendoSubystem extends SubsystemBase {
         SmartDashboard.putNumber("Pivot Lock Servo", PivotUnlockedPosition);
     }
 
-    public void ExtendTelescope(double speed) {
-        // uses pid controller to get position that is then set to motor
-        // extendExtendoMotor.set(pid.calculate(extendExtendoMotor.getEncoder().getPosition(),
-        // setPoint));
-        // extendExtendoMotor.set(speed);
+    public void ExtendTelescope(double speed, double desiredPosition) {
+        double kp = SmartDashboard.getNumber("kp Extendo", 0);
+        double ki = SmartDashboard.getNumber("ki Extendo", 0);
+        double kd = SmartDashboard.getNumber("kd Extendo", 0);
+
+        extendoPID.setPID(kp, ki, kd);
+
+        if (desiredPosition != 0){
+            speed = extendoPID.calculate(extendExtendoMotor.getEncoder().getPosition(), desiredPosition);
+        }
         if (speed > 0) {
             if (extendExtendoMotor.getEncoder().getPosition() > 135) {
                 // stops motor with upper limit switch
@@ -57,9 +62,17 @@ public class ExtendoSubystem extends SubsystemBase {
         }
     }
 
-    public void Pivot(double speed) {
-        // working command for setting pivot speed
+    public void Pivot(double speed, double desiredPosition) {
+        double kp = SmartDashboard.getNumber("kp Pivot", 0);
+        double ki = SmartDashboard.getNumber("ki Pivot", 0);
+        double kd = SmartDashboard.getNumber("kd Pivot", 0);
 
+        pivotPID.setPID(kp, ki, kd);
+
+        if (desiredPosition != 0){
+            speed = pivotPID.calculate(pivotTelescopeArmMotor.getEncoder().getPosition(), desiredPosition);
+        }
+        
         if (speed > 0) {
             pivotLockServo.set(PivotLockPosition);
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {

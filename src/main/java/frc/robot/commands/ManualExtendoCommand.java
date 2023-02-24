@@ -20,13 +20,13 @@ public class ManualExtendoCommand extends CommandBase {
 
     @Override
     public void execute(){
-        m_ExtendoSubystem.Pivot(m_pivotSpeedSupplier.getAsDouble());
-        m_ExtendoSubystem.ExtendTelescope(m_extendSpeedSupplier.getAsDouble());
+        m_ExtendoSubystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
+        m_ExtendoSubystem.ExtendTelescope(m_extendSpeedSupplier.getAsDouble(), 0);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_ExtendoSubystem.Pivot(0);
-        m_ExtendoSubystem.ExtendTelescope(0);
+        m_ExtendoSubystem.Pivot(0, 0);
+        m_ExtendoSubystem.ExtendTelescope(0, 0);
     }
 }
