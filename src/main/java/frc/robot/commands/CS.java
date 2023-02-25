@@ -10,7 +10,7 @@ public class CS extends SequentialCommandGroup {
         this.m_robotContainer = robotContainer;
         addCommands(
             // add wait command
-            m_robotContainer.getAutonomousCommand("PW_CS"),
+            //m_robotContainer.getAutonomousCommand("PW_CS"),
             new AutoLevelCommand(driveTrain)
         );
     }
