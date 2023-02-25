@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubystem;
 
-public class PivotCommand extends CommandBase{
+public PivotCommand extends CommandBase{
     private final ExtendoSubystem m_ExtendoSubsystem;
 
     public PivotCommand(ExtendoSubystem pivot){
@@ -18,6 +18,6 @@ public class PivotCommand extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        m_ExtendoSubsystem.Pivot(0.0);;
+        m_ExtendoSubsystem.Pivot(0.0);
     }
 }
