@@ -91,4 +91,5 @@ public final class Constants {
     new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularAccelerationRadiansPerSecondSquared);
+            // Have fun!
 }

@@ -105,7 +105,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(String auto) {
+  public Command getAutonomousCommand(/*String auto*/) {
     // Configures kinematics so the driving is accurate 
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
       Constants.kMaxSpeedMetersPerSecond,
@@ -122,7 +122,7 @@ public class RobotContainer {
         new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
       trajectoryConfig);
 
-      String trajectoryJSON = "output/" + auto + ".wpilib.json";
+      /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
       Trajectory temp;
 
       //Load command and select backup if needed
@@ -137,7 +137,7 @@ public class RobotContainer {
       }catch(Exception e){
           DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
           temp = trajectory;
-      }
+      } */
 
     // Sets up PID
     PIDController xController = new PIDController(Constants.kPXController, 0, 0);
@@ -148,7 +148,7 @@ public class RobotContainer {
 
     // Makes the command to drive in auto
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                temp,
+                trajectory,
                 m_drivetrainSubsystem::getPose,
                 Constants.kDriveKinematics,
                 xController,

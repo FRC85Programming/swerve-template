@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     if (autoSelect == 1) {
-      
+      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
