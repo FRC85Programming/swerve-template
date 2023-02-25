@@ -68,6 +68,11 @@ public final class Constants {
     public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
     public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;
 
+    public static final String Backup = "Backup";
+    public static final String CS = "CS";
+    public static final String Comm_R = "Comm_R";
+    public static final String Comm_L = "Comm_L";
+
         // These values MUST be configured for our robot. Do not run it without finding them
     public static final double kMaxAccelerationMetersPerSecondSquared = SmartDashboard.getNumber("MaxAccel", 5);
     public static final double kWheelBase = Units.inchesToMeters(22);
