@@ -4,19 +4,35 @@
 
 package frc.robot.subsystems;
 
-import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
-import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
-import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
-import com.swervedrivespecialties.swervelib.MotorType;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import static frc.robot.Constants.BACK_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.DRIVETRAIN_PIGEON_ID;
+import static frc.robot.Constants.DRIVETRAIN_TRACKWIDTH_METERS;
+import static frc.robot.Constants.DRIVETRAIN_WHEELBASE_METERS;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
+import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
+import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
+import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,18 +47,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import static frc.robot.Constants.*;
-
-import frc.robot.Constants;
-import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -462,6 +472,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
       }
       drive(new ChassisSpeeds(y,-x,0));
   }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
+  }
+    
+  public void stop() {
+    drive(new ChassisSpeeds(0.0,0.0,0.0));
+  }
+
   public SparkMaxPIDController getDrivePID(){
     return ((CANSparkMax)m_frontLeftModule.getDriveMotor()).getPIDController();
   }
@@ -486,13 +505,5 @@ public class DrivetrainSubsystem extends SubsystemBase {
     backLeft.getPIDController().setP(p);
     backLeft.getPIDController().setI(i);
     backLeft.getPIDController().setD(d);
-  }
-
-  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
-  }
-    
-  public void stop() {
-    drive(new ChassisSpeeds(0.0,0.0,0.0));
   }
 }

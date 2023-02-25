@@ -122,8 +122,8 @@ public class RobotContainer {
     //         .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
-    // new Trigger(m_controller::getLeftBumper)
-    //         .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+    new Trigger(m_controller::getLeftBumper)
+            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // // Cuts robot speed in half 
     // new Trigger(m_controller::getRightBumper)
