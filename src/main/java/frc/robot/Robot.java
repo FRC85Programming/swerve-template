@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.Comm_L;
+import frc.robot.subsystems.DrivetrainSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -23,9 +26,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  
+  private Command Comm_L;
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
-  String trajectoryJSON = "paths/Unnamed.wpilib.json";
+  private DrivetrainSubsystem m_drivetrainSubsystem;
+  private Double autoSelect;
   Trajectory trajectory = new Trajectory();
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,17 +39,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+    double autoSelect = SmartDashboard.getNumber("Auto:", 0);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    }
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
@@ -82,8 +81,12 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    if (autoSelect == 1) {
+      
+    }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    //new Comm_L(m_drivetrainSubsystem, m_robotContainer);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
