@@ -17,7 +17,6 @@ public class IntakeCommand extends CommandBase{
 
     @Override
     public void execute() {
-        // m_intake.setRollerSpeed(m_leftTriggerSupplier.getAsDouble());
         if (m_output){
             m_intake.setRollerSpeed(0.8);
         } else {

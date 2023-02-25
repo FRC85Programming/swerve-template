@@ -25,7 +25,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
     private double PivotLockPosition = 0.95;
-    private double PivotUnlockedPosition = 0.5;
+    private double PivotUnlockedPosition = 0.6;
 
     public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
@@ -78,7 +78,7 @@ public class ExtendoSubystem extends SubsystemBase {
 
         if (speed > 0) {
             pivotLockServo.set(PivotLockPosition);
-            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 120) {
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 110) {
                 pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
