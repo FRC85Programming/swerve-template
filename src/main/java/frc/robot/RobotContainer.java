@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import java.nio.file.Path;
 import java.util.List;
+
+import com.pathplanner.lib.*;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -14,6 +17,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -154,7 +160,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getAutonomousCommand(String auto) {
     // Configures kinematics so the driving is accurate 
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
       Constants.kMaxSpeedMetersPerSecond,
@@ -165,11 +171,28 @@ public class RobotContainer {
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new Rotation2d(0)),
       List.of(
-        // Go to these locations:
+        //Go to these locations:
         new Translation2d(1, 0),
         new Translation2d(1, -1)),
         new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
       trajectoryConfig);
+
+      String trajectoryJSON = "output/" + auto + ".wpilib.json";
+      Trajectory temp;
+
+      //Load command and select backup if needed
+      
+      try{
+          if(auto.startsWith("PW_")){
+              Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+              temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+          }else{
+              temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
+          }
+      }catch(Exception e){
+          DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
+          temp = trajectory;
+      }
 
     // Sets up PID
     PIDController xController = new PIDController(Constants.kPXController, 0, 0);
@@ -180,7 +203,7 @@ public class RobotContainer {
 
     // Makes the command to drive in auto
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
+                temp,
                 m_drivetrainSubsystem::getPose,
                 Constants.kDriveKinematics,
                 xController,

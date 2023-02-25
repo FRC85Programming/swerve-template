@@ -312,7 +312,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       return;
     }
     state = SwerveModuleState.optimize(state, getState(module).angle);
-    m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
+    module.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
   }
 
 
