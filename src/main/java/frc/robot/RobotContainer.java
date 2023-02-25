@@ -81,15 +81,7 @@ public class RobotContainer {
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getStartButton)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    // new Trigger(m_controller::getAButton)
-    //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-    //new Trigger(m_controller::getBButtonPressed)
-              //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
-
-    //new Trigger(m_controller::getYButton)
-              //.whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
-              
-    new Trigger(m_controller::getYButton)
+    new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight

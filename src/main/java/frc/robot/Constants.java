@@ -59,6 +59,7 @@ public final class Constants {
     public static final int INTAKE_ROLLERS_MOTOR = 54;
     public static final int INTAKE_PIVOT_MOTOR = 53;
 
+    public static final int EXTENDO_BRAKE_LIMIT_SWITCH = 3;
     public static final int INTAKE_PIVOT_LIMIT_SWITCH = 2;
     public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
     public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;

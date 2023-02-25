@@ -34,41 +34,36 @@ public class ExtendCommand extends CommandBase {
 
     @Override
     public void execute() {
-
-        double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = m_intakeWrist.getAsDouble();
-        double extendPosition = m_ExtendPosition.getAsDouble();
-
-        if (m_ExtendoSubystem.getPivotAngle() > pivotAngle - tolerancePivot
-                && m_ExtendoSubystem.getPivotAngle() < pivotAngle + tolerancePivot) {
-            m_ExtendoSubystem.Pivot(0);
-            if (m_ExtendoSubystem.getExtendPosition() > extendPosition - toleranceExtend
-                    && m_ExtendoSubystem.getExtendPosition() < extendPosition + toleranceExtend) {
-                m_ExtendoSubystem.ExtendTelescope(0);
-                if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
-                        && m_IntakeSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake) {
-                    m_IntakeSubsystem.Pivot(0);
-                } else if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist) {
-                    m_IntakeSubsystem.Pivot(-intakePivotSpeed);
+        if (m_ExtendoSubystem.getPivotAngle() > m_PivotAngle - tolerancePivot
+                && m_ExtendoSubystem.getPivotAngle() < m_PivotAngle + tolerancePivot) {
+            m_ExtendoSubystem.Pivot(0.0, 0.0);
+            if (m_ExtendoSubystem.getExtendPosition() > m_ExtendPosition - toleranceExtend
+                    && m_ExtendoSubystem.getExtendPosition() < m_ExtendPosition + toleranceExtend) {
+                m_ExtendoSubystem.ExtendTelescope(0.0, 0.0);
+                if (m_IntakeSubsystem.getIntakeWrist() > m_intakeWrist - toleranceIntake
+                        && m_IntakeSubsystem.getIntakeWrist() < m_intakeWrist + toleranceIntake) {
+                    m_IntakeSubsystem.Pivot(0.0, 0.0);
+                } else if (m_IntakeSubsystem.getIntakeWrist() > m_intakeWrist) {
+                    m_IntakeSubsystem.Pivot(-intakePivotSpeed, 0.0);
                 } else {
-                    m_IntakeSubsystem.Pivot(intakePivotSpeed);
+                    m_IntakeSubsystem.Pivot(intakePivotSpeed, 0.0);
                 }
-            } else if (m_ExtendoSubystem.getExtendPosition() > extendPosition) {
-                m_ExtendoSubystem.ExtendTelescope(-extendSpeed);
+            } else if (m_ExtendoSubystem.getExtendPosition() > m_ExtendPosition) {
+                m_ExtendoSubystem.ExtendTelescope(-extendSpeed, 0.0);
             } else {
-                m_ExtendoSubystem.ExtendTelescope(extendSpeed);
+                m_ExtendoSubystem.ExtendTelescope(extendSpeed, 0.0);
             }
-        } else if (m_ExtendoSubystem.getPivotAngle() > pivotAngle) {
-            m_ExtendoSubystem.Pivot(-pivotSpeed);
+        } else if (m_ExtendoSubystem.getPivotAngle() > m_PivotAngle) {
+            m_ExtendoSubystem.Pivot(-pivotSpeed, 0.0);
         } else {
-            m_ExtendoSubystem.Pivot(pivotSpeed);
+            m_ExtendoSubystem.Pivot(pivotSpeed, 0.0);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_ExtendoSubystem.ExtendTelescope(0.0);
-        m_ExtendoSubystem.Pivot(0.0);
-        m_IntakeSubsystem.Pivot(0.0);
+        m_ExtendoSubystem.ExtendTelescope(0.0, 0.0);
+        m_ExtendoSubystem.Pivot(0.0, 0.0);
+        m_IntakeSubsystem.Pivot(0.0, 0.0);
     }
 }

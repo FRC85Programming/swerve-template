@@ -18,12 +18,12 @@ public class IntakeWristCommand extends CommandBase{
 
     @Override
     public void execute() {
-        m_intakeSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble());
+        m_intakeSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
         SmartDashboard.putNumber("intake wrist speed", m_pivotSpeedSupplier.getAsDouble());
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_intakeSubsystem.Pivot(0);
+        m_intakeSubsystem.Pivot(0, 0);
     }
 }
