@@ -21,13 +21,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoLevelCommand;
-import frc.robot.commands.BrakeWheelsCommand;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.ZeroGyroscopeCommand;
-import frc.robot.commands.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.VisionTracking;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.commands.*;
 
 
@@ -41,14 +38,18 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final VisionTracking m_visionTracking = new VisionTracking();
-
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
+  private final XboxController m_operatorController = new XboxController(1);
+  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
+    m_ExtendoSubystem.register();
+    m_IntakeSubsystem.register();
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -60,7 +61,14 @@ public class RobotContainer {
             () -> -modifyAxis(getY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(getX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-    ));
+            ));
+
+    m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
+            () -> modifyAxis(-m_operatorController.getLeftY()), 
+            () -> modifyAxis(-m_operatorController.getRightY())));
+          
+    m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
+            () -> modifyAxis(m_operatorController.getLeftX())));
 
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -108,27 +116,36 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getStartButton)
+    new Trigger(m_operatorController::getStartButton)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    // new Trigger(m_controller::getAButton)
-    //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-    //new Trigger(m_controller::getBButtonPressed)
-              //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
-
-    new Trigger(m_controller::getYButton)
-              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
-              
     new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
+    // tracks april tag using limelight
     //new Trigger(m_controller::getYButton)
-            //whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+            //.whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+
     // a button activates brake wheels command
-    new Trigger(m_controller::getAButton)
+    new Trigger(m_controller::getLeftBumper)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+
+    // Cuts robot speed in half 
+    new Trigger(m_controller::getRightBumper)
+            .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+
+    // cube pick up position
     new Trigger(m_controller::getBButton)
-            .whileTrue(new DriveDistance(m_drivetrainSubsystem, 0, 5, 0, 1.8));
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 47.0, 30.0, -23.0));
+
+    // cone pick up position (Tipped)
+    new Trigger(m_controller::getAButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 52.0, 34.0, -44.0));
+
+    // cone pick up position (Upright)
+    new Trigger(m_controller::getYButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

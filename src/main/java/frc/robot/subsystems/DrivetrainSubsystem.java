@@ -8,10 +8,9 @@ import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.revrobotics.CANEncoder;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -100,7 +99,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
-  private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
+  private final Pigeon2 m_pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
   static double[] ypr = new double[3];
   PIDController pitchPIDController = new PIDController(0, 0, 0);
   PIDController rollPIDController = new PIDController(0, 0, 0); 
@@ -144,6 +143,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
     .build();
 
+     
     // We will do the same for the other modules
     m_frontRightModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
     .withDriveMotor(MotorType.NEO, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
@@ -178,7 +178,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
     .build();
 
-    odometry = new SwerveDriveOdometry(m_kinematics, Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
+    odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation(), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
     });
@@ -191,6 +191,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+    
+    SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
+    SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
+    SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
+    SmartDashboard.putBoolean("Set drive PID", false);
   }
 
   /**
@@ -202,12 +207,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
   
 
   public void zeroGyroscope() {
-    //m_pigeon.setYaw(0.0);
-    odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
-    {
-      m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
+    m_pigeon.setYaw(0.0);
   }
+
+  // public void resetOdometry() {
+  //   odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
+  //   {
+  //     m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
+  //   }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
+  // }
 
   public void zeroPitchRoll()
   {
@@ -226,8 +234,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // m_backLeftModule.set(0, 45);
   // }
   public Rotation2d getGyroscopeRotation() {
-    //return Rotation2d.fromDegrees(m_pigeon.getYaw());
-    return odometry.getPoseMeters().getRotation();
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
   public SwerveModule getFrontLeft() {
@@ -255,7 +262,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(m_pigeon.getFusedHeading(), 360);
+    return Math.IEEEremainder(m_pigeon.getCompassHeading(), 360);
 }
 
   public Rotation2d getRotation2d() {
@@ -309,7 +316,7 @@ public double getDriveVelocity(SwerveModule module) {
 }
 
   private boolean brakeLock = false;
-
+  private boolean halfSpeedLock = false;
   @Override
   public void periodic() {
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
@@ -318,8 +325,11 @@ public double getDriveVelocity(SwerveModule module) {
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     if (brakeLock){
       brakeState();
-    } else{
-      swerveState();
+    }
+    else if (halfSpeedLock == true) {
+      swerveState(true);
+    } else {
+      swerveState(false);
     }
 
     SmartDashboard.putNumber("Front Left Steer Absolute Angle", Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
@@ -331,6 +341,14 @@ public double getDriveVelocity(SwerveModule module) {
     SmartDashboard.putNumber("Front Right Steer Calibration Angle", Units.radiansToDegrees(_frontRightCalibrationValue));
     SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
     SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
+
+    if (SmartDashboard.getBoolean("Set drive PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
+      setDrivePID(p, i, d);
+      SmartDashboard.putBoolean("Set drive PID", false);
+    }
   }
 
   public void checkCalibration() {
@@ -355,26 +373,29 @@ public double getDriveVelocity(SwerveModule module) {
   public void brakeState()
   {
     //TODO: Switch back to 45 degree thing
-    m_frontLeftModule.set(0, -_frontLeftCalibrationValue);
-    m_frontRightModule.set(0, -_frontRightCalibrationValue);
-    m_backLeftModule.set(0, -_backLeftCalibrationValue);
-    m_backRightModule.set(0, -_backRightCalibrationValue);
+    m_frontLeftModule.set(0, 45 - -_frontLeftCalibrationValue);
+    m_frontRightModule.set(0, 45 - -_frontRightCalibrationValue);
+    m_backLeftModule.set(0, 45 - -_backLeftCalibrationValue);
+    m_backRightModule.set(0, 45 - -_backRightCalibrationValue);
   }
 
-  public void swerveState()
+  public void swerveState(boolean halfSpeed)
   {
-    odometry.update(Rotation2d.fromDegrees(m_pigeon.getFusedHeading()), new SwerveModulePosition[]
-    {
-      m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    });
-
+    // odometry.update(getGyroscopeRotation(), new SwerveModulePosition[]
+    // {
+    //   m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
+    // });
+    double scale = 1;
+    if (halfSpeed){
+      scale = 0.5;
+    }
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians() - _frontLeftCalibrationValue);
-    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians() - _frontRightCalibrationValue);
-    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians() - _backLeftCalibrationValue);
-    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians() - _backRightCalibrationValue);
+    m_frontLeftModule.set(states[0].speedMetersPerSecond * scale / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians() - _frontLeftCalibrationValue);
+    m_frontRightModule.set(states[1].speedMetersPerSecond * scale / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians() - _frontRightCalibrationValue);
+    m_backLeftModule.set(states[2].speedMetersPerSecond * scale / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians() - _backLeftCalibrationValue);
+    m_backRightModule.set(states[3].speedMetersPerSecond * scale / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians() - _backRightCalibrationValue);
        
     m_pigeon.getYawPitchRoll(ypr);
     double[] PitchRoll = GetPitchRoll();
@@ -383,13 +404,14 @@ public double getDriveVelocity(SwerveModule module) {
     SmartDashboard.putNumber("Gyro Roll", PitchRoll[1]);
   }
 
-  public void AutoMode(){
-    
-  }
-
+  
   // sets true or false for brake command  
   public void setLock(boolean value){
     brakeLock = value;
+  }
+  public void setHalfSpeed(boolean value)
+  {
+    halfSpeedLock = value;
   }
 
 
@@ -401,7 +423,7 @@ public double getDriveVelocity(SwerveModule module) {
     double kd = SmartDashboard.getNumber("kd", 0);
 
     double[] pr = GetPitchRoll();
-    double maxSpeed = 1;
+    double maxSpeed = .6;
 
 
     pitchPIDController.setPID(kp, ki, kd);
@@ -434,11 +456,38 @@ public double getDriveVelocity(SwerveModule module) {
       }
       drive(new ChassisSpeeds(y,-x,0));
   }
+
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
     
   public void stop() {
     drive(new ChassisSpeeds(0.0,0.0,0.0));
+  }
+
+  public SparkMaxPIDController getDrivePID(){
+    return ((CANSparkMax)m_frontLeftModule.getDriveMotor()).getPIDController();
+  }
+
+  public void setDrivePID(double p, double i, double d){
+    CANSparkMax frontLeft = (CANSparkMax)m_frontLeftModule.getDriveMotor();
+    frontLeft.getPIDController().setP(p);
+    frontLeft.getPIDController().setI(i);
+    frontLeft.getPIDController().setD(d);
+
+    CANSparkMax frontRight = (CANSparkMax)m_frontRightModule.getDriveMotor();
+    frontRight.getPIDController().setP(p);
+    frontRight.getPIDController().setI(i);
+    frontRight.getPIDController().setD(d);
+    
+    CANSparkMax backRight = (CANSparkMax)m_backRightModule.getDriveMotor();
+    backRight.getPIDController().setP(p);
+    backRight.getPIDController().setI(i);
+    backRight.getPIDController().setD(d);
+
+    CANSparkMax backLeft = (CANSparkMax)m_backLeftModule.getDriveMotor();
+    backLeft.getPIDController().setP(p);
+    backLeft.getPIDController().setI(i);
+    backLeft.getPIDController().setD(d);
   }
 }
