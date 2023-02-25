@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,7 +29,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import static frc.robot.Constants.*;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -40,7 +38,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 12.0;
+  public static final double MAX_VOLTAGE = 3;
 
   private NetworkTable _calibration = NetworkTableInstance.getDefault().getTable("SwerveCalibration");
   private NetworkTableEntry _frontLeftCalibration;
@@ -281,7 +279,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void brakeState()
   {
-    //TODO: Switch back to 45 degree thing
     m_frontLeftModule.set(0, 45 - -_frontLeftCalibrationValue);
     m_frontRightModule.set(0, 45 - -_frontRightCalibrationValue);
     m_backLeftModule.set(0, 45 - -_backLeftCalibrationValue);
