@@ -13,9 +13,11 @@ import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -30,6 +32,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.*;
+
+import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -98,6 +102,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private final PIDController turningPidController;
 
   public ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -170,6 +175,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
     });
 
+    turningPidController = new PIDController(Constants.kPTurning, 0, 0);
+    turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
@@ -189,6 +197,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void zeroGyroscope() {
     m_pigeon.setYaw(0.0);
+    odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getCompassHeading()), new SwerveModulePosition[]
+    {
+      m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
+    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
   }
 
   // public void resetOdometry() {
@@ -209,6 +221,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return new double[] {ypr[1] - pitchOffset, ypr[2] - rollOffset};
   }
 
+  public SwerveModule getFrontLeft() {
+    return m_backLeftModule;
+  }
+
+  public SwerveModule getFrontRight() {
+    return m_frontRightModule;
+  }
+
+  public SwerveModule getBackRight() {
+    return m_backRightModule;
+  }
+
+  public SwerveModule getBackLeft() {
+    return m_backLeftModule;
+  }
+
+
 //   sets all wheel positions to 45 degrees to prevent movement
   // public void brakeWheels(){
 
@@ -225,6 +254,58 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void setChassisSpeeds(double x, double y, double z) {
     drive(m_chassisSpeeds);
   }
+
+  public double getHeading() {
+    return Math.IEEEremainder(m_pigeon.getCompassHeading(), 360);
+  }
+
+  public Rotation2d getRotation2d() {
+    return Rotation2d.fromDegrees(getHeading());
+  }public Pose2d getPose() {
+    // Gets the position of the bot on the field for the auto
+    return odometry.getPoseMeters();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    // Resets the gyro
+    SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
+    odometry.resetPosition(getRotation2d(), positions, pose);
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    // Sets the desired states of the modules (this is where the error is) 
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
+    setDesiredState(desiredStates[0], m_frontLeftModule);
+    setDesiredState(desiredStates[1], m_frontRightModule);
+    setDesiredState(desiredStates[2], m_backLeftModule);
+    setDesiredState(desiredStates[3], m_backRightModule);
+}
+
+public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+  if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+  }
+  state = SwerveModuleState.optimize(state, getState(module).angle);
+  m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
+}
+
+
+public SwerveModuleState getState(SwerveModule module) {
+  return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
+}
+
+public double getTurningPosition(SwerveModule module) {
+  return module.getSteerAngle();
+}
+
+public double getTurningVelocity(SwerveModule module) {
+  return module.getSteerMotor().get();
+}
+
+public double getDriveVelocity(SwerveModule module) {
+  return module.getDriveVelocity();
+}
 
   private boolean brakeLock = false;
   private boolean halfSpeedLock = false;
@@ -386,6 +467,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     backLeft.getPIDController().setP(p);
     backLeft.getPIDController().setI(i);
     backLeft.getPIDController().setD(d);
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
+  }
+    
+  public void stop() {
+    drive(new ChassisSpeeds(0.0,0.0,0.0));
   }
 
 }
