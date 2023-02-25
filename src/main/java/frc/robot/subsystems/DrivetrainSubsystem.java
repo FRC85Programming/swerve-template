@@ -60,7 +60,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 3;
+  public static final double MAX_VOLTAGE = 12;
 
   private NetworkTable _calibration = NetworkTableInstance.getDefault().getTable("SwerveCalibration");
   private NetworkTableEntry _frontLeftCalibration;
