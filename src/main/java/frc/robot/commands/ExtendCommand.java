@@ -34,26 +34,31 @@ public class ExtendCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_ExtendoSubystem.getPivotAngle() > m_PivotAngle - tolerancePivot
-                && m_ExtendoSubystem.getPivotAngle() < m_PivotAngle + tolerancePivot) {
+
+        double pivotAngle = m_PivotAngle.getAsDouble();
+        double intakeWrist = m_intakeWrist.getAsDouble();
+        double extendPosition = m_ExtendPosition.getAsDouble();
+
+        if (m_ExtendoSubystem.getPivotAngle() > pivotAngle - tolerancePivot
+                && m_ExtendoSubystem.getPivotAngle() < pivotAngle + tolerancePivot) {
             m_ExtendoSubystem.Pivot(0.0, 0.0);
-            if (m_ExtendoSubystem.getExtendPosition() > m_ExtendPosition - toleranceExtend
-                    && m_ExtendoSubystem.getExtendPosition() < m_ExtendPosition + toleranceExtend) {
+            if (m_ExtendoSubystem.getExtendPosition() > extendPosition - toleranceExtend
+                    && m_ExtendoSubystem.getExtendPosition() < extendPosition + toleranceExtend) {
                 m_ExtendoSubystem.ExtendTelescope(0.0, 0.0);
-                if (m_IntakeSubsystem.getIntakeWrist() > m_intakeWrist - toleranceIntake
-                        && m_IntakeSubsystem.getIntakeWrist() < m_intakeWrist + toleranceIntake) {
+                if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
+                        && m_IntakeSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake) {
                     m_IntakeSubsystem.Pivot(0.0, 0.0);
-                } else if (m_IntakeSubsystem.getIntakeWrist() > m_intakeWrist) {
+                } else if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist) {
                     m_IntakeSubsystem.Pivot(-intakePivotSpeed, 0.0);
                 } else {
                     m_IntakeSubsystem.Pivot(intakePivotSpeed, 0.0);
                 }
-            } else if (m_ExtendoSubystem.getExtendPosition() > m_ExtendPosition) {
+            } else if (m_ExtendoSubystem.getExtendPosition() > extendPosition) {
                 m_ExtendoSubystem.ExtendTelescope(-extendSpeed, 0.0);
             } else {
                 m_ExtendoSubystem.ExtendTelescope(extendSpeed, 0.0);
             }
-        } else if (m_ExtendoSubystem.getPivotAngle() > m_PivotAngle) {
+        } else if (m_ExtendoSubystem.getPivotAngle() > pivotAngle) {
             m_ExtendoSubystem.Pivot(-pivotSpeed, 0.0);
         } else {
             m_ExtendoSubystem.Pivot(pivotSpeed, 0.0);
