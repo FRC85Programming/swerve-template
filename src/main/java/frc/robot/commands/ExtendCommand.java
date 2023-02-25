@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,18 +11,18 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ExtendCommand extends CommandBase {
     private final ExtendoSubystem m_ExtendoSubystem;
     private final IntakeSubsystem m_IntakeSubsystem;
-    private final double m_ExtendPosition;
-    private final double m_PivotAngle;
-    private final double tolerancePivot = 1.0;
-    private final double toleranceExtend = 1.0;
-    private final double toleranceIntake = 1.0;
+    private final DoubleSupplier m_ExtendPosition;
+    private final DoubleSupplier m_PivotAngle;
+    private final DoubleSupplier m_intakeWrist;
+    private final double tolerancePivot = 1;
+    private final double toleranceExtend = 1;
+    private final double toleranceIntake = 1;
     private final double extendSpeed = 0.8;
     private final double pivotSpeed = 0.8;
     private final double intakePivotSpeed = 0.8;
-    private final double m_intakeWrist;
 
-    public ExtendCommand(ExtendoSubystem extendo, IntakeSubsystem intakeSubsystem, double extendPosition,
-            double pivotAngle, double intakeWrist) {
+    public ExtendCommand(ExtendoSubystem extendo, IntakeSubsystem intakeSubsystem, DoubleSupplier extendPosition,
+            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist) {
         m_IntakeSubsystem = intakeSubsystem;
         m_ExtendoSubystem = extendo;
         m_ExtendPosition = extendPosition;

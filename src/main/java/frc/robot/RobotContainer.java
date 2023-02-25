@@ -4,8 +4,13 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -47,7 +52,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-            ));
+    ));
 
     m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
             () -> modifyAxis(-m_operatorController.getLeftY()), 
@@ -74,7 +79,7 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    new Trigger(m_operatorController::getStartButton)
+    new Trigger(m_controller::getStartButton)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
@@ -84,24 +89,27 @@ public class RobotContainer {
             //.whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
-    new Trigger(m_controller::getLeftBumper)
+    new Trigger(m_controller::getAButton)
             .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // Cuts robot speed in half 
-    new Trigger(m_controller::getRightBumper)
+    new Trigger(m_controller::getLeftBumper)
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // cube pick up position
-    new Trigger(m_controller::getBButton)
+    /*new Trigger(m_operatorController::getAButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 47.0, 30.0, -23.0));
 
     // cone pick up position (Tipped)
-    new Trigger(m_controller::getAButton)
+    new Trigger(m_operatorController::getXButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 52.0, 34.0, -44.0));
 
     // cone pick up position (Upright)
-    new Trigger(m_controller::getYButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
+    new Trigger(m_operatorController::getBButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));*/
+
+    new Trigger(m_operatorController::getYButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> SmartDashboard.getNumber("desiredExtendPosition", 0), () -> SmartDashboard.getNumber("desiredPivotAngle", 0), () -> SmartDashboard.getNumber("desiredWristPosition", 0)));
   }
   
 
