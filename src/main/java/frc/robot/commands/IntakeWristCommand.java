@@ -8,7 +8,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeWristCommand extends CommandBase{
     private final IntakeSubsystem m_intakeSubsystem;
     private final DoubleSupplier m_pivotSpeedSupplier;
-
+    // private final DoubleSupplier m_pivotDownSpeedSupplier;
     public IntakeWristCommand(IntakeSubsystem m_intakeSubsystem, DoubleSupplier m_pivotSpeedSupplier){
         this.m_intakeSubsystem = m_intakeSubsystem;
         this.m_pivotSpeedSupplier = m_pivotSpeedSupplier;
@@ -18,7 +18,10 @@ public class IntakeWristCommand extends CommandBase{
 
     @Override
     public void execute() {
-        m_intakeSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
+            m_intakeSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
+        
+
+
         SmartDashboard.putNumber("intake wrist speed", m_pivotSpeedSupplier.getAsDouble());
     }
 

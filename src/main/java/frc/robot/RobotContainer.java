@@ -54,7 +54,7 @@ public class RobotContainer {
             () -> modifyAxis(-m_operatorController.getRightY())));
           
     m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
-            () -> modifyAxis(m_operatorController.getLeftX())));
+            () -> getWristAxis()));
 
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -80,16 +80,16 @@ public class RobotContainer {
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
-    //new Trigger(m_controller::getYButton)
-            //.whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+    // new Trigger(m_controller::getYButton)
+    //         .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
 
     // a button activates brake wheels command
-    new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+    // new Trigger(m_controller::getLeftBumper)
+    //         .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
-    // Cuts robot speed in half 
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+    // // Cuts robot speed in half 
+    // new Trigger(m_controller::getRightBumper)
+    //         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // cube pick up position
     new Trigger(m_controller::getBButton)
@@ -102,6 +102,12 @@ public class RobotContainer {
     // cone pick up position (Upright)
     new Trigger(m_controller::getYButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
+
+    new Trigger(m_controller::getLeftBumper)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
+
+    new Trigger(m_controller::getRightBumper)
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, false));    
   }
   
 
@@ -126,7 +132,15 @@ public class RobotContainer {
       return 0.0;
     }
   }
-
+  private double getWristAxis() {
+    if(m_operatorController.getRightBumper()){
+      return 0.5;
+    } else if (modifyAxis(m_operatorController.getRightTriggerAxis()) != 0){
+      return -0.5;
+    } else {
+      return 0;
+    }
+  }
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.12);
