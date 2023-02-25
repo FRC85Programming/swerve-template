@@ -45,14 +45,13 @@ public class Robot extends TimedRobot {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     }
 
+    SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
     SmartDashboard.putNumber("AutoLevel Max Speed", .2);
     
     SmartDashboard.putNumber("kp", 2.1);
     SmartDashboard.putNumber("ki", 0);
     SmartDashboard.putNumber("kd", 0.5);
-
-
   }
 
   /**

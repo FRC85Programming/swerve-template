@@ -15,7 +15,7 @@ import edu.wpi.first.math.util.Units;
  * constants. This class should not be used for any other purpose. All constants should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -55,6 +55,18 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32; 
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210);
+
+    public static final int EXTENDO_EXTEND_MOTOR = 51;
+    public static final int EXTENDO_ARM_PIVOT_MOTOR = 52;
+    public static final int PIVOT_LOCK_SERVO = 0;
+
+    public static final int INTAKE_ROLLERS_MOTOR = 54;
+    public static final int INTAKE_PIVOT_MOTOR = 53;
+
+    public static final int EXTENDO_BRAKE_LIMIT_SWITCH = 3;
+    public static final int INTAKE_PIVOT_LIMIT_SWITCH = 2;
+    public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
+    public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;
 
         // These values MUST be configured for our robot. Do not run it without finding them
     public static final double kMaxAccelerationMetersPerSecondSquared = 10;
