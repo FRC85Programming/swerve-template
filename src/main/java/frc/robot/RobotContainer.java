@@ -34,18 +34,15 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+  private final VisionTracking m_visionTracking = new VisionTracking();
+
   private final XboxController m_controller = new XboxController(0);
-  private final XboxController m_operatorController = new XboxController(1);
-  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
-    m_ExtendoSubystem.register();
-    m_IntakeSubsystem.register();
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -54,17 +51,10 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> -modifyAxis(getY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(getX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-            ));
-
-    m_ExtendoSubystem.setDefaultCommand(new ManualExtendoCommand(m_ExtendoSubystem, 
-            () -> modifyAxis(-m_operatorController.getLeftY()), 
-            () -> modifyAxis(-m_operatorController.getRightY())));
-          
-    m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
-            () -> getWristAxis()));
+    ));
 
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -73,34 +63,6 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  public double getX()
-  {
-
-    if (m_controller.getPOV() == 90) {
-      return 1;
-    } else if (m_controller.getPOV() == 270){
-      return -1;
-    }
-    else {
-      return m_controller.getLeftX();
-    }
-  }
-
-  public double getY()
-  {
-
-    if (m_controller.getPOV() == 0) {
-      return -1;
-    } else if (m_controller.getPOV() == 180){
-      return 1;
-    }
-    else {
-      return m_controller.getLeftY();
-    }
-  }
-
-  
- 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -112,42 +74,25 @@ public class RobotContainer {
     new Trigger(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
               .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
-    new Trigger(m_operatorController::getStartButton)
+    new Trigger(m_controller::getStartButton)
               .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
+    // new Trigger(m_controller::getAButton)
+    //           .onTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
+    //new Trigger(m_controller::getBButtonPressed)
+              //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
+
+    new Trigger(m_controller::getYButton)
+              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
+              
     new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
-    // tracks april tag using limelight
-    // new Trigger(m_controller::getYButton)
-    //         .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
-
+    //new Trigger(m_controller::getYButton)
+            //whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     // a button activates brake wheels command
-    new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
-
-    // // Cuts robot speed in half 
-    // new Trigger(m_controller::getRightBumper)
-    //         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
-
-    // cube pick up position
-    new Trigger(m_controller::getBButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 47.0, 30.0, -23.0));
-
-    // cone pick up position (Tipped)
     new Trigger(m_controller::getAButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 52.0, 34.0, -44.0));
-
-    // cone pick up position (Upright)
-    new Trigger(m_controller::getYButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, 23.0, 69.0, -60.5));
-
-    new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
-
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, false));    
+            .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
   }
-  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -208,15 +153,7 @@ public class RobotContainer {
       return 0.0;
     }
   }
-  private double getWristAxis() {
-    if(m_operatorController.getRightBumper()){
-      return 0.5;
-    } else if (modifyAxis(m_operatorController.getRightTriggerAxis()) != 0){
-      return -0.5;
-    } else {
-      return 0;
-    }
-  }
+
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.12);
@@ -235,4 +172,6 @@ public class RobotContainer {
   public void checkCalibration() {
     m_drivetrainSubsystem.checkCalibration();
   }
+
+  
 }
