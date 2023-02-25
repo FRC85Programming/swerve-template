@@ -441,7 +441,7 @@ public double getDriveVelocity(SwerveModule module) {
       {
         y = 0;
       }
-      drive(new ChassisSpeeds(y,-x,0));
+      drive(new ChassisSpeeds(x,y,0));
   }
   public SparkMaxPIDController getDrivePID(){
     return ((CANSparkMax)m_frontLeftModule.getDriveMotor()).getPIDController();
