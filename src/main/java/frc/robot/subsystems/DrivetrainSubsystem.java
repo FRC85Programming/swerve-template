@@ -61,8 +61,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   
 
-  private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(Constants.kDriveKinematics,
-           new Rotation2d(0), null);
+
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
   //  By default this value is setup for a Mk3 standard module using Falcon500s to drive.
@@ -265,13 +264,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Pose2d getPose() {
     // Gets the position of the bot on the field for the auto
-    return odometer.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   public void resetOdometry(Pose2d pose) {
     // Resets the gyro
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
-    odometer.resetPosition(getRotation2d(), positions, pose);
+    odometry.resetPosition(getRotation2d(), positions, pose);
   }
   
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -314,7 +313,7 @@ public double getDriveVelocity(SwerveModule module) {
   @Override
   public void periodic() {
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
-    odometer.update(getRotation2d(), positions);
+    odometry.update(getRotation2d(), positions);
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     if (brakeLock){

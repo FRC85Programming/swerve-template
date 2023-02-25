@@ -149,8 +149,7 @@ public class RobotContainer {
         // Go to these locations:
         new Translation2d(1, 0),
         new Translation2d(1, -1)),
-        // Spin 180 through the whole auto
-        new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
+        new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
       trajectoryConfig);
 
     // Sets up PID
