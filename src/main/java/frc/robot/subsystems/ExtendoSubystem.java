@@ -16,6 +16,7 @@ public class ExtendoSubystem extends SubsystemBase {
             MotorType.kBrushless);
     private final CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,
             MotorType.kBrushless);
+    private final CANSparkMax pivotTelescopeArmMotorTwo = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR_TWO, MotorType.kBrushless);
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
     private final DigitalInput UnlockLimitSwitch = new DigitalInput(Constants.EXTENDO_BRAKE_LIMIT_SWITCH);
@@ -30,6 +31,8 @@ public class ExtendoSubystem extends SubsystemBase {
     public ExtendoSubystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
+        pivotTelescopeArmMotorTwo.setIdleMode(IdleMode.kBrake);
+
 
         SmartDashboard.putNumber("Pivot Lock Position", PivotLockPosition);
         SmartDashboard.putNumber("Pivot Unlock Position", PivotUnlockedPosition);
@@ -82,6 +85,7 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
             }
         } else if (speed < 0) {
             pivotLockServo.set(PivotUnlockedPosition);
@@ -89,6 +93,9 @@ public class ExtendoSubystem extends SubsystemBase {
                 if (PivotArmLimitSwitch.get()) {
                     pivotTelescopeArmMotor.getEncoder().setPosition(0);
                     pivotTelescopeArmMotor.stopMotor();
+
+                    pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
+                    pivotTelescopeArmMotorTwo.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
                 }
