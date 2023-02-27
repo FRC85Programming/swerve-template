@@ -38,7 +38,8 @@ public class RobotContainer {
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
-  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem();
+  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem(m_IntakeSubsystem);
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -103,16 +104,16 @@ public class RobotContainer {
             .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // cube pick up position
-    new Trigger(m_operatorController::getAButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
+    //new Trigger(m_operatorController::getAButton)
+            //.whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
 
     // cone pick up position (Tipped)
-    new Trigger(m_operatorController::getXButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
+    //new Trigger(m_operatorController::getXButton)
+            //.whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
 
     // cone pick up position (Upright)
-    new Trigger(m_controller::getYButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    //new Trigger(m_controller::getYButton)
+           //.whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
     new Trigger(m_controller::getLeftBumper)
             .whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
@@ -122,8 +123,8 @@ public class RobotContainer {
     new Trigger(m_operatorController::getBButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
-    new Trigger(m_operatorController::getYButton)
-            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> SmartDashboard.getNumber("desiredExtendPosition", 0), () -> SmartDashboard.getNumber("desiredPivotAngle", 0), () -> SmartDashboard.getNumber("desiredWristPosition", 0)));
+    new Trigger(m_controller::getXButton)
+            .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> SmartDashboard.getNumber("DesiredExtendPosition", 0), () -> SmartDashboard.getNumber("DesiredPivotPosition", 0), () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
   }
   
 

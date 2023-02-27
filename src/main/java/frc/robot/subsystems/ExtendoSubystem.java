@@ -26,10 +26,12 @@ public class ExtendoSubystem extends SubsystemBase {
     private final double pivotSpeedScale = 0.5;
     private double PivotLockPosition = 0.95;
     private double PivotUnlockedPosition = 0.6;
+    private final IntakeSubsystem m_intake;
 
-    public ExtendoSubystem() {
+    public ExtendoSubystem(IntakeSubsystem intake) {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
+        m_intake = intake;
 
         SmartDashboard.putNumber("Pivot Lock Position", PivotLockPosition);
         SmartDashboard.putNumber("Pivot Unlock Position", PivotUnlockedPosition);
@@ -89,9 +91,13 @@ public class ExtendoSubystem extends SubsystemBase {
                 if (PivotArmLimitSwitch.get()) {
                     pivotTelescopeArmMotor.getEncoder().setPosition(0);
                     pivotTelescopeArmMotor.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
+                        pivotTelescopeArmMotor.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -15) {
+                        pivotTelescopeArmMotor.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
-                }
+                } 
             } else {
                 pivotTelescopeArmMotor.set(0.2);
             }

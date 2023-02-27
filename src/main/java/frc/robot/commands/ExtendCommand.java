@@ -42,26 +42,28 @@ public class ExtendCommand extends CommandBase {
         if (m_ExtendoSubystem.getPivotAngle() > pivotAngle - tolerancePivot
                 && m_ExtendoSubystem.getPivotAngle() < pivotAngle + tolerancePivot) {
             m_ExtendoSubystem.Pivot(0.0, 0.0);
-            if (m_ExtendoSubystem.getExtendPosition() > extendPosition - toleranceExtend
-                    && m_ExtendoSubystem.getExtendPosition() < extendPosition + toleranceExtend) {
-                m_ExtendoSubystem.ExtendTelescope(0.0, 0.0);
-                if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
-                        && m_IntakeSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake) {
-                    m_IntakeSubsystem.Pivot(0.0, 0.0);
-                } else if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist) {
-                    m_IntakeSubsystem.Pivot(-intakePivotSpeed, 0.0);
-                } else {
-                    m_IntakeSubsystem.Pivot(intakePivotSpeed, 0.0);
-                }
-            } else if (m_ExtendoSubystem.getExtendPosition() > extendPosition) {
-                m_ExtendoSubystem.ExtendTelescope(-extendSpeed, 0.0);
-            } else {
-                m_ExtendoSubystem.ExtendTelescope(extendSpeed, 0.0);
-            }
         } else if (m_ExtendoSubystem.getPivotAngle() > pivotAngle) {
             m_ExtendoSubystem.Pivot(-pivotSpeed, 0.0);
         } else {
             m_ExtendoSubystem.Pivot(pivotSpeed, 0.0);
+        }
+
+        if (m_ExtendoSubystem.getExtendPosition() > extendPosition - toleranceExtend
+                && m_ExtendoSubystem.getExtendPosition() < extendPosition + toleranceExtend) {
+            m_ExtendoSubystem.ExtendTelescope(0.0, 0.0);
+        } else if (m_ExtendoSubystem.getExtendPosition() > extendPosition) {
+            m_ExtendoSubystem.ExtendTelescope(-extendSpeed, 0.0);
+        } else {
+            m_ExtendoSubystem.ExtendTelescope(extendSpeed, 0.0);
+        }
+
+        if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
+                && m_IntakeSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake) {
+            m_IntakeSubsystem.Pivot(0.0, 0.0);
+        } else if (m_IntakeSubsystem.getIntakeWrist() > intakeWrist) {
+            m_IntakeSubsystem.Pivot(-intakePivotSpeed, 0.0);
+        } else {
+            m_IntakeSubsystem.Pivot(intakePivotSpeed, 0.0);
         }
     }
 
