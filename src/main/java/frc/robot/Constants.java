@@ -74,7 +74,7 @@ public final class Constants {
     public static final String Comm_L = "Comm_L";
 
         // These values MUST be configured for our robot. Do not run it without finding them
-    public static final double kMaxAccelerationMetersPerSecondSquared = SmartDashboard.getNumber("MaxAccel", 5);
+    public static final double kMaxAccelerationMetersPerSecondSquared = 10;
     public static final double kWheelBase = Units.inchesToMeters(22);
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
@@ -82,19 +82,18 @@ public final class Constants {
                 new Translation2d(-kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
                 new Translation2d(-kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2));
 
-    public static final double kPXController = SmartDashboard.getNumber("XController", 1.5);
-    public static final double kPYController = SmartDashboard.getNumber("YController", 1.5);
-    public static final double kPThetaController = SmartDashboard.getNumber("TheataController", 3);
-    public static final double kPhysicalMaxSpeedMetersPerSecond = SmartDashboard.getNumber("Maxspeed", 5);
+    public static final double kPXController = 1.5;
+    public static final double kPYController = 1.5;
+    public static final double kPThetaController = 3;
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880 / 60;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
     public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 4;
-    public static final double kPTurning = SmartDashboard.getNumber("Turning", 1);
+    public static final double kPTurning = 0.5;
     public static final double kMaxAngularSpeedRadiansPerSecond = //
             Constants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
     new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularAccelerationRadiansPerSecondSquared);
-            // Have fun!
 }

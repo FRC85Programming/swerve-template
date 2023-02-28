@@ -86,6 +86,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    /* 
     String chosenAuto = m_chooser.getSelected();
     if (chosenAuto == "CS") {
       new CS(m_drivetrainSubsystem, m_robotContainer);
@@ -98,6 +99,8 @@ public class Robot extends TimedRobot {
     } else {
       m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     }
+    */
+    m_autonomousCommand = new CS(m_drivetrainSubsystem, m_robotContainer);
 
     //new Comm_L(m_drivetrainSubsystem, m_robotContainer);
     // schedule the autonomous command (example)
