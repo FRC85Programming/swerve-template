@@ -95,21 +95,26 @@ public class ExtendoSubystem extends SubsystemBase {
                 if (PivotArmLimitSwitch.get()) {
                     pivotTelescopeArmMotor.getEncoder().setPosition(0);
                     pivotTelescopeArmMotor.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
-                        pivotTelescopeArmMotor.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -15) {
-                        pivotTelescopeArmMotor.stopMotor();
 
                     pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
                     pivotTelescopeArmMotorTwo.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
+                        pivotTelescopeArmMotor.stopMotor();
+                        pivotTelescopeArmMotorTwo.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) {
+                    pivotTelescopeArmMotor.stopMotor();
+                    pivotTelescopeArmMotorTwo.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                    pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
                 } 
             } else {
                 pivotTelescopeArmMotor.set(0.2);
+                pivotTelescopeArmMotorTwo.set(0.2);
             }
         } else {
             pivotTelescopeArmMotor.stopMotor();
+            pivotTelescopeArmMotorTwo.stopMotor();
             pivotLockServo.set(PivotLockPosition);
         }
     }
