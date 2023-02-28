@@ -5,6 +5,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import java.util.function.DoubleSupplier;
+
+import com.fasterxml.jackson.databind.ser.std.NumberSerializers.DoubleSerializer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -13,18 +17,14 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakePivotMotor = new CANSparkMax(Constants.INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
     private final DigitalInput intakePivotLimitSwitch = new DigitalInput(Constants.INTAKE_PIVOT_LIMIT_SWITCH);
     private final PIDController intakePID = new PIDController(0, 0, 0);
-<<<<<<< HEAD
-    private final double WristSpeedScale = 0.50;
-=======
     private final double WristSpeedScale = 0.80;
->>>>>>> bfd230ad3532602c73da0aa465fafab8ac81ed84
 
     public IntakeSubsystem() {
         
     }
 
-    public void setRollerSpeed(Double speed) {
-        intakeRollerMotor.set(speed);
+    public void setRollerSpeed(DoubleSupplier speed) {
+        intakeRollerMotor.set(speed.getAsDouble());
     }
 
     public void StopRollers() {

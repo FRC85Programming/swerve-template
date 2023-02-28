@@ -121,10 +121,10 @@ public class RobotContainer {
     //new Trigger(m_controller::getRightBumper)
             //.whileTrue(new IntakeCommand(m_IntakeSubsystem, false));
     new Trigger(() -> m_controller.getLeftTriggerAxis() != 0)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, .8));
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, () -> m_controller.getLeftTriggerAxis()));
 
     new Trigger(() -> m_controller.getRightTriggerAxis() != 0)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, -.8));
+            .whileTrue(new IntakeCommand(m_IntakeSubsystem, () -> m_controller.getRightTriggerAxis()));
 
     new Trigger(m_operatorController::getBButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
