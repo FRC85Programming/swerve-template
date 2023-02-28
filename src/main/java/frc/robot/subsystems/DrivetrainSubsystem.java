@@ -410,7 +410,7 @@ public double getDriveVelocity(SwerveModule module) {
     double kd = SmartDashboard.getNumber("kd", 0);
 
     double[] pr = GetPitchRoll();
-    double maxSpeed = .6;
+    double maxSpeed = .4;
 
 
     pitchPIDController.setPID(kp, ki, kd);

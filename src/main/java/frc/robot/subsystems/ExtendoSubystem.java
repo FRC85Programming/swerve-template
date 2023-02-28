@@ -83,6 +83,7 @@ public class ExtendoSubystem extends SubsystemBase {
             pivotLockServo.set(PivotLockPosition);
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 110) {
                 pivotTelescopeArmMotor.stopMotor();
+                pivotTelescopeArmMotorTwo.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
                 pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
@@ -98,12 +99,15 @@ public class ExtendoSubystem extends SubsystemBase {
                     pivotTelescopeArmMotorTwo.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                    pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
                 }
             } else {
                 pivotTelescopeArmMotor.set(0.2);
+                pivotTelescopeArmMotorTwo.set(0.2);
             }
         } else {
             pivotTelescopeArmMotor.stopMotor();
+            pivotTelescopeArmMotorTwo.stopMotor();
             pivotLockServo.set(PivotLockPosition);
         }
     }
@@ -123,8 +127,10 @@ public class ExtendoSubystem extends SubsystemBase {
         SmartDashboard.putBoolean("Extendo Pivot Brake Limit switch", UnlockLimitSwitch.get());
         SmartDashboard.putNumber("Extendo extend position", extendExtendoMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Extendo pivot position", pivotTelescopeArmMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Extendo pivotTwo position", pivotTelescopeArmMotorTwo.getEncoder().getPosition());
 
         SmartDashboard.putString("Extendo Pivot Brake mode", pivotTelescopeArmMotor.getIdleMode().toString());
+        SmartDashboard.putString("Extendo PivotTwo Brake mode", pivotTelescopeArmMotorTwo.getIdleMode().toString());
         SmartDashboard.putString("Extendo extend Brake mode", extendExtendoMotor.getIdleMode().toString());
 
         PivotLockPosition = SmartDashboard.getNumber("Pivot Lock Position", PivotLockPosition);
