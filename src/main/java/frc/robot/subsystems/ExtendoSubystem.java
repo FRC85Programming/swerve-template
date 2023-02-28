@@ -93,7 +93,7 @@ public class ExtendoSubystem extends SubsystemBase {
                     pivotTelescopeArmMotor.stopMotor();
                 } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
                         pivotTelescopeArmMotor.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -15) {
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) {
                         pivotTelescopeArmMotor.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);

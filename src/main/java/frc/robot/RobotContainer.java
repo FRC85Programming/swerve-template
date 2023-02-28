@@ -68,6 +68,9 @@ public class RobotContainer {
     m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
             () -> getWristAxis()));
 
+    m_IntakeSubsystem.setDefaultCommand(new IntakeCommand(m_IntakeSubsystem, 
+            () -> modifyAxis(m_controller.getRightTriggerAxis())));
+
     //m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
     
@@ -115,11 +118,11 @@ public class RobotContainer {
     //new Trigger(m_controller::getYButton)
            //.whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
-    new Trigger(m_controller::getLeftBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
+    //new Trigger(m_controller::getLeftBumper)
+            //.whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
 
-    new Trigger(m_controller::getRightBumper)
-            .whileTrue(new IntakeCommand(m_IntakeSubsystem, false));    
+    //new Trigger(m_controller::getRightBumper)
+            //.whileTrue(new IntakeCommand(m_IntakeSubsystem, false));    
     new Trigger(m_operatorController::getBButton)
             .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
