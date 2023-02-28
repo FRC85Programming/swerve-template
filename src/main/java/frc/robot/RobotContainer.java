@@ -32,7 +32,6 @@ import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -89,7 +88,7 @@ public class RobotContainer {
               //.toggleOnFalse(new BrakeWheelsCommand(m_drivetrainSubsystem, false));
 
     new Trigger(m_controller::getYButton)
-              .whileTrue(new AutoLevelCommand(m_drivetrainSubsystem));
+              .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
               
     new Trigger(m_controller::getXButton)
               .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
@@ -106,14 +105,16 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(/*String auto*/) {
+  public Command getAutonomousCommand(String auto) {
+    // Resets wheels so they don't fight each other
+    m_drivetrainSubsystem.zeroWheels();
     // Configures kinematics so the driving is accurate 
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
       Constants.kMaxSpeedMetersPerSecond,
       Constants.kMaxAccelerationMetersPerSecondSquared)
               .setKinematics(Constants.kDriveKinematics);
     
-    // This actually makes the trajectory. This will be changed to use pathweaver, but now it has a basic path
+    // This sets the trajectory points that will be used as a backup if it can not load the original
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new Rotation2d(0)),
       List.of(
@@ -123,11 +124,11 @@ public class RobotContainer {
         new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
       trajectoryConfig);
 
-      /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
+      // Setting up trajectory variables
+      String trajectoryJSON = "output/" + auto + ".wpilib.json";
       Trajectory temp;
 
       //Load command and select backup if needed
-      
       try{
           if(auto.startsWith("PW_")){
               Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -138,17 +139,18 @@ public class RobotContainer {
       }catch(Exception e){
           DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
           temp = trajectory;
-      } */
-    // Sets up PID
+      }
+
+    // Sets up PID to stay on the trajectory
     PIDController xController = new PIDController(Constants.kPXController, 0, 0);
     PIDController yController = new PIDController(Constants.kPYController, 0, 0);
     ProfiledPIDController thetaController = new ProfiledPIDController(
             Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // Makes the command to drive in auto
+    // This is what actually drives the bot. It is run in a SequentialCommandGroup
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
+                temp,
                 m_drivetrainSubsystem::getPose,
                 Constants.kDriveKinematics,
                 xController,
@@ -158,7 +160,6 @@ public class RobotContainer {
                 m_drivetrainSubsystem);
     
     return new SequentialCommandGroup(
-                // Ask Poom what this error means
                 new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
                 swerveControllerCommand,
                 // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot

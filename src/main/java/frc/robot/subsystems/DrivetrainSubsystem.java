@@ -296,6 +296,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
     odometry.resetPosition(getRotation2d(), positions, pose);
   }
+
+  public void zeroWheels() {
+    m_frontLeftModule.set(0, 0 - -_frontLeftCalibrationValue);
+    m_frontRightModule.set(0, 0 - -_frontRightCalibrationValue);
+    m_backLeftModule.set(0, 0 - -_backLeftCalibrationValue);
+    m_backRightModule.set(0, 0 - -_backRightCalibrationValue);
+  }
   
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Sets the desired states of the modules (this is where the error is) 
@@ -348,6 +355,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } else {
       swerveState(false);
     }
+
+    SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
     SmartDashboard.putNumber("Front Left Steer Absolute Angle", Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Front Right Steer Absolute Angle", Units.radiansToDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
