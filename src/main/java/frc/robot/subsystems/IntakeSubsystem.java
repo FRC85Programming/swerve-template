@@ -13,7 +13,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakePivotMotor = new CANSparkMax(Constants.INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
     private final DigitalInput intakePivotLimitSwitch = new DigitalInput(Constants.INTAKE_PIVOT_LIMIT_SWITCH);
     private final PIDController intakePID = new PIDController(0, 0, 0);
-    private final double WristSpeedScale = 0.50;
+    private final double WristSpeedScale = 0.80;
 
     public IntakeSubsystem() {
         
