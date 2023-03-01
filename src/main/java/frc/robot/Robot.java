@@ -4,11 +4,22 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.*;
+import frc.robot.subsystems.DrivetrainSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -17,18 +28,27 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
+  //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
+  private DrivetrainSubsystem m_drivetrainSubsystem;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  Trajectory trajectory = new Trajectory();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    m_chooser.setDefaultOption("CS", "CS");
+    m_chooser.addOption("Comm_L", "Comm_L");
+    m_chooser.addOption("Comm_R", "Comm_R");
+    SmartDashboard.putData("Auto Program:", m_chooser);
+    // Instantiate our RobotContainer.  This will perform all our bCutton bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
     SmartDashboard.putNumber("AutoLevel Max Speed", .2);
@@ -66,8 +86,23 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    /* 
+    String chosenAuto = m_chooser.getSelected();
+    if (chosenAuto == "CS") {
+      new CS(m_drivetrainSubsystem, m_robotContainer);
+    }
+    if (chosenAuto == "Comm_L") {
+      new Comm_L(m_drivetrainSubsystem, m_robotContainer);
+    }
+    if (chosenAuto == "Comm_R") {
+      new Comm_R(m_drivetrainSubsystem, m_robotContainer);
+    } else {
+      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    }
+    */
+    m_autonomousCommand = new CS(m_drivetrainSubsystem, m_robotContainer);
 
+    //new Comm_L(m_drivetrainSubsystem, m_robotContainer);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -76,7 +111,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+  }
 
   @Override
   public void teleopInit() {
@@ -87,6 +124,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
   }
 
   /** This function is called periodically during operator control. */

@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -31,27 +32,29 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = .4953; 
 
-    public static final int DRIVETRAIN_PIGEON_ID = 41;
+    public static final int DRIVETRAIN_PIGEON_ID = 41; // FIXME Set Pigeon ID
+    public static final int PDP_ID = 58; // PDP Id
 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1; 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2; 
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(252);
+
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(224);
 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 12; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 13; 
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(130);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(126);
 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21; 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 22; 
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 23; 
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(319);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.08);
 
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 31;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32; 
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210.5);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210);
 
     public static final int EXTENDO_EXTEND_MOTOR = 51;
     public static final int EXTENDO_ARM_PIVOT_MOTOR = 52;
@@ -65,6 +68,11 @@ public final class Constants {
     public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
     public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;
 
+    public static final String Backup = "Backup";
+    public static final String CS = "CS";
+    public static final String Comm_R = "Comm_R";
+    public static final String Comm_L = "Comm_L";
+
         // These values MUST be configured for our robot. Do not run it without finding them
     public static final double kMaxAccelerationMetersPerSecondSquared = 10;
     public static final double kWheelBase = Units.inchesToMeters(22);
@@ -77,7 +85,7 @@ public final class Constants {
     public static final double kPXController = 1.5;
     public static final double kPYController = 1.5;
     public static final double kPThetaController = 3;
-    public static final double kPhysicalMaxSpeedMetersPerSecond = 3.6576;
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880 / 60;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
     public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 4;

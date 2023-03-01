@@ -4,14 +4,35 @@
 
 package frc.robot.subsystems;
 
-import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
-import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
-import com.swervedrivespecialties.swervelib.MotorType;
+import static frc.robot.Constants.BACK_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.DRIVETRAIN_PIGEON_ID;
+import static frc.robot.Constants.DRIVETRAIN_TRACKWIDTH_METERS;
+import static frc.robot.Constants.DRIVETRAIN_WHEELBASE_METERS;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
+import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
+import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
+import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,10 +52,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.*;
-
 import frc.robot.Constants;
-import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -53,6 +71,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private double _frontRightCalibrationValue;
   private double _backLeftCalibrationValue;
   private double _backRightCalibrationValue;
+
+  
+
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -104,7 +125,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_backRightModule;
   private final PIDController turningPidController;
 
-  public ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+  private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   public DrivetrainSubsystem() {
     _frontLeftCalibration = _calibration.getEntry("FrontLeft");
@@ -119,6 +140,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     _frontRightCalibrationValue = _frontRightCalibration.getDouble(FRONT_RIGHT_MODULE_STEER_OFFSET);
     _backLeftCalibrationValue = _backLeftCalibration.getDouble(BACK_LEFT_MODULE_STEER_OFFSET);
     _backRightCalibrationValue = _backRightCalibration.getDouble(BACK_RIGHT_MODULE_STEER_OFFSET);
+
 
     SmartDashboard.putBoolean("Swerve Calibrate", false); 
 
@@ -194,6 +216,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public double pitchOffset;
   public double rollOffset;
+  
 
   public void zeroGyroscope() {
     m_pigeon.setYaw(0.0);
@@ -250,7 +273,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
   }
-
+// this sucks -matt
   public void setChassisSpeeds(double x, double y, double z) {
     drive(m_chassisSpeeds);
   }
@@ -261,7 +284,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(getHeading());
-  }public Pose2d getPose() {
+  }
+
+  public Pose2d getPose() {
     // Gets the position of the bot on the field for the auto
     return odometry.getPoseMeters();
   }
@@ -272,6 +297,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     odometry.resetPosition(getRotation2d(), positions, pose);
   }
 
+  public void zeroWheels() {
+    m_frontLeftModule.set(0, 0 - -_frontLeftCalibrationValue);
+    m_frontRightModule.set(0, 0 - -_frontRightCalibrationValue);
+    m_backLeftModule.set(0, 0 - -_backLeftCalibrationValue);
+    m_backRightModule.set(0, 0 - -_backRightCalibrationValue);
+  }
+  
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Sets the desired states of the modules (this is where the error is) 
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
@@ -279,38 +311,42 @@ public class DrivetrainSubsystem extends SubsystemBase {
     setDesiredState(desiredStates[1], m_frontRightModule);
     setDesiredState(desiredStates[2], m_backLeftModule);
     setDesiredState(desiredStates[3], m_backRightModule);
-}
+  }
 
-public void setDesiredState(SwerveModuleState state, SwerveModule module) {
-  if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+  public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
       stop();
       return;
+    }
+    state = SwerveModuleState.optimize(state, getState(module).angle);
+    module.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
   }
-  state = SwerveModuleState.optimize(state, getState(module).angle);
-  m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
-}
 
 
-public SwerveModuleState getState(SwerveModule module) {
-  return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
-}
+  public SwerveModuleState getState(SwerveModule module) {
+    return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
+  }
 
-public double getTurningPosition(SwerveModule module) {
-  return module.getSteerAngle();
-}
+  public double getTurningPosition(SwerveModule module) {
+    return module.getSteerAngle();
+  }
 
-public double getTurningVelocity(SwerveModule module) {
-  return module.getSteerMotor().get();
-}
+  public double getTurningVelocity(SwerveModule module) {
+    return module.getSteerMotor().get();
+  }
 
-public double getDriveVelocity(SwerveModule module) {
-  return module.getDriveVelocity();
-}
+  public double getDriveVelocity(SwerveModule module) {
+    return module.getDriveVelocity();
+  }
 
   private boolean brakeLock = false;
   private boolean halfSpeedLock = false;
   @Override
   public void periodic() {
+    SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
+    odometry.update(getRotation2d(), positions);
+    SmartDashboard.putNumber("Robot Heading", getHeading());
+    SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     if (brakeLock){
       brakeState();
     }
@@ -319,6 +355,8 @@ public double getDriveVelocity(SwerveModule module) {
     } else {
       swerveState(false);
     }
+
+    SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
     SmartDashboard.putNumber("Front Left Steer Absolute Angle", Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Front Right Steer Absolute Angle", Units.radiansToDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
@@ -443,6 +481,15 @@ public double getDriveVelocity(SwerveModule module) {
       }
       drive(new ChassisSpeeds(y,-x,0));
   }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
+  }
+    
+  public void stop() {
+    drive(new ChassisSpeeds(0.0,0.0,0.0));
+  }
+
   public SparkMaxPIDController getDrivePID(){
     return ((CANSparkMax)m_frontLeftModule.getDriveMotor()).getPIDController();
   }
@@ -468,13 +515,4 @@ public double getDriveVelocity(SwerveModule module) {
     backLeft.getPIDController().setI(i);
     backLeft.getPIDController().setD(d);
   }
-
-  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
-  }
-    
-  public void stop() {
-    drive(new ChassisSpeeds(0.0,0.0,0.0));
-  }
-
 }
