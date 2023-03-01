@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,14 +18,10 @@ public class ExtendoSubystem extends SubsystemBase {
     private final CANSparkMax pivotTelescopeArmMotorTwo = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR_TWO, MotorType.kBrushless);
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
-    private final DigitalInput UnlockLimitSwitch = new DigitalInput(Constants.EXTENDO_BRAKE_LIMIT_SWITCH);
-    private final Servo pivotLockServo = new Servo(Constants.PIVOT_LOCK_SERVO);
     private final PIDController pivotPID = new PIDController(0, 0, 0);
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
-    private double PivotLockPosition = 0.95;
-    private double PivotUnlockedPosition = 0.6;
     private final IntakeSubsystem m_intake;
 
     public ExtendoSubystem(IntakeSubsystem intake) {
@@ -37,10 +32,6 @@ public class ExtendoSubystem extends SubsystemBase {
         pivotTelescopeArmMotor.setInverted(true);
         pivotTelescopeArmMotorTwo.setInverted(true);
         m_intake = intake;
-
-
-        SmartDashboard.putNumber("Pivot Lock Position", PivotLockPosition);
-        SmartDashboard.putNumber("Pivot Unlock Position", PivotUnlockedPosition);
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
@@ -85,7 +76,6 @@ public class ExtendoSubystem extends SubsystemBase {
         }
 
         if (speed > 0) {
-            pivotLockServo.set(PivotLockPosition);
             if (pivotTelescopeArmMotor.getEncoder().getPosition() > 100) {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
@@ -94,31 +84,24 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
             }
         } else if (speed < 0) {
-            pivotLockServo.set(PivotUnlockedPosition);
-            if (UnlockLimitSwitch.get()) {
-                if (PivotArmLimitSwitch.get()) {
-                    pivotTelescopeArmMotor.getEncoder().setPosition(0);
-                    pivotTelescopeArmMotor.stopMotor();
-                    pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
-                    pivotTelescopeArmMotorTwo.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 15) {
-                        pivotTelescopeArmMotor.stopMotor();
-                        pivotTelescopeArmMotorTwo.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) /*might be -15*/{
-                        pivotTelescopeArmMotor.stopMotor();
-                        pivotTelescopeArmMotorTwo.stopMotor();
-                } else {
-                    pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
-                    pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
-                } 
+            if (PivotArmLimitSwitch.get()) {
+                pivotTelescopeArmMotor.getEncoder().setPosition(0);
+                pivotTelescopeArmMotor.stopMotor();
+                pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
+                pivotTelescopeArmMotorTwo.stopMotor();
+            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 15) {
+                pivotTelescopeArmMotor.stopMotor();
+                pivotTelescopeArmMotorTwo.stopMotor();
+            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) /*might be -15*/{
+                pivotTelescopeArmMotor.stopMotor();
+                pivotTelescopeArmMotorTwo.stopMotor();
             } else {
-                pivotTelescopeArmMotor.set(0.2);
-                pivotTelescopeArmMotorTwo.set(0.2);
+                pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
             }
         } else {
             pivotTelescopeArmMotorTwo.stopMotor();
             pivotTelescopeArmMotor.stopMotor();
-            pivotLockServo.set(PivotLockPosition);
         }
     }
 
@@ -134,14 +117,10 @@ public class ExtendoSubystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Extendo pivot limit switch", PivotArmLimitSwitch.get());
         SmartDashboard.putBoolean("Extendo extend limit switch", ExtendLimitSwitch.get());
-        SmartDashboard.putBoolean("Extendo Pivot Brake Limit switch", UnlockLimitSwitch.get());
         SmartDashboard.putNumber("Extendo extend position", extendExtendoMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Extendo pivot position", pivotTelescopeArmMotor.getEncoder().getPosition());
 
         SmartDashboard.putString("Extendo Pivot Brake mode", pivotTelescopeArmMotor.getIdleMode().toString());
         SmartDashboard.putString("Extendo extend Brake mode", extendExtendoMotor.getIdleMode().toString());
-
-        PivotLockPosition = SmartDashboard.getNumber("Pivot Lock Position", PivotLockPosition);
-        PivotUnlockedPosition = SmartDashboard.getNumber("Pivot Unlock Position", PivotUnlockedPosition);
     }
 }
