@@ -47,7 +47,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
-  private final ExtendoSubystem m_ExtendoSubystem = new ExtendoSubystem(m_IntakeSubsystem);
+  private final ExtendoSubsystem m_ExtendoSubystem = new ExtendoSubsystem(m_IntakeSubsystem);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -70,7 +70,7 @@ public class RobotContainer {
         () -> modifyAxis(-m_operatorController.getLeftY()),
         () -> modifyAxis(-m_operatorController.getRightY())));
 
-    m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_IntakeSubsystem,
+    m_IntakeSubsystem.setDefaultCommand(new IntakeWristCommand(m_ExtendoSubystem,
         () -> getWristAxis()));
 
     // m_drivetrainSubsystem.zeroGyroscope();
@@ -125,10 +125,10 @@ public class RobotContainer {
         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     new Trigger(m_operatorController::getBButton)
-        .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+        .whileTrue(new ExtendCommand(m_ExtendoSubystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
     new Trigger(m_controller::getXButton)
-        .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem,
+        .whileTrue(new ExtendCommand(m_ExtendoSubystem,
             () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));

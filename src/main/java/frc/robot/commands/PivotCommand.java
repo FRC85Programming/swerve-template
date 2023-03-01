@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ExtendoSubystem;
+import frc.robot.subsystems.ExtendoSubsystem;
 
 public class PivotCommand extends CommandBase{
-    private final ExtendoSubystem m_ExtendoSubsystem;
+    private final ExtendoSubsystem m_ExtendoSubsystem;
 
-    public PivotCommand(ExtendoSubystem pivot){
+    public PivotCommand(ExtendoSubsystem pivot){
         this.m_ExtendoSubsystem = pivot;
     }
 

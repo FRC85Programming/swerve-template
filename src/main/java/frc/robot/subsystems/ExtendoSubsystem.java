@@ -10,7 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ExtendoSubystem extends SubsystemBase {
+public class ExtendoSubsystem extends SubsystemBase {
+    // Wrist stuff
+    private final CANSparkMax intakeWristMotor = new CANSparkMax(Constants.INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
+    private final DigitalInput intakeWristLimitSwitch = new DigitalInput(Constants.INTAKE_PIVOT_LIMIT_SWITCH);
+    private final PIDController WristPID = new PIDController(0, 0, 0);
+    private final double WristSpeedScale = 0.80;
+
+    // extendo pivot
     private final CANSparkMax extendExtendoMotor = new CANSparkMax(Constants.EXTENDO_EXTEND_MOTOR,
             MotorType.kBrushless);
     private final CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,
@@ -24,7 +31,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private final double pivotSpeedScale = 0.5;
     private final IntakeSubsystem m_intake;
 
-    public ExtendoSubystem(IntakeSubsystem intake) {
+    public ExtendoSubsystem(IntakeSubsystem intake) {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotorTwo.setIdleMode(IdleMode.kBrake);
@@ -92,7 +99,7 @@ public class ExtendoSubystem extends SubsystemBase {
             } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 15) {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
-            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) /*might be -15*/{
+            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && intakeWristMotor.getEncoder().getPosition() < -30) /*might be -15*/{
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
             } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 7){
@@ -116,6 +123,40 @@ public class ExtendoSubystem extends SubsystemBase {
         return pivotTelescopeArmMotor.getEncoder().getPosition();
     }
 
+    public void Wrist(double speed, double desiredPosition) {
+        double kp = SmartDashboard.getNumber("kp Intake", 1);
+        double ki = SmartDashboard.getNumber("ki Intake", 0);
+        double kd = SmartDashboard.getNumber("kd Intake", 0);
+
+        WristPID.setPID(kp, ki, kd);
+
+        if (desiredPosition != 0){
+            speed = WristPID.calculate(intakeWristMotor.getEncoder().getPosition(), desiredPosition);
+        }
+        if (speed < 0) {
+            if (intakeWristMotor.getEncoder().getPosition() < -82) {
+                intakeWristMotor.stopMotor();
+            } else {
+                intakeWristMotor.set(speed * WristSpeedScale);
+            }
+        } else if (speed > 0) {
+            if (intakeWristLimitSwitch.get()) {
+                intakeWristMotor.getEncoder().setPosition(0);
+                intakeWristMotor.stopMotor();
+            } else if (intakeWristMotor.getEncoder().getPosition() > -7){
+                intakeWristMotor.set(speed * 0.2);
+            } else {
+                intakeWristMotor.set(speed * WristSpeedScale);
+            }
+        } else {
+            intakeWristMotor.stopMotor();
+        }
+    }
+    public double getIntakeWrist(){
+        return intakeWristMotor.getEncoder().getPosition();
+    }
+    
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Extendo pivot limit switch", PivotArmLimitSwitch.get());
@@ -125,5 +166,8 @@ public class ExtendoSubystem extends SubsystemBase {
 
         SmartDashboard.putString("Extendo Pivot Brake mode", pivotTelescopeArmMotor.getIdleMode().toString());
         SmartDashboard.putString("Extendo extend Brake mode", extendExtendoMotor.getIdleMode().toString());
+
+        SmartDashboard.putBoolean("intake wrist limit sensor", intakeWristLimitSwitch.get());
+        SmartDashboard.putNumber("Intake wrist position", intakeWristMotor.getEncoder().getPosition());
     }
 }
