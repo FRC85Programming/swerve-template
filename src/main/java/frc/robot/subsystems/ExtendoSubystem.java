@@ -16,6 +16,7 @@ public class ExtendoSubystem extends SubsystemBase {
             MotorType.kBrushless);
     private final CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,
             MotorType.kBrushless);
+    private final CANSparkMax pivotTelescopeArmMotorTwo = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR_TWO, MotorType.kBrushless);
     private final DigitalInput PivotArmLimitSwitch = new DigitalInput(Constants.EXTENDO_PIVOT_LIMIT_SWITCH);
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTENDO_EXTEND_LIMIT_SWITCH);
     private final DigitalInput UnlockLimitSwitch = new DigitalInput(Constants.EXTENDO_BRAKE_LIMIT_SWITCH);
@@ -32,6 +33,8 @@ public class ExtendoSubystem extends SubsystemBase {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
         m_intake = intake;
+        pivotTelescopeArmMotorTwo.setIdleMode(IdleMode.kBrake);
+
 
 
         SmartDashboard.putNumber("Pivot Lock Position", PivotLockPosition);
@@ -85,6 +88,7 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotor.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
             }
         } else if (speed < 0) {
             pivotLockServo.set(PivotUnlockedPosition);
@@ -92,18 +96,26 @@ public class ExtendoSubystem extends SubsystemBase {
                 if (PivotArmLimitSwitch.get()) {
                     pivotTelescopeArmMotor.getEncoder().setPosition(0);
                     pivotTelescopeArmMotor.stopMotor();
+
+                    pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
+                    pivotTelescopeArmMotorTwo.stopMotor();
                 } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
                         pivotTelescopeArmMotor.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) /*might be -15*/{
-                        pivotTelescopeArmMotor.stopMotor();
+                        pivotTelescopeArmMotorTwo.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) {
+                    pivotTelescopeArmMotor.stopMotor();
+                    pivotTelescopeArmMotorTwo.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
+                    pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
                 } 
             } else {
                 pivotTelescopeArmMotor.set(0.2);
+                pivotTelescopeArmMotorTwo.set(0.2);
             }
         } else {
             pivotTelescopeArmMotor.stopMotor();
+            pivotTelescopeArmMotorTwo.stopMotor();
             pivotLockServo.set(PivotLockPosition);
         }
     }
