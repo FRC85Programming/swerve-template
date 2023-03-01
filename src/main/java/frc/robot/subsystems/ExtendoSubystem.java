@@ -32,9 +32,11 @@ public class ExtendoSubystem extends SubsystemBase {
     public ExtendoSubystem(IntakeSubsystem intake) {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
-        m_intake = intake;
         pivotTelescopeArmMotorTwo.setIdleMode(IdleMode.kBrake);
 
+        pivotTelescopeArmMotor.setInverted(true);
+        pivotTelescopeArmMotorTwo.setInverted(true);
+        m_intake = intake;
 
 
         SmartDashboard.putNumber("Pivot Lock Position", PivotLockPosition);
@@ -42,7 +44,7 @@ public class ExtendoSubystem extends SubsystemBase {
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Extendo", 0);
+        double kp = SmartDashboard.getNumber("kp Extendo", 1);
         double ki = SmartDashboard.getNumber("ki Extendo", 0);
         double kd = SmartDashboard.getNumber("kd Extendo", 0);
 
@@ -72,7 +74,7 @@ public class ExtendoSubystem extends SubsystemBase {
     }
 
     public void Pivot(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Pivot", 0);
+        double kp = SmartDashboard.getNumber("kp Pivot", 1);
         double ki = SmartDashboard.getNumber("ki Pivot", 0);
         double kd = SmartDashboard.getNumber("kd Pivot", 0);
 
@@ -84,8 +86,9 @@ public class ExtendoSubystem extends SubsystemBase {
 
         if (speed > 0) {
             pivotLockServo.set(PivotLockPosition);
-            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 110) {
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 100) {
                 pivotTelescopeArmMotor.stopMotor();
+                pivotTelescopeArmMotorTwo.stopMotor();
             } else {
                 pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
                 pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
@@ -96,15 +99,14 @@ public class ExtendoSubystem extends SubsystemBase {
                 if (PivotArmLimitSwitch.get()) {
                     pivotTelescopeArmMotor.getEncoder().setPosition(0);
                     pivotTelescopeArmMotor.stopMotor();
-
                     pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
                     pivotTelescopeArmMotorTwo.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 5) {
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 15) {
                         pivotTelescopeArmMotor.stopMotor();
                         pivotTelescopeArmMotorTwo.stopMotor();
-                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) {
-                    pivotTelescopeArmMotor.stopMotor();
-                    pivotTelescopeArmMotorTwo.stopMotor();
+                } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && m_intake.getIntakeWrist() < -30) /*might be -15*/{
+                        pivotTelescopeArmMotor.stopMotor();
+                        pivotTelescopeArmMotorTwo.stopMotor();
                 } else {
                     pivotTelescopeArmMotor.set(speed * pivotSpeedScale);
                     pivotTelescopeArmMotorTwo.set(speed * pivotSpeedScale);
@@ -114,8 +116,8 @@ public class ExtendoSubystem extends SubsystemBase {
                 pivotTelescopeArmMotorTwo.set(0.2);
             }
         } else {
-            pivotTelescopeArmMotor.stopMotor();
             pivotTelescopeArmMotorTwo.stopMotor();
+            pivotTelescopeArmMotor.stopMotor();
             pivotLockServo.set(PivotLockPosition);
         }
     }

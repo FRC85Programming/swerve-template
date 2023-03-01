@@ -31,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void Pivot(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Intake", 0);
+        double kp = SmartDashboard.getNumber("kp Intake", 1);
         double ki = SmartDashboard.getNumber("ki Intake", 0);
         double kd = SmartDashboard.getNumber("kd Intake", 0);
 

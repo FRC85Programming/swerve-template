@@ -95,7 +95,7 @@ public class RobotContainer {
         .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getStartButton)
         .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getXButton)
+    new Trigger(m_controller::getBButton)
         .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
@@ -229,9 +229,9 @@ public class RobotContainer {
 
   private double getWristAxis() {
     if (m_operatorController.getRightBumper()) {
-      return 0.5;
+      return 1;
     } else if (modifyAxis(m_operatorController.getRightTriggerAxis()) != 0) {
-      return -0.5;
+      return -m_operatorController.getRightTriggerAxis();
     } else {
       return 0;
     }

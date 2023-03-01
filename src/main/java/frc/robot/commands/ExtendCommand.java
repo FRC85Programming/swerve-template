@@ -30,6 +30,7 @@ public class ExtendCommand extends CommandBase {
         m_intakeWrist = intakeWrist;
 
         addRequirements(extendo);
+        addRequirements(intakeSubsystem);
     }
 
     @Override
@@ -43,9 +44,9 @@ public class ExtendCommand extends CommandBase {
                 && m_ExtendoSubystem.getPivotAngle() < pivotAngle + tolerancePivot) {
             m_ExtendoSubystem.Pivot(0.0, 0.0);
         } else if (m_ExtendoSubystem.getPivotAngle() > pivotAngle) {
-            m_ExtendoSubystem.Pivot(-pivotSpeed, 0.0);
-        } else {
             m_ExtendoSubystem.Pivot(pivotSpeed, 0.0);
+        } else {
+            m_ExtendoSubystem.Pivot(-pivotSpeed, 0.0);
         }
 
         if (m_ExtendoSubystem.getExtendPosition() > extendPosition - toleranceExtend
