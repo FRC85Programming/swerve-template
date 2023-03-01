@@ -50,6 +50,8 @@ public class IntakeSubsystem extends SubsystemBase {
             if (intakePivotLimitSwitch.get()) {
                 intakePivotMotor.getEncoder().setPosition(0);
                 intakePivotMotor.stopMotor();
+            } else if (intakePivotMotor.getEncoder().getPosition() > -7){
+                intakePivotMotor.set(speed * 0.2);
             } else {
                 intakePivotMotor.set(speed * WristSpeedScale);
             }
