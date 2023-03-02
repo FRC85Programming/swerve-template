@@ -29,16 +29,14 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
-    private final IntakeSubsystem m_intake;
 
-    public ExtendoSubsystem(IntakeSubsystem intake) {
+    public ExtendoSubsystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotorTwo.setIdleMode(IdleMode.kBrake);
 
         pivotTelescopeArmMotor.setInverted(true);
         pivotTelescopeArmMotorTwo.setInverted(true);
-        m_intake = intake;
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
