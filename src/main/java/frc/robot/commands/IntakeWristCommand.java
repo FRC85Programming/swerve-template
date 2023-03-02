@@ -20,8 +20,6 @@ public class IntakeWristCommand extends CommandBase{
     public void execute() {
             m_intakeSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
         
-
-
         SmartDashboard.putNumber("intake wrist speed", m_pivotSpeedSupplier.getAsDouble());
     }
 
