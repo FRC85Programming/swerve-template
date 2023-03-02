@@ -19,20 +19,25 @@ public class AutoScore extends CommandBase
         m_drivetrainSubsystem = driveTrain;
         m_extendoSubsystem = extendo;
         m_intakeSubsystem = intake;
+
+        addRequirements(m_drivetrainSubsystem, extendo, intake);
     }
 
     @Override
     public void execute()
     {
-        m_extendoSubsystem.Pivot(0.8, 50);
-        m_intakeSubsystem.setRollerSpeed(-0.8);
-        new WaitCommand(0.3);
-        m_intakeSubsystem.StopRollers();
+        m_extendoSubsystem.Pivot(0.8, 0);
+        /*m_intakeSubsystem.setRollerSpeed(-0.8);
+
+        m_intakeSubsystem.StopRollers();*/
 
     }
 
+    public boolean isFinished() {
+        return m_extendoSubsystem.getPivotAngle() >= 40;
+    }
     public void end(boolean interrupted) {
-
+        m_extendoSubsystem.Pivot(0, 0);
     }
 }
 
