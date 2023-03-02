@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -74,7 +76,7 @@ public final class Constants {
     public static final String Comm_L = "Comm_L";
 
         // These values MUST be configured for our robot. Do not run it without finding them
-    public static final double kMaxAccelerationMetersPerSecondSquared = 10;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 30;
     public static final double kWheelBase = Units.inchesToMeters(22);
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
@@ -82,10 +84,10 @@ public final class Constants {
                 new Translation2d(-kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
                 new Translation2d(-kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2));
 
-    public static final double kPXController = 1.5;
-    public static final double kPYController = 1.5;
-    public static final double kPThetaController = 3;
-    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880 / 60;
+    public static final double kPXController = 5;
+    public static final double kPYController = 5;
+    public static final double kPThetaController = 30;
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
     public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 4;

@@ -17,6 +17,7 @@ public class DriveDistance extends CommandBase
     private double constantFLDistance;
     private Boolean constantCalc;
     private double flTarget;
+    private int counter = 0;
     public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double angle, double target) {
         // Sets up variables for each subsystem
         m_drivetrainSubsystem = driveTrain;
@@ -26,11 +27,16 @@ public class DriveDistance extends CommandBase
         wheelAngle = angle;
         encoderTarget = target;
         constantCalc = false;
+
+        addRequirements(m_drivetrainSubsystem);
     }
 
     @Override
     public void execute() {
         // Gets the drive distance so that we can accuratley judge how far we need to drive
+        counter++;
+        SmartDashboard.putNumber("Auto Counter", counter);
+        SmartDashboard.putNumber("Fl Speed", m_frontLeftModule.getDriveVelocity());
         if (constantCalc == false) {
             constantFLDistance = m_frontLeftModule.getDriveDistance();
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
@@ -39,6 +45,8 @@ public class DriveDistance extends CommandBase
         }
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
+        SmartDashboard.putNumber("Wheel Speed X", wheelSpeedX);
+        SmartDashboard.putNumber("flTarget", flTarget);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, wheelAngle));
         SmartDashboard.putNumber("Encoder FL", m_frontLeftModule.getDriveDistance());
     }

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -41,15 +42,25 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-
+  private final IntakeSubsystem m_intakeSubsystem;
+  private final ExtendoSubsystem m_extendoSubsystem;
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final XboxController m_controller = new XboxController(0);
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_extendoSubsystem = new ExtendoSubsystem();
+    m_intakeSubsystem = new IntakeSubsystem();
     m_drivetrainSubsystem.register();
-
+    m_chooser.setDefaultOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
+    m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
+    m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
+    m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_intakeSubsystem));
+    m_chooser.addOption("Normal Follow", getAutonomousCommand());
+    SmartDashboard.putData(m_chooser);
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -105,9 +116,12 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(String auto) {
+  public Command getAuto() {
+    return m_chooser.getSelected();
+  }
+  public Command getAutonomousCommand(/*String auto*/) {
     // Resets wheels so they don't fight each other
-    m_drivetrainSubsystem.zeroWheels();
+    //m_drivetrainSubsystem.zeroWheels();
     // Configures kinematics so the driving is accurate 
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
       Constants.kMaxSpeedMetersPerSecond,
@@ -119,13 +133,13 @@ public class RobotContainer {
       new Pose2d(0, 0, new Rotation2d(0)),
       List.of(
         //Go to these locations:
-        new Translation2d(1, 0),
+        new Translation2d(5, 0),
         new Translation2d(1, -1)),
         new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
       trajectoryConfig);
 
       // Setting up trajectory variables
-      String trajectoryJSON = "output/" + auto + ".wpilib.json";
+      /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
       Trajectory temp;
 
       //Load command and select backup if needed
@@ -140,7 +154,7 @@ public class RobotContainer {
           DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
           temp = trajectory;
       }
-
+*/
     // Sets up PID to stay on the trajectory
     PIDController xController = new PIDController(Constants.kPXController, 0, 0);
     PIDController yController = new PIDController(Constants.kPYController, 0, 0);
@@ -150,7 +164,7 @@ public class RobotContainer {
 
     // This is what actually drives the bot. It is run in a SequentialCommandGroup
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                temp,
+                trajectory,
                 m_drivetrainSubsystem::getPose,
                 Constants.kDriveKinematics,
                 xController,
@@ -187,6 +201,7 @@ public class RobotContainer {
 
     return value;
   }
+
 
   public XboxController getController()
   {

@@ -1,11 +1,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ExtendoSubystem;
+import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class ExtendCommand extends CommandBase {
-    private final ExtendoSubystem m_ExtendoSubystem;
+    private final ExtendoSubsystem m_ExtendoSubystem;
     private final IntakeSubsystem m_IntakeSubsystem;
     private final double m_ExtendPosition;
     private final double m_PivotAngle;
@@ -17,7 +17,7 @@ public class ExtendCommand extends CommandBase {
     private final double intakePivotSpeed = 0.8;
     private final double m_intakeWrist;
 
-    public ExtendCommand(ExtendoSubystem extendo, IntakeSubsystem intakeSubsystem, double extendPosition,
+    public ExtendCommand(ExtendoSubsystem extendo, IntakeSubsystem intakeSubsystem, double extendPosition,
             double pivotAngle, double intakeWrist) {
         m_IntakeSubsystem = intakeSubsystem;
         m_ExtendoSubystem = extendo;

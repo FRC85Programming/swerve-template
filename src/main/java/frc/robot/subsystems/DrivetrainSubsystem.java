@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -245,7 +246,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public SwerveModule getFrontLeft() {
-    return m_backLeftModule;
+    return m_frontLeftModule;
   }
 
   public SwerveModule getFrontRight() {
@@ -295,13 +296,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // Resets the gyro
     SwerveModulePosition positions[] = {m_backLeftModule.getPosition(), m_backRightModule.getPosition(), m_frontLeftModule.getPosition(), m_frontRightModule.getPosition()};
     odometry.resetPosition(getRotation2d(), positions, pose);
-  }
-
-  public void zeroWheels() {
-    m_frontLeftModule.set(0, 0 - -_frontLeftCalibrationValue);
-    m_frontRightModule.set(0, 0 - -_frontRightCalibrationValue);
-    m_backLeftModule.set(0, 0 - -_backLeftCalibrationValue);
-    m_backRightModule.set(0, 0 - -_backRightCalibrationValue);
   }
   
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -394,6 +388,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
       _backRightCalibration.setPersistent();
       SmartDashboard.putBoolean("Swerve Calibrate", false);
     }
+  }
+  public double getFrontLeftCalibration() {
+    return _frontLeftCalibrationValue;
+  }
+  public double getBackLeftCalibration() {
+    return _backLeftCalibrationValue;
+  }
+  public double getFrontRightCalibration() {
+    return _frontRightCalibrationValue;
+  }
+  public double getBackRightCalibration() {
+    return _backRightCalibrationValue;
   }
 
   public void brakeState()

@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ExtendoSubystem extends SubsystemBase {
+public class ExtendoSubsystem extends SubsystemBase {
     private final CANSparkMax extendExtendoMotor = new CANSparkMax(Constants.EXTENDO_EXTEND_MOTOR,
             MotorType.kBrushless);
     private final CANSparkMax pivotTelescopeArmMotor = new CANSparkMax(Constants.EXTENDO_ARM_PIVOT_MOTOR,
@@ -27,7 +27,7 @@ public class ExtendoSubystem extends SubsystemBase {
     private double PivotLockPosition = 0.95;
     private double PivotUnlockedPosition = 0.5;
 
-    public ExtendoSubystem() {
+    public ExtendoSubsystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
         pivotTelescopeArmMotor.setIdleMode(IdleMode.kBrake);
 
