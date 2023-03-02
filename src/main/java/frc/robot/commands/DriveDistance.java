@@ -17,6 +17,7 @@ public class DriveDistance extends CommandBase
     private double constantFLDistance;
     private Boolean constantCalc;
     private double flTarget;
+    private double flTargetMinus;
     private int counter = 0;
     public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double angle, double target) {
         // Sets up variables for each subsystem
@@ -42,6 +43,8 @@ public class DriveDistance extends CommandBase
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
             flTarget = constantFLDistance + encoderTarget;
             constantCalc = true;
+
+            flTargetMinus = constantFLDistance - encoderTarget;
         }
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
@@ -54,7 +57,7 @@ public class DriveDistance extends CommandBase
     @Override
     public boolean isFinished(){
         // Ends the command when it hits the target encoder distance
-        return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3;
+        return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
     }
 
     @Override

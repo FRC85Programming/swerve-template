@@ -55,7 +55,7 @@ public class RobotContainer {
     m_extendoSubsystem = new ExtendoSubsystem();
     m_intakeSubsystem = new IntakeSubsystem();
     m_drivetrainSubsystem.register();
-    m_chooser.setDefaultOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
+    m_chooser.setDefaultOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_intakeSubsystem));
     m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
     m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
     m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_intakeSubsystem));
