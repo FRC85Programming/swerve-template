@@ -51,15 +51,18 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
-    m_chooser.setDefaultOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_chooser.setDefaultOption("Manual OnePlace",
+        new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
     m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
-    m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_chooser.addOption("Manual OnePlace",
+        new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_chooser.addOption("Normal Follow", getAutonomousCommand());
     SmartDashboard.putData(m_chooser);
     m_extendoSubsystem.register();
@@ -132,14 +135,20 @@ public class RobotContainer {
     new Trigger(() -> m_controller.getPOV() == 270)
         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
-    new Trigger(m_operatorController::getBButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // new Trigger(m_operatorController::getBButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
     new Trigger(m_controller::getXButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
             () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+
+    new Trigger(m_controller::getLeftBumper)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+
+    new Trigger(m_operatorController::getAButton)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
     // cube pick up position
     // new Trigger(m_operatorController::getAButton)
@@ -165,42 +174,48 @@ public class RobotContainer {
   public Command getAuto() {
     return m_chooser.getSelected();
   }
-  public Command getAutonomousCommand(/*String auto*/) {
+
+  public Command getAutonomousCommand(/* String auto */) {
     // Resets wheels so they don't fight each other
-    //m_drivetrainSubsystem.zeroWheels();
-    // Configures kinematics so the driving is accurate 
+    // m_drivetrainSubsystem.zeroWheels();
+    // Configures kinematics so the driving is accurate
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-      Constants.kMaxSpeedMetersPerSecond,
-      Constants.kMaxAccelerationMetersPerSecondSquared)
-              .setKinematics(Constants.kDriveKinematics);
-    
-    // This sets the trajectory points that will be used as a backup if it can not load the original
+        Constants.kMaxSpeedMetersPerSecond,
+        Constants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(Constants.kDriveKinematics);
+
+    // This sets the trajectory points that will be used as a backup if it can not
+    // load the original
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(
-        //Go to these locations:
-        new Translation2d(5, 0),
-        new Translation2d(1, -1)),
-        new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180 */ (180)),
-      trajectoryConfig);
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            // Go to these locations:
+            new Translation2d(5, 0),
+            new Translation2d(1, -1)),
+        new Pose2d(2, -1, Rotation2d.fromDegrees /* spin 180 */ (180)),
+        trajectoryConfig);
 
-      // Setting up trajectory variables
-      /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
-      Trajectory temp;
-
-      //Load command and select backup if needed
-      try{
-          if(auto.startsWith("PW_")){
-              Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-              temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-          }else{
-              temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
-          }
-      }catch(Exception e){
-          DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
-          temp = trajectory;
-      }
-*/
+    // Setting up trajectory variables
+    /*
+     * String trajectoryJSON = "output/" + auto + ".wpilib.json";
+     * Trajectory temp;
+     * 
+     * //Load command and select backup if needed
+     * try{
+     * if(auto.startsWith("PW_")){
+     * Path trajectoryPath =
+     * Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+     * temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+     * }else{
+     * temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond,
+     * Constants.kMaxAccelerationMetersPerSecondSquared);
+     * }
+     * }catch(Exception e){
+     * DriverStation.reportWarning("Error loading path:" + auto +
+     * ". Loading backup....", e.getStackTrace());
+     * temp = trajectory;
+     * }
+     */
     // Sets up PID to stay on the trajectory
     PIDController xController = new PIDController(Constants.kPXController, 0, 0);
     PIDController yController = new PIDController(Constants.kPYController, 0, 0);
@@ -220,10 +235,12 @@ public class RobotContainer {
         m_drivetrainSubsystem);
 
     return new SequentialCommandGroup(
-                new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-                swerveControllerCommand,
-                // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
-                new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+        new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
+        swerveControllerCommand,
+        // You have to add stop modules for this error. Look at this code and copy and
+        // paste:
+        // https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
+        new InstantCommand(() -> m_drivetrainSubsystem.stop()));
   }
 
   private static double deadband(double value, double deadband) {
@@ -266,5 +283,4 @@ public class RobotContainer {
     m_drivetrainSubsystem.checkCalibration();
   }
 
-  
 }
