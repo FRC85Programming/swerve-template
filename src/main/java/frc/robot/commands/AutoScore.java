@@ -26,7 +26,21 @@ public class AutoScore extends CommandBase
     @Override
     public void execute()
     {
-        m_extendoSubsystem.Pivot(0.8, 0);
+        if (m_extendoSubsystem.getPivotAngle() <= 80) {
+            m_extendoSubsystem.Pivot(0.8, 0);
+        } else {
+            m_extendoSubsystem.Pivot(0, 0);
+        }
+        if (m_extendoSubsystem.getExtendPosition() <= 60) {
+            m_extendoSubsystem.ExtendTelescope(0.2, 0);
+        } else {
+            m_extendoSubsystem.ExtendTelescope(0, 0);
+        }
+        if (m_extendoSubsystem.getIntakeWrist() >= -38) {
+            m_extendoSubsystem.Wrist(-0.2, 0);
+        } else {
+            m_extendoSubsystem.Wrist(0, 0);
+        }
         /*m_intakeSubsystem.setRollerSpeed(-0.8);
 
         m_intakeSubsystem.StopRollers();*/
@@ -34,10 +48,12 @@ public class AutoScore extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 40;
+        return m_extendoSubsystem.getPivotAngle() >= 73 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -30;
     }
     public void end(boolean interrupted) {
         m_extendoSubsystem.Pivot(0, 0);
+        m_extendoSubsystem.ExtendTelescope(0, 0);
+        m_extendoSubsystem.Wrist(0, 0);
     }
 }
 

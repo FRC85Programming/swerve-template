@@ -8,7 +8,7 @@ public class ManualMobility extends SequentialCommandGroup {
     public ManualMobility(DrivetrainSubsystem driveTrain, RobotContainer robotContainer) {
         addCommands(  
             //new zeroWheels(driveTrain),
-            new DriveDistance(driveTrain, 0, 2, 0.0, 4.95)
+            new DriveDistance(driveTrain, 0, 0.5, 0.0, 4.95)
         );
     }
 }
