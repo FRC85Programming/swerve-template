@@ -13,10 +13,10 @@ public class One_Comm_CS_L extends SequentialCommandGroup {
       this.m_robotContainer = robotContainer;
       this.m_ExtendoSubsystem = extendoSubsystem;
       addCommands(
-        //new PivotCommand(m_ExtendoSubsystem),
-        new ExtendCommand(m_ExtendoSubsystem, intakeSubsystem, extendPosition, pivotAngle, intakeWrist),
-        new IntakeCommand(intakeSubsystem, output),
-        //m_robotContainer.getAutonomousCommand("PW_1_Comm_CS_L"),
+        new PivotCommand(m_ExtendoSubsystem),
+        new ExtendCommand(m_ExtendoSubsystem, () -> extendPosition, () -> pivotAngle, () -> intakeWrist),
+        new IntakeCommand(intakeSubsystem, () -> 0.8),
+        m_robotContainer.getAutonomousCommand(),
         new WaitCommand(.5),
         //m_robotContainer.getAutonomousCommand("PW_1_Comm_CS_LPart2"),
         new AutoLevelCommand(driveTrain)

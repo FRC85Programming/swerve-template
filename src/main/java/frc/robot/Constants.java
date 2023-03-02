@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,7 +33,7 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = .4953; 
 
-    public static final int DRIVETRAIN_PIGEON_ID = 41; // FIXME Set Pigeon ID
+    public static final int DRIVETRAIN_PIGEON_ID = 41;
     public static final int PDP_ID = 58; // PDP Id
 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1; 
@@ -66,7 +65,6 @@ public final class Constants {
     public static final int INTAKE_ROLLERS_MOTOR = 54;
     public static final int INTAKE_PIVOT_MOTOR = 53;
 
-    public static final int EXTENDO_BRAKE_LIMIT_SWITCH = 3;
     public static final int INTAKE_PIVOT_LIMIT_SWITCH = 2;
     public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
     public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;

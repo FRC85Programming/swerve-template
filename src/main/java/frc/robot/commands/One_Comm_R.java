@@ -12,10 +12,10 @@ public class One_Comm_R extends SequentialCommandGroup {
       this.m_robotContainer = robotContainer;
       this.m_ExtendoSubsystem = extendoSubsystem;
       addCommands(
-        //new PivotCommand(m_ExtendoSubsystem),
-        new ExtendCommand(m_ExtendoSubsystem, intakeSubsystem, extendPosition, pivotAngle, intakeWrist),
-        new IntakeCommand(intakeSubsystem, output)
-        //m_robotContainer.getAutonomousCommand("PW_1_Comm_R")
+        new PivotCommand(m_ExtendoSubsystem),
+        new ExtendCommand(m_ExtendoSubsystem, () -> extendPosition, () -> pivotAngle, () -> intakeWrist),
+        new IntakeCommand(intakeSubsystem, () -> 0.8),
+        m_robotContainer.getAutonomousCommand()
       );
     }
 } 

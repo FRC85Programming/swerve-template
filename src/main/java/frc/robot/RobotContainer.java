@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -44,25 +46,25 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final IntakeSubsystem m_intakeSubsystem;
-  private final ExtendoSubsystem m_extendoSubsystem;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
-
+  private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_extendoSubsystem = new ExtendoSubsystem();
-    m_intakeSubsystem = new IntakeSubsystem();
     m_drivetrainSubsystem.register();
-    m_chooser.setDefaultOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_intakeSubsystem));
+    m_chooser.setDefaultOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
     m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
-    m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_intakeSubsystem));
+    m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_chooser.addOption("Normal Follow", getAutonomousCommand());
     SmartDashboard.putData(m_chooser);
+    m_extendoSubsystem.register();
+    m_IntakeSubsystem.register();
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -76,7 +78,8 @@ public class RobotContainer {
 
     m_extendoSubsystem.setDefaultCommand(new ManualExtendoCommand(m_extendoSubsystem,
         () -> modifyAxis(-m_operatorController.getLeftY()),
-        () -> modifyAxis(-m_operatorController.getRightY())));
+        () -> modifyAxis(-m_operatorController.getRightY()),
+        () -> getWristAxis()));
 
     // m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -100,7 +103,7 @@ public class RobotContainer {
         .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getStartButton)
         .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getXButton)
+    new Trigger(m_controller::getBButton)
         .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
@@ -116,10 +119,10 @@ public class RobotContainer {
 
     // intake
     new Trigger(() -> m_controller.getLeftTriggerAxis() != 0)
-        .whileTrue(new IntakeCommand(m_intakeSubsystem, () -> m_controller.getLeftTriggerAxis()));
+        .whileTrue(new IntakeCommand(m_IntakeSubsystem, () -> m_controller.getLeftTriggerAxis()));
     // outtake
     new Trigger(() -> m_controller.getRightTriggerAxis() != 0)
-        .whileTrue(new IntakeCommand(m_intakeSubsystem, () -> -m_controller.getRightTriggerAxis()));
+        .whileTrue(new IntakeCommand(m_IntakeSubsystem, () -> -m_controller.getRightTriggerAxis()));
 
     // a button activates brake wheels command
     new Trigger(() -> m_controller.getPOV() == 90)
@@ -130,10 +133,10 @@ public class RobotContainer {
         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     new Trigger(m_operatorController::getBButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, m_intakeSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
 
     new Trigger(m_controller::getXButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, m_intakeSubsystem,
+        .whileTrue(new ExtendCommand(m_extendoSubsystem,
             () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
@@ -237,9 +240,9 @@ public class RobotContainer {
 
   private double getWristAxis() {
     if (m_operatorController.getRightBumper()) {
-      return 0.5;
+      return 1;
     } else if (modifyAxis(m_operatorController.getRightTriggerAxis()) != 0) {
-      return -0.5;
+      return -m_operatorController.getRightTriggerAxis();
     } else {
       return 0;
     }
