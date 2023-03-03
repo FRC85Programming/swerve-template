@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -13,6 +14,7 @@ public class BalanceAuto extends SequentialCommandGroup{
             m_drivetrainSubsystem = driveTrain;
             m_extendoSubsystem = extendo;
             m_intakeSubsystem = intake;
+            SmartDashboard.putBoolean("BalanceAuto started", true);
             addCommands(
                 new ZeroGyroscopeCommand(driveTrain),
                 new ZeroPitchRollCommand(driveTrain),

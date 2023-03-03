@@ -458,14 +458,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     if (timerStart == false) {
       m_timer.reset();
       m_timer.start();
+      timerStart = true;
     }
-    if (m_timer.get() <= 0.5) {
+    if (m_timer.get() <= 0.6) {
       double kp = SmartDashboard.getNumber("kp", 0);
       double ki = SmartDashboard.getNumber("ki", 0);
       double kd = SmartDashboard.getNumber("kd", 0);
 
       double[] pr = GetPitchRoll();
-      double maxSpeed = .4;
+      double maxSpeed = .5;
 
 
       pitchPIDController.setPID(kp, ki, kd);
