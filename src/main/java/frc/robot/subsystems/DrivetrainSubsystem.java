@@ -58,6 +58,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.ZeroGyroscopeCommand;
 
+/**
+ * Ashley is dumb
+ */
+
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
    * The maximum voltage that will be delivered to the drive motors.

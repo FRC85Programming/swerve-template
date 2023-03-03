@@ -43,13 +43,11 @@ public class ScoreLineup extends CommandBase
             if (tx - 2 < 19.5 * area + 1.7 && tx + 2 > 19.5 * area + 2){
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
                 trackDone = true;
-            } else if (tx - 1 > 19.5 * area + 1.7) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 1));
-            }
-            else if (tx + 1 < 19.5 * area + 1.7) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, -1));
-            }
-    
+            } else if (tx - 2 > 19.5 * area + 1.7) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0.5));
+            } else if (tx + 2 < 19.5 * area + 1.7) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, -0.5));
+            } 
         }
     }
     @Override
