@@ -36,7 +36,7 @@ public class AutoScore extends CommandBase
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
         }
-        if (m_extendoSubsystem.getIntakeWrist() >= -38) {
+        if (m_extendoSubsystem.getIntakeWrist() >= -42) {
             m_extendoSubsystem.Wrist(-0.2, 0);
         } else {
             m_extendoSubsystem.Wrist(0, 0);

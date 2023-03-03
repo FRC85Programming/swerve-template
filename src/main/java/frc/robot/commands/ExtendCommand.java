@@ -66,6 +66,20 @@ public class ExtendCommand extends CommandBase {
     }
 
     @Override
+    public boolean isFinished(){
+        double pivotAngle = m_PivotAngle.getAsDouble();
+        double intakeWrist = m_intakeWrist.getAsDouble();
+        double extendPosition = m_ExtendPosition.getAsDouble();
+
+        return m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
+                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake 
+                && m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
+                && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend
+                && m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
+                && m_ExtendoSubsystem.getPivotAngle() < pivotAngle + tolerancePivot;
+    }
+
+    @Override
     public void end(boolean interrupted) {
         m_ExtendoSubsystem.ExtendTelescope(0.0, 0.0);
         m_ExtendoSubsystem.Pivot(0.0, 0.0);

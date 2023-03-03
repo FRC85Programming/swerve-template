@@ -57,8 +57,11 @@ public class RobotContainer {
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
-    m_chooser.setDefaultOption("Manual OnePlace",
-        new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_chooser.setDefaultOption("None", new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+    m_chooser.addOption("Manual OnePlace",
+    new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_chooser.addOption("Balance Auto", new BalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem));
+    m_chooser.addOption("Score and Engage", new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem));
     m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
     m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
     m_chooser.addOption("Manual OnePlace",
@@ -106,7 +109,7 @@ public class RobotContainer {
         .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
     new Trigger(m_controller::getStartButton)
         .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getBButton)
+    new Trigger(() -> m_controller.getPOV() == 180)
         .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
@@ -151,19 +154,19 @@ public class RobotContainer {
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
     // cube pick up position
-    // new Trigger(m_operatorController::getAButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 47.0, () -> 30.0, () -> -23.0));
+    new Trigger(m_operatorController::getAButton)
+    .whileTrue(new ExtendCommand(m_extendoSubsystem, () ->
+    47.0, () -> 30.0, () -> -23.0));
 
     // cone pick up position (Tipped)
-    // new Trigger(m_operatorController::getXButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 52.0, () -> 34.0, () -> -44.0));
+    new Trigger(m_operatorController::getXButton)
+    .whileTrue(new ExtendCommand(m_extendoSubsystem, () ->
+    52.0, () -> 34.0, () -> -44.0));
 
     // cone pick up position (Upright)
-    // new Trigger(m_controller::getYButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 23.0, () -> 69.0, () -> -60.5));
+    new Trigger(m_controller::getYButton)
+    .whileTrue(new ExtendCommand(m_extendoSubsystem, () ->
+    23.0, () -> 69.0, () -> -60.5));
   }
 
   /**

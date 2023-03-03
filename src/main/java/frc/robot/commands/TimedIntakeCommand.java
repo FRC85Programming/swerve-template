@@ -32,7 +32,7 @@ public class TimedIntakeCommand extends CommandBase
             m_timer.start();
             timerStarted = true;
         }
-        m_intakeSubsystem.setRollerSpeed(() -> 1);
+        m_intakeSubsystem.setRollerSpeed(() -> 0.8);
 
     }
     @Override
