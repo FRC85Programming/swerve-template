@@ -57,7 +57,6 @@ public class RobotContainer {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
-  private final Field2d m_field = new Field2d();
   private final VisionTracking vision = new VisionTracking();
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   HolonomicDriveController controller = new HolonomicDriveController(
@@ -204,7 +203,7 @@ public class RobotContainer {
       TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
         Constants.kMaxSpeedMetersPerSecond,
         Constants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.kDriveKinematics);
+                .setKinematics(Constants.kKinematics);
       
       // This sets the trajectory points that will be used as a backup if it can not load the original
       Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
@@ -244,15 +243,13 @@ public class RobotContainer {
       SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
           trajectory,
           m_drivetrainSubsystem::getPose,
-          Constants.kDriveKinematics,
+          Constants.kKinematics,
           xController,
           yController,
           thetaController,
           m_drivetrainSubsystem::setModuleStates,
           m_drivetrainSubsystem);
 
-      SmartDashboard.putData("Field", m_field);
-      m_field.setRobotPose(m_drivetrainSubsystem.getOdo().getPoseMeters());
 
       return new SequentialCommandGroup(
                   new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
