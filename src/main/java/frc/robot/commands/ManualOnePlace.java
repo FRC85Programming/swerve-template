@@ -9,7 +9,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
     private final ExtendoSubsystem m_extendoSubsystem;
     private final IntakeSubsystem m_intakeSubsystem;
 
-    public ManualOnePlace(DrivetrainSubsystem driveTrain, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
+    public ManualOnePlace(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         m_drivetrainSubsystem = driveTrain;
         m_extendoSubsystem = extendo;
         m_intakeSubsystem = intake;
@@ -18,7 +18,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
             new AutoScore(driveTrain, extendo),
             new TimedIntakeCommand(intake, false),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, 0, -1.0, 0.0, 4.95, 0)
+            new DriveDistance(driveTrain, vision, 0, -1.0, 0.0, 4.95)
         );
     }
 }

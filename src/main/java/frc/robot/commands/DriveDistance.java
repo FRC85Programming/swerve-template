@@ -2,10 +2,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionTracking;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,27 +33,38 @@ public class DriveDistance extends CommandBase
     private Boolean intakeOn;
     private Boolean turnDone;
     public Boolean driveDone;
+    public Boolean track;
+    public Boolean trackDone;
+    private static int instanceCount = 0;
+    private final VisionTracking vision;
     Timer m_timer;
     Boolean timerStarted = false;
-    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget) {
-        this(driveTrain, speedY, speedX, rotateSpeed, driveTarget, 0);
+    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget) {
+        this(driveTrain, vision, speedY, speedX, rotateSpeed, driveTarget, 0, false);
     }
-    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget) {
-        // Sets up variables for each subsystem
+    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
+        this.track = track;
+        this.vision = vision;
         wheelSpeedX = speedX;
         wheelSpeedY = speedY;
         turnSpeed = rotateSpeed;
         encoderTarget = driveTarget;
+        this.angleTarget = angleTarget;
+        init();
+        addRequirements(m_drivetrainSubsystem);
+    }
+
+    private void init() {
+        // Sets up variables for each subsystem
         constantCalc = false;
         angleCalc = false;
-        this.angleTarget = angleTarget;
         turnDone = false;
         driveDone = false;
+        instanceCount++;
         m_timer = new Timer();
-
-        addRequirements(m_drivetrainSubsystem);
+        SmartDashboard.putNumber("instance count", instanceCount);
     }
 
     @Override
@@ -91,13 +104,41 @@ public class DriveDistance extends CommandBase
         SmartDashboard.putNumber("Turn Speed", turnSpeed);
         SmartDashboard.putNumber("targetAngle", targetAngle);
         if (wheelSpeedX > 0) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.3 + 0.3, 0, turnSpeed));
+            if (m_timer.get() * 0.5 + 0.5 > wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
+            } 
+            if (m_timer.get() * 0.5 + 0.5 < wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.5 + 0.5, 0, turnSpeed));
+            } 
         }
         if (wheelSpeedX < 0) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.3 - 0.3, 0, turnSpeed));
+            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.5 - 0.5, 0, turnSpeed));
+            } 
+            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
+            } 
         }
-        SmartDashboard.putNumber("timer", m_timer.get());
-        SmartDashboard.putNumber("Rotation", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+         if (wheelSpeedY > 0) {
+            if (m_timer.get() * 0.5 - 0.5 > wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+            } 
+            if (m_timer.get() * 0.5 - 0.5 < wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
+            } 
+        }
+        if (wheelSpeedY < 0) {
+            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
+            } 
+            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+            }
+        }
+        if (wheelSpeedX == 0 && wheelSpeedY == 0) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
+        } 
+    
     }
     private boolean driveFinished() {
         return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
@@ -115,10 +156,7 @@ public class DriveDistance extends CommandBase
     public void end (boolean interrupted)  {
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
-        constantCalc = false;
-        angleCalc = false;
-        turnDone = false;
-        driveDone = false;
         m_timer.reset();
+        init();
     }
 }

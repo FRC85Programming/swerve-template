@@ -28,129 +28,92 @@ public class Follow extends CommandBase
 {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     public HolonomicDriveController controller;
-    public ProfiledPIDController turningController;
     public SwerveModule m_frontLeftModule;
     public SwerveModule m_backLeftModule;
     public SwerveModule m_frontRightModule;
     public SwerveModule m_backRightModule;
-    private final SwerveDriveKinematics m_kinematics;
+    public TrajectoryConfig trajectoryConfig;
+    public SwerveDriveKinematics kinematics;
+    double forward;
+    double sideways;
+    double angular;
+    ProfiledPIDController turningController = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(6.28, 3.14));
+    PIDController xController = new PIDController(1, 0, 0);
+    PIDController yController = new PIDController(1, 0, 0);
+    Trajectory trajectory;
+    //private final SwerveDriveKinematics m_kinematics;
 
-    public Follow(DrivetrainSubsystem driveTrain)
-    {
-        HolonomicDriveController controller = new HolonomicDriveController(
-            new PIDController(0, 0, 0), new PIDController(1, 0, 0),
-            new ProfiledPIDController(0, 0, 0,
-                new TrapezoidProfile.Constraints(60, 60)));
-        ProfiledPIDController turningController = new ProfiledPIDController(1, 0, 0,
-        new TrapezoidProfile.Constraints(6.28, 3.14));
-        m_kinematics = new SwerveDriveKinematics(
-          // Front left
-          new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
-          // Front right
-          new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS*-1 / 2.0),
-          // Back left
-          new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS*-1 / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
-          // Back right
-          new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS*-1 / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS*-1 / 2.0)
-        );
+    public Follow(DrivetrainSubsystem driveTrain, SwerveDriveKinematics kinematics) {
+
+
+        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+                Constants.kMaxSpeedMetersPerSecond,
+                Constants.kMaxAccelerationMetersPerSecondSquared)
+                        .setKinematics(Constants.kDriveKinematics);
+        var controller = new HolonomicDriveController(xController, yController, turningController);
+
         m_drivetrainSubsystem = driveTrain;
         m_backRightModule = m_drivetrainSubsystem.getBackRight();
         m_backLeftModule = m_drivetrainSubsystem.getBackLeft();
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
         m_frontRightModule = m_drivetrainSubsystem.getFrontRight();
         addRequirements(m_drivetrainSubsystem);
+
+        SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+            // Front left
+            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            // Front right
+            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS*-1 / 2.0),
+            // Back left
+            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS*-1 / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            // Back right
+            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS*-1 / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS*-1 / 2.0)
+    );
+
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(
+                    new Translation2d(1, 0),
+                    new Translation2d(1, -1)),
+            new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
+            trajectoryConfig);
+        
     }
 
     @Override
-    public void execute()
-    {   
-        // Resets wheels so they don't fight each other
-        //m_drivetrainSubsystem.zeroWheels();
-        // Configures kinematics so the driving is accurate 
-        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-        Constants.kMaxSpeedMetersPerSecond,
-        Constants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.kDriveKinematics);
-        
-        // This sets the trajectory points that will be used as a backup if it can not load the original
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(
-            //Go to these locations:
-            new Translation2d(0, 1),
-            new Translation2d(1, -1)),
-            new Pose2d(2, -1, Rotation2d.fromDegrees /*spin 180*/  (0)),
-        trajectoryConfig);
-
+    public void execute() {
         // Sample the trajectory at 3.4 seconds from the beginning.
-        /*Trajectory.State goal = trajectory.sample(3.4);
+        Trajectory.State goal = trajectory.sample(2);
 
         // Get the adjusted speeds. Here, we want the robot to be facing
         // 70 degrees (in the field-relative coordinate system).
         ChassisSpeeds adjustedSpeeds = controller.calculate(
-            m_drivetrainSubsystem.getPose(), goal, Rotation2d.fromDegrees(0));
-
-        SwerveModuleState[] moduleStates = Constants.kDriveKinematics.toSwerveModuleStates(adjustedSpeeds);
-
-            SwerveModuleState frontLeft = moduleStates[0];
-            SwerveModuleState frontRight = moduleStates[1];
-            SwerveModuleState backLeft = moduleStates[2];
-            SwerveModuleState backRight = moduleStates[3];
-
-        frontLeft = SwerveModuleState.optimize(frontLeft, m_drivetrainSubsystem.getState(m_frontLeftModule).angle);
-        m_frontLeftModule.set(frontLeft.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningController.calculate(m_drivetrainSubsystem.getTurningPosition(m_frontLeftModule), frontLeft.angle.getRadians()));
-        frontRight = SwerveModuleState.optimize(frontRight, m_drivetrainSubsystem.getState(m_frontRightModule).angle);
-        m_frontRightModule.set(frontRight.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningController.calculate(m_drivetrainSubsystem.getTurningPosition(m_frontRightModule), frontRight.angle.getRadians()));
-        backRight = SwerveModuleState.optimize(backRight, m_drivetrainSubsystem.getState(m_backRightModule).angle);
-        m_backRightModule.set(backRight.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningController.calculate(m_drivetrainSubsystem.getTurningPosition(m_backRightModule), backRight.angle.getRadians()));
-        backLeft = SwerveModuleState.optimize(backLeft, m_drivetrainSubsystem.getState(m_backLeftModule).angle);
-        m_backLeftModule.set(backLeft.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningController.calculate(m_drivetrainSubsystem.getTurningPosition(m_backLeftModule), backLeft.angle.getRadians()));
-        */
-    
+        m_drivetrainSubsystem.getPose(), goal, Rotation2d.fromDegrees(0));   
         
-        // Setting up trajectory variables
-        /*String trajectoryJSON = "ou
-        output/" + auto + ".wpilib.json";
-        Trajectory temp;\
-        //Load command and select backup if needed
-        try{
-            if(auto.startsWith("PW_")){
-                Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-                temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            }else{
-                temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
-            }
-        }catch(Exception e){
-            DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
-            temp = trajectory;
-        }*/
-        // Sets up PID to stay on the trajectory
-        PIDController xController = new PIDController(Constants.kPXController, 0, 0);
-        PIDController yController = new PIDController(Constants.kPYController, 0, 0);
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-            Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(adjustedSpeeds);
 
-        // This is what actually drives the bot. It is run in a SequentialCommandGroup
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-            trajectory,
-            m_drivetrainSubsystem::getPose,
-            Constants.kDriveKinematics,
-            xController,
-            yController,
-            thetaController,
-            m_drivetrainSubsystem::setModuleStates,
-            m_drivetrainSubsystem);
+        SwerveModuleState frontLeftState = moduleStates[0];
+        SwerveModuleState frontRightState = moduleStates[1];
+        SwerveModuleState backLeftState = moduleStates[2];
+        SwerveModuleState backRightState = moduleStates[3];
 
-        new SequentialCommandGroup(
-                new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-                swerveControllerCommand,
-                new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+        ChassisSpeeds driveSpeed = kinematics.toChassisSpeeds(frontLeftState, frontRightState, backLeftState, backRightState);
+
+        double forward = driveSpeed.vxMetersPerSecond;
+        double sideways = driveSpeed.vyMetersPerSecond;
+        double angular = driveSpeed.omegaRadiansPerSecond;
+
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(forward, sideways, angular));
     }
 
     @Override
-    public boolean isFinished(){
-        return false;
+    public boolean isFinished() {
+        return forward == 0 || sideways == 0 || angular == 0;
     }
 
+    @Override
+    public void end (boolean interrupted)  {
+        // Stops the robot and allows the target distance to be calculated again
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
+    }
 }

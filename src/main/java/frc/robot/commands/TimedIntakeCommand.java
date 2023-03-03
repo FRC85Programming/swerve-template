@@ -30,11 +30,11 @@ public class TimedIntakeCommand extends CommandBase
             m_timer.start();
             timerStarted = true;
         }
-        if (this.intakeMode) {
+        /*if (this.intakeMode) {
             m_intakeSubsystem.setRollerSpeed(() -> -0.8);
         } else {
             m_intakeSubsystem.setRollerSpeed(() -> 0.6);
-        }
+        }*/
 
     }
     @Override

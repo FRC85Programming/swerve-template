@@ -75,22 +75,21 @@ public final class Constants {
     public static final String Comm_L = "Comm_L";
 
       // These values MUST be configured for our robot. Do not run it without finding them
-      public static final double kMaxAccelerationMetersPerSecondSquared = 2;
-      public static final double kWheelBase = Units.inchesToMeters(22);
+      public static final double kMaxAccelerationMetersPerSecondSquared = 3;
       public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-                  new Translation2d(kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                  new Translation2d(kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                  new Translation2d(-kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                  new Translation2d(-kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2));
-;
-      public static final double kPXController = 0.1;
-      public static final double kPYController = 0.1;
-      public static final double kPThetaController = 0.1;
+                  new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2),
+                  new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2),
+                  new Translation2d(-DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
+                  new Translation2d(-DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+
+      public static final double kPXController = 1;
+      public static final double kPYController = 1;
+      public static final double kPThetaController = 1;
       public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0 * SdsModuleConfigurations.MK4_L1.getDriveReduction() * SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;;
       public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
       public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 2;
-      public static final double kPTurning = 0.1;
+      public static final double kPTurning = 1;
       public static final double kMaxAngularSpeedRadiansPerSecond = //
               Constants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
       public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //

@@ -525,6 +525,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return yLevel;
   }
 
+  public SwerveDriveOdometry getOdo() {
+    return odometry;
+  }
+
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
