@@ -53,6 +53,7 @@ import frc.robot.commands.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final VisionTracking m_visionTracking = new VisionTracking();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
@@ -150,6 +151,8 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
 
+    new Trigger(m_operatorController::getAButton)
+        .whileTrue(new LineUpAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
     /*new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));*/
       new Trigger(m_controller::getLeftBumper)
@@ -170,6 +173,7 @@ public class RobotContainer {
     // new Trigger(m_controller::getYButton)
     //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -186,9 +190,7 @@ public class RobotContainer {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
       return new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this);
-    } else if (autoMode.equals("CS")) {
-      return new CS(m_drivetrainSubsystem, this);
-    } //else if (autoMode.equals("Normal Follow")) {
+    }//else if (autoMode.equals("Normal Follow")) {
      //return new Follow(m_drivetrainSubsystem);
     /* }*/ else if (autoMode.equals("Score and Pickup")) {
       return new ScoreAndPickup(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
@@ -259,6 +261,12 @@ public class RobotContainer {
 
   }
 
+  /**
+   * 
+   * @param value
+   * @param deadband
+   * @return
+   */
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.00) {
@@ -271,6 +279,11 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * 
+   * @param value
+   * @return
+   */
   private double getWristAxis() {
     if (m_operatorController.getRightBumper()) {
       return 1;
@@ -291,6 +304,10 @@ public class RobotContainer {
     return value;
   }
 
+  /**
+   * 
+   * @return the controller object
+   */
   public XboxController getController() {
     return m_controller;
   }

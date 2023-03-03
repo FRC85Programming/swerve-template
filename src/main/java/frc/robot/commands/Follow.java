@@ -49,7 +49,7 @@ public class Follow extends CommandBase
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                 Constants.kMaxSpeedMetersPerSecond,
                 Constants.kMaxAccelerationMetersPerSecondSquared)
-                        .setKinematics(Constants.kDriveKinematics);
+                        .setKinematics(Constants.kKinematics);
         var controller = new HolonomicDriveController(xController, yController, turningController);
 
         m_drivetrainSubsystem = driveTrain;
