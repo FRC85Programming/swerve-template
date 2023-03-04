@@ -56,6 +56,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.ZeroGyroscopeCommand;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -207,6 +208,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     turningPidController.enableContinuousInput(-Math.PI, Math.PI);
 
     m_timer = new Timer();
+
+    this.zeroGyroscope(0);
 
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
