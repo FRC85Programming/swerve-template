@@ -19,9 +19,9 @@ public class BalanceAuto extends SequentialCommandGroup{
                 new ZeroGyroscopeCommand(driveTrain),
                 new ZeroPitchRollCommand(driveTrain),
                 new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-                new DriveDistance(driveTrain, 0, -0.8, 0, 5),
+                new DriveDistance(driveTrain, 0, -0.85, 0, 4.9),
                 new WaitCommand(0.3),
-                new DriveDistance(driveTrain, 0, 0.8, 0, -3),
+                new DriveDistance(driveTrain, 0, 0.85, 0, -3),
                 new AutoLevelPIDCommand(driveTrain),
                 new BrakeWheelsCommand(driveTrain)
             );
