@@ -14,7 +14,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
         m_extendoSubsystem = extendo;
         m_intakeSubsystem = intake;
         addCommands(  
-            //new zeroWheels(driveTrain),
+            new ZeroGyroscopeCommand(driveTrain, 180),
             new AutoScore(driveTrain, extendo, intake),
             new TimedIntakeCommand(driveTrain, extendo, intake),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
