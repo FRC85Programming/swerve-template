@@ -142,16 +142,16 @@ public class RobotContainer {
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
     // cube pick up position
-    new Trigger(m_controller::getAButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
+    // new Trigger(m_controller::getAButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
 
     // cone pick up position (Tipped)
-    new Trigger(m_controller::getXButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
+    // new Trigger(m_controller::getXButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
 
-    // cone pick up position (Upright)
-    new Trigger(m_controller::getYButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // // cone pick up position (Upright)
+    // new Trigger(m_controller::getYButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
   }
 
   /**
