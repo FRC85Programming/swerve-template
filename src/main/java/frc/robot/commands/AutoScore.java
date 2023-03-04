@@ -32,7 +32,7 @@ public class AutoScore extends CommandBase
             m_extendoSubsystem.Pivot(0, 0);
         }
         if (m_extendoSubsystem.getExtendPosition() <= 60) {
-            m_extendoSubsystem.ExtendTelescope(0.2, 0);
+            m_extendoSubsystem.ExtendTelescope(0.25, 0);
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
         }

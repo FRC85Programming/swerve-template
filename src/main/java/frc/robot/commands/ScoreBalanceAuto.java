@@ -14,12 +14,12 @@ public class ScoreBalanceAuto extends SequentialCommandGroup {
         m_intakeSubsystem = intake;
 
         addCommands(
+            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new ZeroGyroscopeCommand(driveTrain, 180),
             new ZeroPitchRollCommand(driveTrain),
             new AutoScore(driveTrain, extendo, intake),
             new TimedIntakeCommand(driveTrain, extendo, intake),
-            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, 0, -0.85, 0, 2),
+            new DriveAndHomeCommand(driveTrain, extendo, intake),
             new AutoLevelPIDCommand(driveTrain)
         );
     }
