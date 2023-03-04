@@ -56,7 +56,7 @@ public class RobotContainer {
     m_extendoSubsystem.register();
     m_IntakeSubsystem.register();
 
-    SmartDashboard.putString("BobDashAutoMode", "Balance");
+    SmartDashboard.putString("BobDashAutoMode", "None");
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
