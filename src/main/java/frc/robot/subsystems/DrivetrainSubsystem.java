@@ -226,12 +226,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double rollOffset;
   
 
-  public void zeroGyroscope() {
-    m_pigeon.setYaw(0.0);
+  public void zeroGyroscope(double angle) {
+    m_pigeon.setYaw(angle);
     odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getCompassHeading()), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
+    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(angle)));
   }
 
   // public void resetOdometry() {
@@ -460,7 +460,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_timer.start();
       timerStart = true;
     }
-    if (m_timer.get() <= 0.6) {
+    if (m_timer.get() <= 0.5) {
       double kp = SmartDashboard.getNumber("kp", 0);
       double ki = SmartDashboard.getNumber("ki", 0);
       double kd = SmartDashboard.getNumber("kd", 0);

@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class ScoreBalanceAuto extends SequentialCommandGroup {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
@@ -15,15 +14,13 @@ public class ScoreBalanceAuto extends SequentialCommandGroup {
         m_intakeSubsystem = intake;
 
         addCommands(
-            new ZeroGyroscopeCommand(driveTrain),
+            new ZeroGyroscopeCommand(driveTrain, 180),
             new ZeroPitchRollCommand(driveTrain),
             new AutoScore(driveTrain, extendo, intake),
             new TimedIntakeCommand(driveTrain, extendo, intake),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, 0, -0.8, 0, 5.2),
-            new WaitCommand(0.3),
-            new DriveDistance(driveTrain, 0.8, 0, 0, 0.5),
-            new AutoLevelCommand(driveTrain)
+            new DriveDistance(driveTrain, 0, -0.85, 0, 2),
+            new AutoLevelPIDCommand(driveTrain)
         );
     }
 }

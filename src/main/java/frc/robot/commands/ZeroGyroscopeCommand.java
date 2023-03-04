@@ -6,15 +6,17 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class ZeroGyroscopeCommand extends CommandBase
 {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public ZeroGyroscopeCommand(DrivetrainSubsystem driveTrain)
+    private final double m_angle;
+    public ZeroGyroscopeCommand(DrivetrainSubsystem driveTrain, double angle)
     {
         this.m_drivetrainSubsystem = driveTrain;
+        this.m_angle = angle;
     }
 
     @Override
     public void execute()
     {
-        m_drivetrainSubsystem.zeroGyroscope();
+        m_drivetrainSubsystem.zeroGyroscope(m_angle);
     }
     @Override
 

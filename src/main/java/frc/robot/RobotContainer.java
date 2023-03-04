@@ -93,7 +93,7 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Trigger(m_controller::getBackButton)
         // No requirements because we don't need to interrupt anything
-        .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+        .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem, 0));
     new Trigger(m_controller::getStartButton)
         .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
     new Trigger(() -> m_controller.getPOV() == 180)
