@@ -57,17 +57,16 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210);
 
-    public static final int EXTENDO_EXTEND_MOTOR = 51;
-    public static final int EXTENDO_ARM_PIVOT_MOTOR = 52;
-    public static final int EXTENDO_ARM_PIVOT_MOTOR_TWO = 55;
-    public static final int PIVOT_LOCK_SERVO = 0;
+    public static final int EXTEND_MOTOR = 51;
+    public static final int PIVOT_MOTOR = 52;
+    public static final int PIVOT_MOTOR_TWO = 55;
 
     public static final int INTAKE_ROLLERS_MOTOR = 54;
     public static final int INTAKE_PIVOT_MOTOR = 53;
 
-    public static final int INTAKE_PIVOT_LIMIT_SWITCH = 2;
-    public static final int EXTENDO_EXTEND_LIMIT_SWITCH = 1;
-    public static final int EXTENDO_PIVOT_LIMIT_SWITCH = 0;
+    public static final int WRIST_LIMIT_SWITCH = 2;
+    public static final int EXTEND_LIMIT_SWITCH = 1;
+    public static final int PIVOT_LIMIT_SWITCH = 0;
 
     public static final String Backup = "Backup";
     public static final String CS = "CS";
