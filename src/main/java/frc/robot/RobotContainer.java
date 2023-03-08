@@ -31,8 +31,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -68,14 +66,10 @@ public class RobotContainer {
    */
   public RobotContainer() {
     m_drivetrainSubsystem.register();
-    m_chooser.setDefaultOption("trajectory", getAutonomousCommand());
-    m_chooser.addOption("Manual Mobility", new ManualMobility(m_drivetrainSubsystem, this));
-    m_chooser.addOption("CS", new CS(m_drivetrainSubsystem, this));
-    m_chooser.addOption("Manual OnePlace", new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem));
-    m_chooser.addOption("Normal Follow", getAutonomousCommand());
-    SmartDashboard.putData(m_chooser);
     m_extendoSubsystem.register();
     m_IntakeSubsystem.register();
+
+    SmartDashboard.putString("BobDashAutoMode", "None");
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -112,10 +106,10 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Trigger(m_controller::getBackButton)
         // No requirements because we don't need to interrupt anything
-        .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem));
+        .onTrue(new ZeroGyroscopeCommand(m_drivetrainSubsystem, 0));
     new Trigger(m_controller::getStartButton)
         .onTrue(new ZeroPitchRollCommand(m_drivetrainSubsystem));
-    new Trigger(m_controller::getBButton)
+    new Trigger(() -> m_controller.getPOV() == 180)
         .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
     // tracks april tag using limelight
@@ -144,8 +138,9 @@ public class RobotContainer {
     new Trigger(() -> m_controller.getPOV() == 270)
         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
-    new Trigger(m_operatorController::getBButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // new Trigger(m_operatorController::getBButton)
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
+    // -> -60.5));
 
     new Trigger(m_controller::getXButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
@@ -153,20 +148,23 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
 
+    new Trigger(m_controller::getLeftBumper)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+
+    new Trigger(m_operatorController::getAButton)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+
     // cube pick up position
-    // new Trigger(m_operatorController::getAButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 47.0, () -> 30.0, () -> -23.0));
+    // new Trigger(m_controller::getAButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
 
     // cone pick up position (Tipped)
-    // new Trigger(m_operatorController::getXButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 52.0, () -> 34.0, () -> -44.0));
+    // new Trigger(m_controller::getXButton)
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
 
-    // cone pick up position (Upright)
+    // // cone pick up position (Upright)
     // new Trigger(m_controller::getYButton)
-    // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
-    // 23.0, () -> 69.0, () -> -60.5));
+    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
   }
 
   /**
@@ -175,7 +173,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAuto() {
-    return m_chooser.getSelected();
+    String autoMode = SmartDashboard.getString("BobDashAutoMode", "None");
+    if (autoMode.equals("Manual OnePlace")) {
+      return new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Balance")) { 
+      return new BalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Score and Engage")) {
+      return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Manual Mobility")) {
+      return new ManualMobility(m_drivetrainSubsystem, this);
+    } else if (autoMode.equals("CS")) {
+      return new CS(m_drivetrainSubsystem, this);
+    } else if (autoMode.equals("Normal Follow")) {
+     return getAutonomousCommand();
+    } else {
+      return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);
+    } 
   }
   public Command getAutonomousCommand() {
     return null;
@@ -222,5 +235,4 @@ public class RobotContainer {
     m_drivetrainSubsystem.checkCalibration();
   }
 
-  
 }
