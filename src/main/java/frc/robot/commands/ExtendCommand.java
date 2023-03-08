@@ -2,11 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.sensors.Pigeon2;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class ExtendCommand extends CommandBase {
     private final ExtendoSubsystem m_ExtendoSubsystem;
@@ -66,13 +63,13 @@ public class ExtendCommand extends CommandBase {
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         double pivotAngle = m_PivotAngle.getAsDouble();
         double intakeWrist = m_intakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
         return m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
-                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake 
+                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceIntake
                 && m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend
                 && m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot

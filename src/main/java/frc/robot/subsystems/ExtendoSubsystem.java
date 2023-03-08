@@ -29,7 +29,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
-    private  double maxPivot = 87;
+    private double maxPivot = 87;
 
     public ExtendoSubsystem() {
         extendMotor.setIdleMode(IdleMode.kBrake);
@@ -43,11 +43,13 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Extendo", 1);
-        double ki = SmartDashboard.getNumber("ki Extendo", 0);
-        double kd = SmartDashboard.getNumber("kd Extendo", 0);
-
-        extendoPID.setPID(kp, ki, kd);
+        if (SmartDashboard.getBoolean("Set extend PID", false)) {
+            double kp = SmartDashboard.getNumber("kp Extendo", 1);
+            double ki = SmartDashboard.getNumber("ki Extendo", 0);
+            double kd = SmartDashboard.getNumber("kd Extendo", 0);
+            extendoPID.setPID(kp, ki, kd);
+            SmartDashboard.putBoolean("Set extend PID", false);
+        }
 
         if (desiredPosition != 0) {
             speed = extendoPID.calculate(extendMotor.getEncoder().getPosition(), desiredPosition);
@@ -73,11 +75,13 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public void Pivot(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Pivot", 1);
-        double ki = SmartDashboard.getNumber("ki Pivot", 0);
-        double kd = SmartDashboard.getNumber("kd Pivot", 0);
-
-        pivotPID.setPID(kp, ki, kd);
+        if (SmartDashboard.getBoolean("Set pivot PID", false)) {
+            double kp = SmartDashboard.getNumber("kp Pivot", 1);
+            double ki = SmartDashboard.getNumber("ki Pivot", 0);
+            double kd = SmartDashboard.getNumber("kd Pivot", 0);
+            pivotPID.setPID(kp, ki, kd);
+            SmartDashboard.putBoolean("Set pivot PID", false);
+        }
 
         if (desiredPosition != 0) {
             speed = pivotPID.calculate(pivotMotor.getEncoder().getPosition(), desiredPosition);
@@ -103,7 +107,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             } else if (pivotMotor.getEncoder().getPosition() < 20 && WristMotor.getEncoder().getPosition() < -15) {
                 pivotMotor.stopMotor();
                 pivotMotorTwo.stopMotor();
-            } else if (pivotMotor.getEncoder().getPosition() < 7){
+            } else if (pivotMotor.getEncoder().getPosition() < 7) {
                 pivotMotor.set(speed * 0.2);
                 pivotMotor.set(speed * 0.2);
             } else {
@@ -125,13 +129,15 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public void Wrist(double speed, double desiredPosition) {
-        double kp = SmartDashboard.getNumber("kp Intake", 1);
-        double ki = SmartDashboard.getNumber("ki Intake", 0);
-        double kd = SmartDashboard.getNumber("kd Intake", 0);
+        if (SmartDashboard.getBoolean("Set wrist PID", false)) {
+            double kp = SmartDashboard.getNumber("kp Intake", 1);
+            double ki = SmartDashboard.getNumber("ki Intake", 0);
+            double kd = SmartDashboard.getNumber("kd Intake", 0);
+            WristPID.setPID(kp, ki, kd);
+            SmartDashboard.putBoolean("Set wrist PID", false);
+        }
 
-        WristPID.setPID(kp, ki, kd);
-
-        if (desiredPosition != 0){
+        if (desiredPosition != 0) {
             speed = WristPID.calculate(WristMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed < 0) {
@@ -144,7 +150,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             if (WristLimitSwitch.get()) {
                 WristMotor.getEncoder().setPosition(0);
                 WristMotor.stopMotor();
-            } else if (WristMotor.getEncoder().getPosition() > -7){
+            } else if (WristMotor.getEncoder().getPosition() > -7) {
                 WristMotor.set(speed * 0.2);
             } else {
                 WristMotor.set(speed * WristSpeedScale);
@@ -153,10 +159,10 @@ public class ExtendoSubsystem extends SubsystemBase {
             WristMotor.stopMotor();
         }
     }
-    public double getIntakeWrist(){
+
+    public double getIntakeWrist() {
         return WristMotor.getEncoder().getPosition();
     }
-    
 
     @Override
     public void periodic() {

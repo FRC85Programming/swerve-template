@@ -3,23 +3,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class ZeroPitchRollCommand extends CommandBase 
-{
+public class ZeroPitchRollCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    public ZeroPitchRollCommand(DrivetrainSubsystem driveTrain)
-    {
+
+    public ZeroPitchRollCommand(DrivetrainSubsystem driveTrain) {
         this.m_drivetrainSubsystem = driveTrain;
     }
 
     @Override
-    public void execute()
-    {
+    public void execute() {
         m_drivetrainSubsystem.zeroPitchRoll();
     }
 
     @Override
-    public boolean isFinished()
-    {
+    public boolean isFinished() {
         return true;
     }
 }

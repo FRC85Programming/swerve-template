@@ -12,11 +12,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <>It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -25,38 +28,38 @@ public final class Constants {
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = .4953; 
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = .4953;
     /**
      * The front-to-back distance between the drivetrain wheels.
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = .4953; 
+    public static final double DRIVETRAIN_WHEELBASE_METERS = .4953;
 
     public static final double DEFAULT_ANGLE_SCALE_FACTOR = 0.9;
 
     public static final int DRIVETRAIN_PIGEON_ID = 41;
     public static final int PDP_ID = 58; // PDP Id
 
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1; 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2; 
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3; 
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1;
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2;
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3;
 
     public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(224);
 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 12; 
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 13; 
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 12;
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 13;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(126);
 
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21; 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 22; 
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 23; 
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21;
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 22;
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 23;
     public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.08);
 
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 31;
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32; 
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33; 
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33;
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210);
 
     public static final int EXTEND_MOTOR = 51;
@@ -78,19 +81,22 @@ public final class Constants {
     public static final String Comm_R = "Comm_R";
     public static final String Comm_L = "Comm_L";
 
-        // These values MUST be configured for our robot. Do not run it without finding them
+    // These values MUST be configured for our robot. Do not run it without finding
+    // them
     public static final double kMaxAccelerationMetersPerSecondSquared = 30;
     public static final double kWheelBase = Units.inchesToMeters(22);
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-                new Translation2d(kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                new Translation2d(kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                new Translation2d(-kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
-                new Translation2d(-kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2));
+            new Translation2d(kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
+            new Translation2d(kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2),
+            new Translation2d(-kWheelBase / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2),
+            new Translation2d(-kWheelBase / 2, DRIVETRAIN_TRACKWIDTH_METERS / 2));
 
     public static final double kPXController = 5;
     public static final double kPYController = 5;
     public static final double kPThetaController = 30;
-    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0 * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;;
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0
+            * SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
+            * Math.PI;;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
     public static final double kMaxSpeedMetersPerSecond = Constants.kPhysicalMaxSpeedMetersPerSecond / 4;
@@ -98,7 +104,7 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = //
             Constants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
-    new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond,
-            kMaxAngularAccelerationRadiansPerSecondSquared);
+            new TrapezoidProfile.Constraints(
+                    kMaxAngularSpeedRadiansPerSecond,
+                    kMaxAngularAccelerationRadiansPerSecondSquared);
 }

@@ -6,14 +6,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class BalanceAuto extends SequentialCommandGroup{
-        private final DrivetrainSubsystem m_drivetrainSubsystem;
-        private final ExtendoSubsystem m_extendoSubsystem;
-        private final IntakeSubsystem m_intakeSubsystem;
     
         public BalanceAuto(DrivetrainSubsystem driveTrain, ExtendoSubsystem extendo, IntakeSubsystem intake) {
-            m_drivetrainSubsystem = driveTrain;
-            m_extendoSubsystem = extendo;
-            m_intakeSubsystem = intake;
             SmartDashboard.putBoolean("BalanceAuto started", true);
             addCommands(
                 new ZeroGyroscopeCommand(driveTrain, 180),

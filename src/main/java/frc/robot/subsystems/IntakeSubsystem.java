@@ -12,7 +12,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeRollerMotor = new CANSparkMax(Constants.INTAKE_ROLLERS_MOTOR, MotorType.kBrushless);
 
     public IntakeSubsystem() {
-        
+
     }
 
     public void setRollerSpeed(DoubleSupplier speed) {
@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
 
     }
 }
