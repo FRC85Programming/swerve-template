@@ -5,17 +5,18 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.*;
 
 public class One_Comm_L extends SequentialCommandGroup {
-    private final RobotContainer m_robotContainer;
-    private final ExtendoSubsystem m_ExtendoSubsystem;
-    public One_Comm_L(DrivetrainSubsystem driveTrain, RobotContainer robotContainer, double extendPosition, double pivotAngle, double intakeWrist, boolean output,
-    ExtendoSubsystem extendoSubsystem, IntakeSubsystem intakeSubsystem){
-      this.m_robotContainer = robotContainer;
-      this.m_ExtendoSubsystem = extendoSubsystem;
-      addCommands(
+  private final RobotContainer m_robotContainer;
+  private final ExtendoSubsystem m_ExtendoSubsystem;
+
+  public One_Comm_L(DrivetrainSubsystem driveTrain, RobotContainer robotContainer, double extendPosition,
+      double pivotAngle, double intakeWrist, boolean output,
+      ExtendoSubsystem extendoSubsystem, IntakeSubsystem intakeSubsystem) {
+    this.m_robotContainer = robotContainer;
+    this.m_ExtendoSubsystem = extendoSubsystem;
+    addCommands(
         new PivotCommand(m_ExtendoSubsystem),
         new ExtendCommand(m_ExtendoSubsystem, () -> extendPosition, () -> pivotAngle, () -> intakeWrist),
         new IntakeCommand(intakeSubsystem, () -> 0.8),
-        m_robotContainer.getAutonomousCommand()
-      );
-    }
-}  
+        m_robotContainer.getAutonomousCommand());
+  }
+}

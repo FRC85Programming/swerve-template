@@ -4,15 +4,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-public class HalfSpeedCommand extends CommandBase{
+public class HalfSpeedCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
 
-    public HalfSpeedCommand(DrivetrainSubsystem driveTrain){
+    public HalfSpeedCommand(DrivetrainSubsystem driveTrain) {
         this.m_drivetrainSubsystem = driveTrain;
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         m_drivetrainSubsystem.setHalfSpeed(true);
     }
 
