@@ -4,24 +4,13 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.*;
-import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ExtendoSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -32,6 +21,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
+  private PowerDistribution m_pd = new PowerDistribution(Constants.PDP_ID, ModuleType.kCTRE);
+  private double m_maxWristCurrent;
+  private double m_maxIntakeCurrent;
 
   Trajectory trajectory = new Trajectory();
   /**
@@ -116,7 +108,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    double wristCurrent = m_pd.getCurrent(Constants.PDP_PORT_WRIST);
+    double intakeCurrent = m_pd.getCurrent(Constants.PDP_PORT_INTAKE);
+    if (wristCurrent > m_maxWristCurrent) {
+      m_maxWristCurrent = wristCurrent;
+      SmartDashboard.putNumber("Max current wrist", m_maxWristCurrent);
+    }
 
+    if (intakeCurrent > m_maxIntakeCurrent) {
+      m_maxIntakeCurrent = intakeCurrent;
+      SmartDashboard.putNumber("Max current intake", m_maxIntakeCurrent);
+    }
   }
 
   @Override

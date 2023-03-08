@@ -70,6 +70,9 @@ public final class Constants {
     public static final int EXTEND_LIMIT_SWITCH = 1;
     public static final int PIVOT_LIMIT_SWITCH = 0;
 
+    public static final int PDP_PORT_WRIST = 3;
+    public static final int PDP_PORT_INTAKE = 13;
+
     public static final String Backup = "Backup";
     public static final String CS = "CS";
     public static final String Comm_R = "Comm_R";
