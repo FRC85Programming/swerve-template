@@ -4,14 +4,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-public class TrackAprilTagCommand extends CommandBase {
+public class ActionOnTagCommand extends CommandBase {
     // V A R I A B L E S 
     double wheelAngle = 0.0;
     boolean wheelReset = true;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final VisionTracking m_visionTracking;
 
-    public TrackAprilTagCommand(DrivetrainSubsystem driveTrain, VisionTracking visionTracking) {
+    public ActionOnTagCommand(DrivetrainSubsystem driveTrain, VisionTracking visionTracking) {
         // Sets up variables for each subsystem
         m_drivetrainSubsystem = driveTrain;
         m_visionTracking = visionTracking;
@@ -19,7 +19,7 @@ public class TrackAprilTagCommand extends CommandBase {
 
     @Override
     public void execute() {
-        m_visionTracking.setPipeline(0);
+
         if (wheelReset == true) {
             // Stops the robot so that nobody dies
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
@@ -32,8 +32,14 @@ public class TrackAprilTagCommand extends CommandBase {
         double tx = m_visionTracking.getX();
         double area = m_visionTracking.getArea();
         double tagID = m_visionTracking.getTag();
-        if (tagID > -1) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(-1.5 * area + 5, 0.0, -tx * 0.2)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
+        if (tagID == 4){
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 1, 0.0));
+        }
+        if (tagID == 3){
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, -1, 0.0));
+        }
+        if (tagID == 5){
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0.0, 1.0));
         }
     }
 
