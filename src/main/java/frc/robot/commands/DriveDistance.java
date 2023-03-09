@@ -45,9 +45,8 @@ public class DriveDistance extends CommandBase
     @Override
     public void execute() {
         if (turnSpeed != 0) {
-            gyroRotation = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees();
             if (angleCalc == false) {
-                targetAngle = gyroRotation + angleTarget;
+                targetAngle = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() + angleTarget;
                 angleCalc = true;
             }
         }
@@ -82,7 +81,7 @@ public class DriveDistance extends CommandBase
     }
     private boolean turnFinished() {
         
-        return turnSpeed == 0 || (gyroRotation - targetAngle >= -0.03 && gyroRotation - targetAngle <= 0.03);
+        return turnSpeed == 0 || (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() - targetAngle >= -0.03 && m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() - targetAngle <= 0.03);
     }
 
     @Override
