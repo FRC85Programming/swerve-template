@@ -271,11 +271,10 @@ public class RobotContainer {
     return value;
   }
 
-
   /**
    * 
    * @return the controller object
-   *
+   */
   public XboxController getController() {
     return m_controller;
   }
