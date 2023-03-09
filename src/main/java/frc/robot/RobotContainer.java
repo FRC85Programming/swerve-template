@@ -69,7 +69,7 @@ public class RobotContainer {
     m_extendoSubsystem.register();
     m_IntakeSubsystem.register();
 
-    SmartDashboard.putString("BobDashAutoMode", "None");
+    SmartDashboard.putString("BobDashAutoMode", "Normal Follow");
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -173,7 +173,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAuto() {
-    String autoMode = SmartDashboard.getString("BobDashAutoMode", "None");
+    String autoMode = SmartDashboard.getString("BobDashAutoMode", "Normal Follow");
     if (autoMode.equals("Manual OnePlace")) {
       return new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Balance")) { 
@@ -185,10 +185,12 @@ public class RobotContainer {
     } else if (autoMode.equals("CS")) {
       return new CS(m_drivetrainSubsystem, this);
     } else if (autoMode.equals("Normal Follow")) {
-     return getAutonomousCommand();
+     return new Follow(m_drivetrainSubsystem);
+    } else if (autoMode.equals("Score and Pickup")) {
+      return new ScoreAndPickup(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
     } else {
       return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);
-    } 
+    }
   }
   public Command getAutonomousCommand() {
     return null;

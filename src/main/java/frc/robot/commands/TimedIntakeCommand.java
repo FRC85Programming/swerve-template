@@ -37,7 +37,7 @@ public class TimedIntakeCommand extends CommandBase
     }
     @Override
     public boolean isFinished() {
-        return m_timer.get() >= 2;
+        return m_timer.get() >= 1;
     }
     @Override
     public void end(boolean interrupted) {

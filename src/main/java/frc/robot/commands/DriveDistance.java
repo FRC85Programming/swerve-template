@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -12,28 +13,44 @@ public class DriveDistance extends CommandBase
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private double wheelSpeedX;
     private double wheelSpeedY;
-    private double wheelAngle;
+    private double turnSpeed;
     private double encoderTarget;
     private double constantFLDistance;
     private Boolean constantCalc;
     private double flTarget;
     private double flTargetMinus;
     private int counter = 0;
-    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double angle, double target) {
+    private double gyroRotation;
+    private double targetAngle;
+    private boolean angleCalc;
+    private double angleTarget;
+    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget) {
+        this(driveTrain, speedY, speedX, rotateSpeed, driveTarget, 0);
+    }
+    public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget) {
         // Sets up variables for each subsystem
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
         wheelSpeedX = speedX;
         wheelSpeedY = speedY;
-        wheelAngle = angle;
-        encoderTarget = target;
+        turnSpeed = rotateSpeed;
+        encoderTarget = driveTarget;
         constantCalc = false;
+        angleCalc = false;
+        this.angleTarget = angleTarget;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     @Override
     public void execute() {
+        if (turnSpeed != 0) {
+            gyroRotation = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees();
+            if (angleCalc == false) {
+                targetAngle = gyroRotation + angleTarget;
+                angleCalc = true;
+            }
+        }
         // Gets the drive distance so that we can accuratley judge how far we need to drive
         counter++;
         SmartDashboard.putNumber("Auto Counter", counter);
@@ -48,16 +65,29 @@ public class DriveDistance extends CommandBase
         }
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
+        if (driveFinished()) {
+            wheelSpeedX = 0;
+            wheelSpeedY = 0;
+        }
+        if (turnFinished()) {
+            turnSpeed = 0;
+        }
         SmartDashboard.putNumber("Wheel Speed X", wheelSpeedX);
         SmartDashboard.putNumber("flTarget", flTarget);
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, wheelAngle));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
         SmartDashboard.putNumber("Encoder FL", m_frontLeftModule.getDriveDistance());
+    }
+    private boolean driveFinished() {
+        return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
+    }
+    private boolean turnFinished() {
+        
+        return turnSpeed == 0 || (gyroRotation - targetAngle >= -0.03 && gyroRotation - targetAngle <= 0.03);
     }
 
     @Override
     public boolean isFinished(){
-        // Ends the command when it hits the target encoder distance
-        return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
+        return driveFinished() && turnFinished();
     }
 
     @Override
@@ -65,5 +95,6 @@ public class DriveDistance extends CommandBase
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         constantCalc = false;
+        angleCalc = false;
     }
 }
