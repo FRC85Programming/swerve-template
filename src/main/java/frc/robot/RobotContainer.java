@@ -141,6 +141,12 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
 
+    new Trigger(m_controller::getYButton)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem,
+            () -> 0,
+            () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+            () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
@@ -149,15 +155,18 @@ public class RobotContainer {
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, ()
+    // -> -23.0));
 
     // cone pick up position (Tipped)
     // new Trigger(m_controller::getXButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, ()
+    // -> -44.0));
 
     // // cone pick up position (Upright)
     // new Trigger(m_controller::getYButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
+    // -> -60.5));
   }
 
   /**
@@ -169,7 +178,7 @@ public class RobotContainer {
     String autoMode = SmartDashboard.getString("BobDashAutoMode", "None");
     if (autoMode.equals("Manual OnePlace")) {
       return new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Balance")) { 
+    } else if (autoMode.equals("Balance")) {
       return new BalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Score and Engage")) {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
@@ -178,10 +187,10 @@ public class RobotContainer {
     } else if (autoMode.equals("CS")) {
       return new CS(m_drivetrainSubsystem, this);
     } else if (autoMode.equals("Normal Follow")) {
-     return getAutonomousCommand();
+      return getAutonomousCommand();
     } else {
       return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);
-    } 
+    }
   }
 
   public Command getAutonomousCommand(/* String auto */) {

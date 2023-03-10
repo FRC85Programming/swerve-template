@@ -9,7 +9,7 @@ public class ExtendCommand extends CommandBase {
     private final ExtendoSubsystem m_ExtendoSubsystem;
     private final DoubleSupplier m_ExtendPosition;
     private final DoubleSupplier m_PivotAngle;
-    private final DoubleSupplier m_intakeWrist;
+    private final DoubleSupplier m_IntakeWrist;
     private final double tolerancePivot = 1;
     private final double toleranceExtend = 1;
     private final double toleranceIntake = 1;
@@ -22,7 +22,7 @@ public class ExtendCommand extends CommandBase {
         m_ExtendoSubsystem = extendo;
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
-        m_intakeWrist = intakeWrist;
+        m_IntakeWrist = intakeWrist;
 
         addRequirements(extendo);
     }
@@ -31,7 +31,7 @@ public class ExtendCommand extends CommandBase {
     public void execute() {
 
         double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = m_intakeWrist.getAsDouble();
+        double intakeWrist = m_IntakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
         if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
@@ -65,7 +65,7 @@ public class ExtendCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = m_intakeWrist.getAsDouble();
+        double intakeWrist = m_IntakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
         return m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceIntake
