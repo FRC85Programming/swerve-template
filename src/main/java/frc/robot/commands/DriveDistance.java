@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -24,6 +26,10 @@ public class DriveDistance extends CommandBase
     private double targetAngle;
     private boolean angleCalc;
     private double angleTarget;
+    private double intakeSpeed;
+    private Boolean intakeOn;
+    private Boolean turnDone;
+    public Boolean driveDone;
     public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget) {
         this(driveTrain, speedY, speedX, rotateSpeed, driveTarget, 0);
     }
@@ -38,6 +44,9 @@ public class DriveDistance extends CommandBase
         constantCalc = false;
         angleCalc = false;
         this.angleTarget = angleTarget;
+        turnDone = false;
+        driveDone = false;
+
 
         addRequirements(m_drivetrainSubsystem);
     }
@@ -51,7 +60,6 @@ public class DriveDistance extends CommandBase
             }
         }
         // Gets the drive distance so that we can accuratley judge how far we need to drive
-        counter++;
         SmartDashboard.putNumber("Auto Counter", counter);
         SmartDashboard.putNumber("Fl Speed", m_frontLeftModule.getDriveVelocity());
         if (constantCalc == false) {
@@ -67,26 +75,27 @@ public class DriveDistance extends CommandBase
         if (driveFinished()) {
             wheelSpeedX = 0;
             wheelSpeedY = 0;
+            driveDone = true;
         }
         if (turnFinished()) {
             turnSpeed = 0;
+            turnDone = true;
         }
-        SmartDashboard.putNumber("Wheel Speed X", wheelSpeedX);
-        SmartDashboard.putNumber("flTarget", flTarget);
+        SmartDashboard.putNumber("Turn Speed", turnSpeed);
+        SmartDashboard.putNumber("targetAngle", targetAngle);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-        SmartDashboard.putNumber("Encoder FL", m_frontLeftModule.getDriveDistance());
+        SmartDashboard.putNumber("Rotation", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     }
     private boolean driveFinished() {
         return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
     }
     private boolean turnFinished() {
-        
-        return turnSpeed == 0 || (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() - targetAngle >= -0.03 && m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() - targetAngle <= 0.03);
+        return turnSpeed == 0 || (Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle >= -1 && Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle <= 1);
     }
 
     @Override
     public boolean isFinished(){
-        return driveFinished() && turnFinished();
+        return turnDone == true && driveDone == true;
     }
 
     @Override
@@ -95,5 +104,7 @@ public class DriveDistance extends CommandBase
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         constantCalc = false;
         angleCalc = false;
+        turnDone = false;
+        driveDone = false;
     }
 }

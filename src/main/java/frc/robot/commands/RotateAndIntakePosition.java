@@ -16,7 +16,7 @@ public class RotateAndIntakePosition extends ParallelCommandGroup {
         this.m_ExtendoSubsystem = m_ExtendoSubsystem;
         this.m_IntakeSubsystem = m_IntakeSubsystem;
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, 0, 0, SmartDashboard.getNumber("Rotate Speed", 0), SmartDashboard.getNumber("Rotate Target", 0), 90),
+            new DriveDistance(m_DrivetrainSubsystem, 0, 0, SmartDashboard.getNumber("Rotate Speed", 0), 0, -90),
             new AutoIntakeCube(m_ExtendoSubsystem, m_IntakeSubsystem)
         );
     }

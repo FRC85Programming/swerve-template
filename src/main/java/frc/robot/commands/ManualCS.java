@@ -6,7 +6,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.*;
 
 public class ManualCS extends SequentialCommandGroup {
-    public ManualCS(DrivetrainSubsystem driveTrain, RobotContainer robotContainer) {
+    public ManualCS(DrivetrainSubsystem driveTrain, IntakeSubsystem intake, RobotContainer robotContainer) {
         addCommands(  
             new zeroWheels(driveTrain),
             new DriveDistance(driveTrain, 0, 5.0, 0.0, 3),

@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -34,7 +35,7 @@ public class AutoIntakeCube extends CommandBase
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
         }
-        if (m_extendoSubsystem.getIntakeWrist() >= -24) {
+        if (m_extendoSubsystem.getIntakeWrist() >= -27) {
             m_extendoSubsystem.Wrist(-0.3, 0);
         } else {
             m_extendoSubsystem.Wrist(0, 0);
@@ -46,12 +47,13 @@ public class AutoIntakeCube extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 9 && m_extendoSubsystem.getExtendPosition() >= 8 && m_extendoSubsystem.getIntakeWrist() <= -30;
+        return m_extendoSubsystem.getPivotAngle() >= 8 && m_extendoSubsystem.getExtendPosition() >= 5 && m_extendoSubsystem.getIntakeWrist() <= -24;
     }
     public void end(boolean interrupted) {
         m_extendoSubsystem.Pivot(0, 0);
         m_extendoSubsystem.ExtendTelescope(0, 0);
         m_extendoSubsystem.Wrist(0, 0);
+        SmartDashboard.putNumber("z Command Done", 1);
     }
 }
 

@@ -43,9 +43,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our bCutton bindings, and put our
     // autonomous chooser on the dashboard.
-    SmartDashboard.putNumber("Drive and Home Distance", 5.7);
+    SmartDashboard.putNumber("Drive and Home Distance", 6.3); //6.35
     SmartDashboard.putNumber("Rotate Speed", -1.4);
     SmartDashboard.putNumber("Rotate Target", 1.4);
+    SmartDashboard.putNumber("Intake Start", 0);
 
     m_robotContainer = new RobotContainer();
 

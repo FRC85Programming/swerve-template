@@ -181,7 +181,7 @@ public class RobotContainer {
     } else if (autoMode.equals("Score and Engage")) {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
-      return new ManualMobility(m_drivetrainSubsystem, this);
+      return new ManualMobility(m_drivetrainSubsystem, m_IntakeSubsystem, this);
     } else if (autoMode.equals("CS")) {
       return new CS(m_drivetrainSubsystem, this);
     } else if (autoMode.equals("Normal Follow")) {
