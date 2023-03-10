@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -30,6 +31,8 @@ public class DriveDistance extends CommandBase
     private Boolean intakeOn;
     private Boolean turnDone;
     public Boolean driveDone;
+    Timer m_timer;
+    Boolean timerStarted = false;
     public DriveDistance(DrivetrainSubsystem driveTrain, double speedY, double speedX, double rotateSpeed, double driveTarget) {
         this(driveTrain, speedY, speedX, rotateSpeed, driveTarget, 0);
     }
@@ -46,7 +49,7 @@ public class DriveDistance extends CommandBase
         this.angleTarget = angleTarget;
         turnDone = false;
         driveDone = false;
-
+        m_timer = new Timer();
 
         addRequirements(m_drivetrainSubsystem);
     }
@@ -58,6 +61,10 @@ public class DriveDistance extends CommandBase
                 targetAngle = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() + angleTarget;
                 angleCalc = true;
             }
+        }
+        if (timerStarted == false) {
+            m_timer.start();
+            timerStarted = true;
         }
         // Gets the drive distance so that we can accuratley judge how far we need to drive
         SmartDashboard.putNumber("Auto Counter", counter);
@@ -83,7 +90,13 @@ public class DriveDistance extends CommandBase
         }
         SmartDashboard.putNumber("Turn Speed", turnSpeed);
         SmartDashboard.putNumber("targetAngle", targetAngle);
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
+        if (wheelSpeedX > 0) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.3 + 0.3, 0, turnSpeed));
+        }
+        if (wheelSpeedX < 0) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.3 - 0.3, 0, turnSpeed));
+        }
+        SmartDashboard.putNumber("timer", m_timer.get());
         SmartDashboard.putNumber("Rotation", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
     }
     private boolean driveFinished() {
@@ -106,5 +119,6 @@ public class DriveDistance extends CommandBase
         angleCalc = false;
         turnDone = false;
         driveDone = false;
+        m_timer.reset();
     }
 }

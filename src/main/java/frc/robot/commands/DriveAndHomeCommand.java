@@ -15,7 +15,7 @@ public class DriveAndHomeCommand extends ParallelCommandGroup {
         this.m_ExtendoSubsystem = m_ExtendoSubsystem;
         this.m_IntakeSubsystem = m_IntakeSubsystem;
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, 0, -1, 0, target, 0),
+            new DriveDistance(m_DrivetrainSubsystem, 0, -2, 0, target, 0),
             new ExtendCommand(m_ExtendoSubsystem, () -> 0, () -> 0, () -> 0)
         );
     }

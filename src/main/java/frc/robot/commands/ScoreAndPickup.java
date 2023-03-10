@@ -14,19 +14,20 @@ public class ScoreAndPickup extends SequentialCommandGroup {
         m_drivetrainSubsystem = driveTrain;
         m_extendoSubsystem = extendo;
         m_intakeSubsystem = intake;
-        addCommands(  
+        addCommands(
+            new ZeroGyroscopeCommand(driveTrain, 0),
+            new zeroWheels(driveTrain),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new ZeroGyroscopeCommand(driveTrain, 180),
             new AutoScore(driveTrain, extendo),
-            new TimedIntakeCommand(intake,false),
-            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(m_drivetrainSubsystem, 0, -1.5, 0, SmartDashboard.getNumber("Drive and Home Distance", 0)),
+            new TimedIntakeCommand(intake, false),
+            new DriveAndHomeCommand(driveTrain, extendo, intake, SmartDashboard.getNumber("Drive and Home Distance", 0)),
             new RotateAndIntakePosition(driveTrain, extendo, intake),
             new DriveAndIntake(driveTrain, extendo, intake, 3),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, 0, 0, 2, 0, 100),
-            new DriveDistance(driveTrain, 0, 1.5, 0, -7.5),
-            new DriveDistance(driveTrain, 0, 0, -2, 0, -15),
+            new DriveDistance(driveTrain, 0, 0, 5, 0, 100),
+            new DriveDistance(driveTrain, 0, 2, 0, -7.5),
+            new DriveDistance(driveTrain, 0, 0, -5, 0, -7),
             new AutoScore(driveTrain, extendo), 
             new TimedIntakeCommand(intake, false),   
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)
