@@ -30,7 +30,7 @@ public class TimedIntakeCommand extends CommandBase
             m_timer.start();
             timerStarted = true;
         }
-        if (intakeMode = true) {
+        if (this.intakeMode) {
             m_intakeSubsystem.setRollerSpeed(() -> -0.8);
         } else {
             m_intakeSubsystem.setRollerSpeed(() -> 0.6);
@@ -39,7 +39,7 @@ public class TimedIntakeCommand extends CommandBase
     }
     @Override
     public boolean isFinished() {
-        return m_timer.get() >= 1;
+        return m_timer.get() >= 1.5;
     }
     @Override
     public void end(boolean interrupted) {
