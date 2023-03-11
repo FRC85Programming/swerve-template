@@ -142,6 +142,9 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
 
+    new Trigger(m_operatorController::getAButton)
+        .whileTrue(new LineUpAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
+
     // cube pick up position
     // new Trigger(m_operatorController::getAButton)
     // .whileTrue(new ExtendCommand(m_ExtendoSubystem, m_IntakeSubsystem, () ->
