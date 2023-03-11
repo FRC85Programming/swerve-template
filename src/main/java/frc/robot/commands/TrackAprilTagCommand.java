@@ -29,11 +29,12 @@ public class TrackAprilTagCommand extends CommandBase {
             wheelReset = false;
         }
         //Sets the variables of the targets x, area, and ID
-        double tx = m_visionTracking.getX();
+        double ty = m_visionTracking.getY();
         double area = m_visionTracking.getArea();
         double tagID = m_visionTracking.getTag();
         if (tagID > -1) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(-1.5 * area + 5, 0.0, -tx * 0.2)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
+            if(ty < 0.5)
+             m_drivetrainSubsystem.drive(new ChassisSpeeds(-1.5 * area + 5, 0.0, 0.0)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
         }
     }
 

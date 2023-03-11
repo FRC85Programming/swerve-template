@@ -17,11 +17,13 @@ public class VisionTracking extends SubsystemBase {
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry thor = table.getEntry("thor");
+  NetworkTableEntry tvert = table.getEntry("tvert");
   NetworkTableEntry aprilEntry = table.getEntry("tid");
   NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
   NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
   /** Creates a new VisionTracking. */
   public VisionTracking() {
+    
   }
 
   @Override
@@ -30,7 +32,6 @@ public class VisionTracking extends SubsystemBase {
     double x = tx.getDouble(0.0);
     double y = ty.getDouble(0.0);
     double area = ta.getDouble(0.0);
-    double hori = thor.getDouble(0.0);
     double validTarget = tv.getDouble(0.0);
     double tid = aprilEntry.getDouble(0.0); // April Tag Number
     double pipeLine = pipelineEntry.getDouble(0.0);
@@ -41,44 +42,38 @@ public class VisionTracking extends SubsystemBase {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("LimelightValidTarget", validTarget);
     SmartDashboard.putNumber("April Tag ID", tid);
-    SmartDashboard.putNumber("Pipeline:", pipeLine);
-    SmartDashboard.putNumber("HorizontaL Length:", hori);
 
 //Aims towards target if there is a valid one
-if (validTarget == 1) {
-  if (x <= 2 && x >= -2) {
-//put in stop motion?
-  } 
-else if (x > 2 && x < 30) {
-  //put in turn negative direction
-} 
-else if (x < -2 && x > -30) {
-// put in turn positive direction
-}
+if (validTarget == 1); {
+  
 }
   }
   public double getX(){
     return tx.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
   }
 
-  public double getArea(){
-    return ta.getDouble(0.0); // Size of target
+  public double getArea() {
+    return ta.getDouble(0.0);
   }
 
-  public double getThor(){
-    return thor.getDouble(0.0); // Size of target horizontal
+  public double getTag() {
+   return aprilEntry.getDouble(0.0);
   }
 
-  public double getTag(){
-    return aprilEntry.getDouble(0.0); // Size of target
+  public double getLength() {
+    return thor.getDouble(0.0);
+  }
+
+  public double getHeight() {
+    return tvert.getDouble(0.0);
+  }
+
+  public double getY() {
+    return ty.getDouble(0.0);
   }
 
   public void setLED(int LEDMode){
     ledModeEntry.setNumber(LEDMode);
-  }
-
-  public double getPipeline() {
-    return pipelineEntry.getDouble(0.0);
   }
 
   public void setPipeline(int pipeline) {
