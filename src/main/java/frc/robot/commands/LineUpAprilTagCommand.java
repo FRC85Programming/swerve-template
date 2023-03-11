@@ -48,7 +48,7 @@ public class LineUpAprilTagCommand extends CommandBase {
             if(ty < -0.5)
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, -1.5 * area + 5, 0.0)); // Max speed 3: 1, 5: 0.6, 8: 0.3, 12: 0.1
             else if(ty > 0.5) 
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 1.5 * area + 5, 0.0));
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 1.5 * area + 5, 0.0));
         }
     }
 
