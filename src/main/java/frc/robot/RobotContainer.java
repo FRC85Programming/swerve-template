@@ -26,7 +26,6 @@ import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.BalanceAuto;
-import frc.robot.commands.Autos.CS;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ManualOnePlace;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
@@ -184,8 +183,6 @@ public class RobotContainer {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
       return new ManualMobility(m_drivetrainSubsystem, this);
-    } else if (autoMode.equals("CS")) {
-      return new CS(m_drivetrainSubsystem, this);
     } else if (autoMode.equals("Normal Follow")) {
       return getAutonomousCommand();
     } else {
