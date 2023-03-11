@@ -11,12 +11,20 @@ public class LineUpAprilTagCommand extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final VisionTracking m_visionTracking;
 
+    /**
+     * Creates a new LineUpAprilTagCommand
+     * @param driveTrain passes in the drive train
+     * @param visionTracking passes in the vision tracking
+     */
     public LineUpAprilTagCommand(DrivetrainSubsystem driveTrain, VisionTracking visionTracking) {
         // Sets up variables for each subsystem
         m_drivetrainSubsystem = driveTrain;
         m_visionTracking = visionTracking;
     }
 
+    /**
+     * Runs the command after it's been constructed
+     */
     @Override
     public void execute() {
         m_visionTracking.setPipeline(0);
@@ -44,6 +52,9 @@ public class LineUpAprilTagCommand extends CommandBase {
         }
     }
 
+    /**
+     * Ends the command
+     */
     @Override
     public void end(boolean interrupted) {
         // Stops the bot and changes the switch variables back to the original position
