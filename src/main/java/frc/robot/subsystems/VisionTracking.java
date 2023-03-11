@@ -10,6 +10,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * This class comunicates with the network tables and updates the values
+ */
 public class VisionTracking extends SubsystemBase {
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = table.getEntry("tx");
@@ -21,11 +24,17 @@ public class VisionTracking extends SubsystemBase {
   NetworkTableEntry aprilEntry = table.getEntry("tid");
   NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
   NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
-  /** Creates a new VisionTracking. */
+  
+  /** 
+   * Creates a new VisionTracking object. 
+   */
   public VisionTracking() {
     
   }
 
+  /**
+   * Updates the values periodically
+   */
   @Override
   public void periodic() {
     //reads values periodically
@@ -42,12 +51,12 @@ public class VisionTracking extends SubsystemBase {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("LimelightValidTarget", validTarget);
     SmartDashboard.putNumber("April Tag ID", tid);
-
-//Aims towards target if there is a valid one
-if (validTarget == 1); {
-  
-}
   }
+
+  /**
+   * Gets the x value from the network table
+   * @return tx from network table 
+   */
   public double getX(){
     return tx.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
   }
