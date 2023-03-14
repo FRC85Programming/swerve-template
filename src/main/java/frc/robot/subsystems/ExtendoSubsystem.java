@@ -29,15 +29,19 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
-    private double maxPivot = 87;
+    private double maxPivot = 70;
+    private double maxExtend = 210;
+    private double maxWrist = -64;
 
     public ExtendoSubsystem() {
         extendMotor.setIdleMode(IdleMode.kBrake);
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
 
-        pivotMotor.setInverted(true);
-        pivotMotorTwo.setInverted(true);
+        extendMotor.setInverted(false);
+        WristMotor.setInverted(true);
+        pivotMotor.setInverted(false);
+        pivotMotorTwo.setInverted(false);
 
         SmartDashboard.putNumber("Max Pivot", maxPivot);
     }
@@ -55,7 +59,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = extendoPID.calculate(extendMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed > 0) {
-            if (extendMotor.getEncoder().getPosition() > 135) {
+            if (extendMotor.getEncoder().getPosition() > maxExtend) {
                 // stops motor with upper limit switch
                 extendMotor.stopMotor();
             } else {
@@ -109,7 +113,7 @@ public class ExtendoSubsystem extends SubsystemBase {
                 pivotMotorTwo.stopMotor();
             } else if (pivotMotor.getEncoder().getPosition() < 7) {
                 pivotMotor.set(speed * 0.2);
-                pivotMotor.set(speed * 0.2);
+                pivotMotorTwo.set(speed * 0.2);
             } else {
                 pivotMotor.set(speed * pivotSpeedScale);
                 pivotMotorTwo.set(speed * pivotSpeedScale);
@@ -141,7 +145,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = WristPID.calculate(WristMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed < 0) {
-            if (WristMotor.getEncoder().getPosition() < -82) {
+            if (WristMotor.getEncoder().getPosition() < maxWrist) {
                 WristMotor.stopMotor();
             } else {
                 WristMotor.set(speed * WristSpeedScale);
@@ -150,7 +154,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             if (WristLimitSwitch.get()) {
                 WristMotor.getEncoder().setPosition(0);
                 WristMotor.stopMotor();
-            } else if (WristMotor.getEncoder().getPosition() > -7) {
+            } else if (WristMotor.getEncoder().getPosition() > -14) {
                 WristMotor.set(speed * 0.2);
             } else {
                 WristMotor.set(speed * WristSpeedScale);
