@@ -47,13 +47,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.ZeroGyroscopeCommand;
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -72,9 +75,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private double _frontRightCalibrationValue;
   private double _backLeftCalibrationValue;
   private double _backRightCalibrationValue;
+  private Timer m_timer;
+  private Boolean timerStart = false;
+  private Boolean yLevel = false;
+  private Boolean xLevel = false;
 
   
-
 
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -87,8 +93,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
   public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 *
-        SdsModuleConfigurations.MK4_L2.getDriveReduction() * 
-        SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+        SdsModuleConfigurations.MK4_L1.getDriveReduction() * 
+        SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -201,6 +207,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     turningPidController = new PIDController(Constants.kPTurning, 0, 0);
     turningPidController.enableContinuousInput(-Math.PI, Math.PI);
 
+    m_timer = new Timer();
+
+    this.zeroGyroscope(0);
+
     tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
     tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
@@ -219,12 +229,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double rollOffset;
   
 
-  public void zeroGyroscope() {
-    m_pigeon.setYaw(0.0);
+  public void zeroGyroscope(double angle) {
+    m_pigeon.setYaw(angle);
     odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getCompassHeading()), new SwerveModulePosition[]
     {
       m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(), m_backRightModule.getPosition()
-    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0)));
+    }, new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(angle)));
   }
 
   // public void resetOdometry() {
@@ -402,6 +412,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return _backRightCalibrationValue;
   }
 
+  public void swerveDriveVolts(double frontLeft, double frontRight, double backRight, double backLeft) {
+    m_frontLeftModule.set(frontLeft, 0 - -_frontLeftCalibrationValue);
+    m_frontRightModule.set(frontRight, 0 - -_frontRightCalibrationValue);
+    m_backLeftModule.set(backLeft, 0 - -_backLeftCalibrationValue);
+    m_backRightModule.set(backRight, 0 - -_backRightCalibrationValue);
+  }
   public void brakeState()
   {
     m_frontLeftModule.set(0, 45 - -_frontLeftCalibrationValue);
@@ -448,44 +464,69 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void AutoLevelPIDController()
   {
+    if (timerStart == false) {
+      m_timer.reset();
+      m_timer.start();
+      timerStart = true;
+    }
+    if (m_timer.get() <= 0.5) {
+      double kp = SmartDashboard.getNumber("kp", 0);
+      double ki = SmartDashboard.getNumber("ki", 0);
+      double kd = SmartDashboard.getNumber("kd", 0);
 
-    double kp = SmartDashboard.getNumber("kp", 0);
-    double ki = SmartDashboard.getNumber("ki", 0);
-    double kd = SmartDashboard.getNumber("kd", 0);
-
-    double[] pr = GetPitchRoll();
-    double maxSpeed = .6;
+      double[] pr = GetPitchRoll();
+      double maxSpeed = .5;
 
 
-    pitchPIDController.setPID(kp, ki, kd);
-    rollPIDController.setPID(kp, ki, kd);
+      pitchPIDController.setPID(kp, ki, kd);
+      rollPIDController.setPID(kp, ki, kd);
 
-    double x = pitchPIDController.calculate(pr[0],0);
-    double y = rollPIDController.calculate(pr[1],0);
+      double x = pitchPIDController.calculate(pr[0],0);
+      double y = rollPIDController.calculate(pr[1],0);
 
-      if(Math.abs(x) > maxSpeed)
-      {
-          x = Math.copySign(maxSpeed, x);
-      }
+        if(Math.abs(x) > maxSpeed)
+        {
+            x = Math.copySign(maxSpeed, x);
+        }
 
-      if(Math.abs(y) > maxSpeed)
-      {
-          y = Math.copySign(maxSpeed, y);
-      }
+        if(Math.abs(y) > maxSpeed)
+        {
+            y = Math.copySign(maxSpeed, y);
+        }
 
-      SmartDashboard.putNumber("AutoLevelPID x", x);
-      SmartDashboard.putNumber("AutoLevelPID y", y);
+        SmartDashboard.putNumber("AutoLevelPID x", x);
+        SmartDashboard.putNumber("AutoLevelPID y", y);
 
-      if (pr[0] > -5 && pr[0] < 5 ) 
-      {
-        x = 0;
-      }
+        if (pr[0] > -5 && pr[0] < 5 ) 
+        {
+          x = 0;
+          xLevel = true;
+        }
 
-      if (pr[1] > -5 && pr[1] < 5) 
-      {
-        y = 0;
-      }
-      drive(new ChassisSpeeds(y,-x,0));
+        if (pr[1] > -5 && pr[1] < 5) 
+        {
+          y = 0;
+          yLevel = true;
+        }
+        drive(new ChassisSpeeds(x,-y,0));
+    } else {
+        drive(new ChassisSpeeds(0, 0, 0));
+        if (m_timer.get() >= 0.9) {
+          m_timer.reset();
+          timerStart = false;
+        }
+    }
+      
+  }
+  public Boolean getXDone() {
+    return xLevel;
+  }
+  public Boolean getYDone() {
+    return yLevel;
+  }
+
+  public SwerveDriveOdometry getOdo() {
+    return odometry;
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {

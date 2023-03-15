@@ -46,13 +46,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our bCutton bindings, and put our
     // autonomous chooser on the dashboard.
+    SmartDashboard.putNumber("Drive and Home Distance", 6.3); //6.35
+    SmartDashboard.putNumber("Rotate Speed", -1.4);
+    SmartDashboard.putNumber("Rotate Target", 1.4);
+    SmartDashboard.putNumber("Intake Start", 0);
+
     m_robotContainer = new RobotContainer();
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
     SmartDashboard.putNumber("AutoLevel Max Speed", .2);
     
-    SmartDashboard.putNumber("kp", 2.1);
+    SmartDashboard.putNumber("kp", 1.5);
     SmartDashboard.putNumber("ki", 0);
     SmartDashboard.putNumber("kd", 0.5);
   }
@@ -100,7 +105,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
+    
   }
 
   @Override

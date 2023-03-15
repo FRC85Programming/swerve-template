@@ -29,6 +29,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScale = 0.4;
     private final double pivotSpeedScale = 0.5;
+    private  double maxPivot = 87;
 
     public ExtendoSubsystem() {
         extendExtendoMotor.setIdleMode(IdleMode.kBrake);
@@ -37,6 +38,8 @@ public class ExtendoSubsystem extends SubsystemBase {
 
         pivotTelescopeArmMotor.setInverted(true);
         pivotTelescopeArmMotorTwo.setInverted(true);
+
+        SmartDashboard.putNumber("Max Pivot", maxPivot);
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
@@ -81,7 +84,7 @@ public class ExtendoSubsystem extends SubsystemBase {
         }
 
         if (speed > 0) {
-            if (pivotTelescopeArmMotor.getEncoder().getPosition() > 100) {
+            if (pivotTelescopeArmMotor.getEncoder().getPosition() > maxPivot) {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
             } else {
@@ -94,10 +97,10 @@ public class ExtendoSubsystem extends SubsystemBase {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.getEncoder().setPosition(0);
                 pivotTelescopeArmMotorTwo.stopMotor();
-            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 15) {
+            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 34 && extendExtendoMotor.getEncoder().getPosition() > 20) {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
-            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && intakeWristMotor.getEncoder().getPosition() < -30) /*might be -15*/{
+            } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 20 && intakeWristMotor.getEncoder().getPosition() < -15) {
                 pivotTelescopeArmMotor.stopMotor();
                 pivotTelescopeArmMotorTwo.stopMotor();
             } else if (pivotTelescopeArmMotor.getEncoder().getPosition() < 7){
@@ -167,5 +170,7 @@ public class ExtendoSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("intake wrist limit sensor", intakeWristLimitSwitch.get());
         SmartDashboard.putNumber("Intake wrist position", intakeWristMotor.getEncoder().getPosition());
+
+        maxPivot = SmartDashboard.getNumber("Max Pivot", maxPivot);
     }
 }
