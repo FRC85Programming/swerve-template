@@ -24,7 +24,7 @@ public class VisionTracking extends SubsystemBase {
   NetworkTableEntry aprilEntry = table.getEntry("tid");
   NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
   NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
-  
+
   /** 
    * Creates a new VisionTracking object. 
    */
