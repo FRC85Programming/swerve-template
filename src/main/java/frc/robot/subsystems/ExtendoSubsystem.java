@@ -32,6 +32,8 @@ public class ExtendoSubsystem extends SubsystemBase {
     private double maxPivot = 70;
     private double maxExtend = 210;
     private double maxWrist = -64;
+    private double pivotSafeZone = 10;
+    private double wristSafeZone = -15;
 
     public ExtendoSubsystem() {
         extendMotor.setIdleMode(IdleMode.kBrake);
@@ -59,7 +61,8 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = extendoPID.calculate(extendMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed > 0) {
-            if (extendMotor.getEncoder().getPosition() > maxExtend) {
+            if (extendMotor.getEncoder().getPosition() > maxExtend
+                    || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
                 // stops motor with upper limit switch
                 extendMotor.stopMotor();
             } else {
@@ -91,7 +94,10 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = pivotPID.calculate(pivotMotor.getEncoder().getPosition(), desiredPosition);
         }
 
-        if (speed > 0) {
+        if (pivotMotor.getEncoder().getPosition() < pivotSafeZone && WristMotor.getEncoder().getPosition() < wristSafeZone) {
+            pivotMotor.stopMotor();
+            pivotMotorTwo.stopMotor();
+        } else if (speed > 0) {
             if (pivotMotor.getEncoder().getPosition() > maxPivot) {
                 pivotMotor.stopMotor();
                 pivotMotorTwo.stopMotor();
@@ -105,10 +111,7 @@ public class ExtendoSubsystem extends SubsystemBase {
                 pivotMotor.stopMotor();
                 pivotMotorTwo.getEncoder().setPosition(0);
                 pivotMotorTwo.stopMotor();
-            } else if (pivotMotor.getEncoder().getPosition() < 34 && extendMotor.getEncoder().getPosition() > 20) {
-                pivotMotor.stopMotor();
-                pivotMotorTwo.stopMotor();
-            } else if (pivotMotor.getEncoder().getPosition() < 20 && WristMotor.getEncoder().getPosition() < -15) {
+            } else if (pivotMotor.getEncoder().getPosition() < 20 && extendMotor.getEncoder().getPosition() > 20) {
                 pivotMotor.stopMotor();
                 pivotMotorTwo.stopMotor();
             } else if (pivotMotor.getEncoder().getPosition() < 7) {
@@ -145,7 +148,8 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = WristPID.calculate(WristMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed < 0) {
-            if (WristMotor.getEncoder().getPosition() < maxWrist) {
+            if (WristMotor.getEncoder().getPosition() < maxWrist
+                    || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
                 WristMotor.stopMotor();
             } else {
                 WristMotor.set(speed * WristSpeedScale);
