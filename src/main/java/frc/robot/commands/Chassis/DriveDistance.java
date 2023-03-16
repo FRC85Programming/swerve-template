@@ -1,24 +1,21 @@
 package frc.robot.commands.Chassis;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionTracking;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class DriveDistance extends CommandBase
-{
+public class DriveDistance extends CommandBase {
     private final SwerveModule m_frontLeftModule;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private double wheelSpeedX;
     private double wheelSpeedY;
     private double turnSpeed;
+    private double wheelAngle;
     private double encoderTarget;
     private double constantFLDistance;
     private Boolean constantCalc;

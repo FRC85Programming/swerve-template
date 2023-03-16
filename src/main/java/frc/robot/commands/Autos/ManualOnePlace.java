@@ -9,14 +9,8 @@ import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 
 public class ManualOnePlace extends SequentialCommandGroup {
-    private final DrivetrainSubsystem m_drivetrainSubsystem;
-    private final ExtendoSubsystem m_extendoSubsystem;
-    private final IntakeSubsystem m_intakeSubsystem;
 
     public ManualOnePlace(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
-        m_drivetrainSubsystem = driveTrain;
-        m_extendoSubsystem = extendo;
-        m_intakeSubsystem = intake;
         addCommands(  
             new ZeroGyroscopeCommand(driveTrain, 180),
             new AutoScore(driveTrain, extendo),

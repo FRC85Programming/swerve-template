@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import com.pathplanner.lib.*;
@@ -54,6 +53,19 @@ import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 import frc.robot.commands.Vision.LineUpAprilTagCommand;
 import frc.robot.commands.Arm.*;
+import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.IntakeCommand;
+import frc.robot.commands.Arm.ManualExtendoCommand;
+import frc.robot.commands.Autos.BalanceAuto;
+import frc.robot.commands.Autos.ManualMobility;
+import frc.robot.commands.Autos.ManualOnePlace;
+import frc.robot.commands.Autos.ScoreBalanceAuto;
+import frc.robot.commands.Chassis.AutoLevelPIDCommand;
+import frc.robot.commands.Chassis.BrakeWheelsCommand;
+import frc.robot.commands.Chassis.DefaultDriveCommand;
+import frc.robot.commands.Chassis.HalfSpeedCommand;
+import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
+import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -165,27 +177,32 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
 
-    new Trigger(m_operatorController::getAButton)
-        .whileTrue(new LineUpAprilTagCommand(m_drivetrainSubsystem, m_visionTracking));
-    /*new Trigger(m_controller::getLeftBumper)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));*/
-      new Trigger(m_controller::getLeftBumper)
-        .whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0, 0, 0, 1, 0, true));
+    new Trigger(m_controller::getYButton)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem,
+            () -> 0,
+            () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+            () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+
+    new Trigger(m_controller::getLeftBumper)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, ()
+    // -> -23.0));
 
     // cone pick up position (Tipped)
     // new Trigger(m_controller::getXButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, ()
+    // -> -44.0));
 
     // // cone pick up position (Upright)
     // new Trigger(m_controller::getYButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
+    // -> -60.5));
   }
   
 

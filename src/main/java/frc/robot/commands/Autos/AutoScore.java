@@ -1,11 +1,8 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class AutoScore extends CommandBase
  {

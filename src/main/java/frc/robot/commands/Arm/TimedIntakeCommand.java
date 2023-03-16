@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class TimedIntakeCommand extends CommandBase
- {
+public class TimedIntakeCommand extends CommandBase {
     private final IntakeSubsystem m_intakeSubsystem;
     Timer m_timer;
     Boolean timerStarted = false;
@@ -20,23 +19,24 @@ public class TimedIntakeCommand extends CommandBase
     }
 
     @Override
-    public void execute()
-    {
+    public void execute() {
         if (timerStarted == false) {
             m_timer.start();
             timerStarted = true;
         }
-        /*if (this.intakeMode) {
+        if (this.intakeMode) {
             m_intakeSubsystem.setRollerSpeed(() -> -0.8);
         } else {
             m_intakeSubsystem.setRollerSpeed(() -> 0.6);
-        }*/
+        }
 
     }
+
     @Override
     public boolean isFinished() {
         return m_timer.get() >= 1.5;
     }
+
     @Override
     public void end(boolean interrupted) {
         m_intakeSubsystem.setRollerSpeed(() -> 0);
@@ -45,4 +45,3 @@ public class TimedIntakeCommand extends CommandBase
         intakeMode = false;
     }
 }
-

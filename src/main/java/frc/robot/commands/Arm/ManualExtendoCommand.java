@@ -11,8 +11,9 @@ public class ManualExtendoCommand extends CommandBase {
     private final DoubleSupplier m_pivotSpeedSupplier;
     private final DoubleSupplier m_extendSpeedSupplier;
     private final DoubleSupplier m_wristSpeedSupplier;
-    
-    public ManualExtendoCommand(ExtendoSubsystem m_ExtendoSubystem, DoubleSupplier pivotSpeedSupplier, DoubleSupplier extendSpeedSupplier, DoubleSupplier wristSpeedSupplier){
+
+    public ManualExtendoCommand(ExtendoSubsystem m_ExtendoSubystem, DoubleSupplier pivotSpeedSupplier,
+            DoubleSupplier extendSpeedSupplier, DoubleSupplier wristSpeedSupplier) {
         this.m_ExtendoSubsystem = m_ExtendoSubystem;
         this.m_pivotSpeedSupplier = pivotSpeedSupplier;
         this.m_extendSpeedSupplier = extendSpeedSupplier;
@@ -22,11 +23,11 @@ public class ManualExtendoCommand extends CommandBase {
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         m_ExtendoSubsystem.Pivot(m_pivotSpeedSupplier.getAsDouble(), 0);
         m_ExtendoSubsystem.ExtendTelescope(m_extendSpeedSupplier.getAsDouble(), 0);
         m_ExtendoSubsystem.Wrist(m_wristSpeedSupplier.getAsDouble(), 0);
-        
+
         SmartDashboard.putNumber("intake wrist speed", m_wristSpeedSupplier.getAsDouble());
     }
 
