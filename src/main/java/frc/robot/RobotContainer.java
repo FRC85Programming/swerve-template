@@ -39,7 +39,21 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
-import frc.robot.commands.*;
+import frc.robot.commands.Autos.BalanceAuto;
+import frc.robot.commands.Autos.ManualMobility;
+import frc.robot.commands.Autos.ManualOnePlace;
+import frc.robot.commands.Autos.ScoreAndPickup;
+import frc.robot.commands.Autos.ScoreBalanceAuto;
+import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Chassis.AutoLevelPIDCommand;
+import frc.robot.commands.Chassis.BrakeWheelsCommand;
+import frc.robot.commands.Chassis.DefaultDriveCommand;
+import frc.robot.commands.Chassis.DriveDistance;
+import frc.robot.commands.Chassis.HalfSpeedCommand;
+import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
+import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.commands.Vision.LineUpAprilTagCommand;
+import frc.robot.commands.Arm.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
