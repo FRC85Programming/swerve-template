@@ -37,11 +37,8 @@ public class LineUpAprilTagCommand extends CommandBase {
             wheelReset = false;
         }
         //Sets the variables of the targets x, area, and ID
-        double tx = m_visionTracking.getX();
         double area = m_visionTracking.getArea();
         double tagID = m_visionTracking.getTag();
-        double length = m_visionTracking.getLength();
-        double height = m_visionTracking.getHeight();
         double ty = m_visionTracking.getY();
 
         if (tagID > -1) {

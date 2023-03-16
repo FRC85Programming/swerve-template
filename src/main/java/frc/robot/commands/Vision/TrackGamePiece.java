@@ -6,7 +6,6 @@ package frc.robot.commands.Vision;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 public class TrackGamePiece extends CommandBase {

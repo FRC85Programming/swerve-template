@@ -49,7 +49,6 @@ public class AutoLevelCommand extends CommandBase {
     @Override
 
     public boolean isFinished() {
-        double[] ypr = m_drivetrainSubsystem.GetPitchRoll();
         return false;
 
         // Code to stop the Robot from AutoLeveling when Leveled facing forwards

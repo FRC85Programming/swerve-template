@@ -5,23 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ExtendoSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -159,13 +151,6 @@ public class Robot extends TimedRobot {
     NetworkTableEntry vEntry = table.getEntry("tv");
     NetworkTableEntry sEntry = table.getEntry("ts");
     NetworkTableEntry aprilEntry = table.getEntry("tid");
-    
-    NetworkTableEntry tshortEntry = table.getEntry("tshort");
-    NetworkTableEntry tlongEntry = table.getEntry("tlong");
-    NetworkTableEntry thorEntry = table.getEntry("thor");
-    NetworkTableEntry tvertEntry = table.getEntry("tvert");
-    NetworkTableEntry getpipeEntry = table.getEntry("getpipe");
-    NetworkTableEntry camtranEntry = table.getEntry("camtran");
     NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
     
     // double tx = xEntry.getDouble(0.0);

@@ -30,8 +30,6 @@ public class ActionOnTagCommand extends CommandBase {
             wheelReset = false;
         }
         // Sets the variables of the targets x, area, and ID
-        double tx = m_visionTracking.getX();
-        double area = m_visionTracking.getArea();
         double tagID = m_visionTracking.getTag();
         if (tagID == 4) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 1, 0.0));

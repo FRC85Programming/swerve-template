@@ -1,15 +1,10 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionTracking;
-
-import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ScoreLineup extends CommandBase

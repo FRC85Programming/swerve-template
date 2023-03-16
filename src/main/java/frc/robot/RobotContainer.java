@@ -6,34 +6,22 @@ package frc.robot;
 
 import java.util.List;
 
-import com.pathplanner.lib.*;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -47,25 +35,12 @@ import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
-import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
-import frc.robot.commands.Vision.LineUpAprilTagCommand;
-import frc.robot.commands.Arm.*;
 import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
-import frc.robot.commands.Autos.BalanceAuto;
-import frc.robot.commands.Autos.ManualMobility;
-import frc.robot.commands.Autos.ManualOnePlace;
-import frc.robot.commands.Autos.ScoreBalanceAuto;
-import frc.robot.commands.Chassis.AutoLevelPIDCommand;
-import frc.robot.commands.Chassis.BrakeWheelsCommand;
-import frc.robot.commands.Chassis.DefaultDriveCommand;
-import frc.robot.commands.Chassis.HalfSpeedCommand;
-import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
-import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -79,7 +54,6 @@ import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final VisionTracking m_visionTracking = new VisionTracking();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
