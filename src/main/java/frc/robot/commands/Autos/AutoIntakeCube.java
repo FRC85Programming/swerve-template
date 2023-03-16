@@ -1,23 +1,18 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class AutoIntakeCube extends CommandBase
  {
     private final ExtendoSubsystem m_extendoSubsystem;
-    private final IntakeSubsystem m_intakeSubsystem;
 
 
     public AutoIntakeCube(ExtendoSubsystem extendo, IntakeSubsystem intake)
     {
         m_extendoSubsystem = extendo;
-        m_intakeSubsystem = intake;
 
         addRequirements(extendo, intake);
     }
