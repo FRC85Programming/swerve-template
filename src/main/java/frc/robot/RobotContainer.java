@@ -190,9 +190,9 @@ public class RobotContainer {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
       return new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this);
-    }//else if (autoMode.equals("Normal Follow")) {
-     //return new Follow(m_drivetrainSubsystem);
-    /* }*/ else if (autoMode.equals("Score and Pickup")) {
+    }else if (autoMode.equals("Normal Follow")) {
+      return getAutonomousCommand();
+    } else if (autoMode.equals("Score and Pickup")) {
       return new ScoreAndPickup(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
     } else {
       return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);

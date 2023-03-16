@@ -37,7 +37,8 @@ public class DriveDistance extends CommandBase
     public Boolean trackDone;
     private static int instanceCount = 0;
     private final VisionTracking vision;
-    Timer m_timer;
+    Timer m_timerPositive;
+    Timer m_timerNegative;
     Boolean timerStarted = false;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget) {
         this(driveTrain, vision, speedY, speedX, rotateSpeed, driveTarget, 0, false);
@@ -63,7 +64,8 @@ public class DriveDistance extends CommandBase
         turnDone = false;
         driveDone = false;
         instanceCount++;
-        m_timer = new Timer();
+        m_timerPositive = new Timer();
+        m_timerNegative = new Timer();
         SmartDashboard.putNumber("instance count", instanceCount);
     }
 
@@ -76,7 +78,7 @@ public class DriveDistance extends CommandBase
             }
         }
         if (timerStarted == false) {
-            m_timer.start();
+            m_timerPositive.start();
             timerStarted = true;
         }
         // Gets the drive distance so that we can accuratley judge how far we need to drive
@@ -103,38 +105,75 @@ public class DriveDistance extends CommandBase
         }
         SmartDashboard.putNumber("Turn Speed", turnSpeed);
         SmartDashboard.putNumber("targetAngle", targetAngle);
-        if (wheelSpeedX > 0) {
-            if (m_timer.get() * 0.5 + 0.5 > wheelSpeedX) {
+        if (flTarget-m_frontLeftModule.getDriveDistance() < flTarget/4) {
+            m_timerNegative.start();
+            if (wheelSpeedX > 0) {
+            if (m_timerNegative.get() * 0.5 + 0.5 > wheelSpeedX) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
             } 
-            if (m_timer.get() * 0.5 + 0.5 < wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.5 + 0.5, 0, turnSpeed));
+            if (m_timerNegative.get() * 0.5 + 0.5 < wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timerNegative.get() *-0.5+2, 0, turnSpeed));
             } 
         }
         if (wheelSpeedX < 0) {
-            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.5 - 0.5, 0, turnSpeed));
+            if (m_timerNegative.get() * -0.5 - 0.5 > wheelSpeedX) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timerNegative.get() *-0.5+2, 0, turnSpeed));
             } 
-            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedX) {
+            if (m_timerNegative.get() * -0.5 - 0.5 < wheelSpeedX) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
             } 
         }
          if (wheelSpeedY > 0) {
-            if (m_timer.get() * 0.5 - 0.5 > wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+            if (m_timerNegative.get() * 0.5 - 0.5 > wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timerNegative.get()*-0.5+2, turnSpeed));
             } 
-            if (m_timer.get() * 0.5 - 0.5 < wheelSpeedY) {
+            if (m_timerNegative.get() * 0.5 - 0.5 < wheelSpeedY) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
             } 
         }
         if (wheelSpeedY < 0) {
-            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedY) {
+            if (m_timerNegative.get() * -0.5 - 0.5 > wheelSpeedY) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
             } 
-            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+            if (m_timerNegative.get()* -0.5 - 0.5 < wheelSpeedY) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timerNegative.get()*-0.5+2, turnSpeed));
             }
         }
+        } else {
+            if (wheelSpeedX > 0) {
+                if (m_timerPositive.get() * 0.5 + 0.5 > wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
+                } 
+                if (m_timerPositive.get() * 0.5 + 0.5 < wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timerPositive.get() * 0.5 + 0.5, 0, turnSpeed));
+                } 
+            }
+            if (wheelSpeedX < 0) {
+                if (m_timerPositive.get() * -0.5 - 0.5 > wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timerPositive.get() * -0.5 - 0.5, 0, turnSpeed));
+                } 
+                if (m_timerPositive.get() * -0.5 - 0.5 < wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
+                } 
+            }
+             if (wheelSpeedY > 0) {
+                if (m_timerPositive.get() * 0.5 - 0.5 > wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timerPositive.get() * -0.5 - 0.5, turnSpeed));
+                } 
+                if (m_timerPositive.get() * 0.5 - 0.5 < wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
+                } 
+            }
+            if (wheelSpeedY < 0) {
+                if (m_timerPositive.get() * -0.5 - 0.5 > wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
+                } 
+                if (m_timerPositive.get() * -0.5 - 0.5 < wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timerPositive.get() * -0.5 - 0.5, turnSpeed));
+                }
+            }
+        }
+
         if (wheelSpeedX == 0 && wheelSpeedY == 0) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
         } 
@@ -156,7 +195,8 @@ public class DriveDistance extends CommandBase
     public void end (boolean interrupted)  {
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
-        m_timer.reset();
+        m_timerPositive.reset();
+        m_timerNegative.reset();
         init();
     }
 }
