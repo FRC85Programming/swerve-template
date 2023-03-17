@@ -15,7 +15,7 @@ public class ScoreBalanceAuto extends SequentialCommandGroup {
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new ZeroGyroscopeCommand(driveTrain, 180),
             new ZeroPitchRollCommand(driveTrain),
-            new AutoScore(driveTrain, extendo),
+            new AutoScore(extendo, "cube"),
             new TimedIntakeCommand(intake, false),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 2.4),
             new AutoLevelPIDCommand(driveTrain)

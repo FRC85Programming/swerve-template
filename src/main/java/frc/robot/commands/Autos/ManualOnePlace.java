@@ -13,7 +13,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
     public ManualOnePlace(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         addCommands(  
             new ZeroGyroscopeCommand(driveTrain, 180),
-            new AutoScore(driveTrain, extendo),
+            new AutoScore(extendo, "cube"),
             new TimedIntakeCommand(intake, false),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new DriveDistance(driveTrain, vision, 0, -1.0, 0.0, 4.95)
