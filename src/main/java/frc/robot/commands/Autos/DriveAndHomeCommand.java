@@ -12,7 +12,7 @@ public class DriveAndHomeCommand extends ParallelCommandGroup {
 
     public DriveAndHomeCommand(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target){
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, -5, 0, target, 0, false),
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, -3, 0, target, 0, false),
             new ExtendCommand(m_ExtendoSubsystem, () -> 0, () -> 0, () -> 0)
         );
     }

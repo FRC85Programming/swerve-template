@@ -114,8 +114,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    SmartDashboard.putData("Field", m_field);
-    m_field.setRobotPose(m_DrivetrainSubsystem.getOdo().getPoseMeters());
   }
 
   @Override
@@ -133,8 +131,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putData("Field", m_field);
-    //m_field.setRobotPose(m_DrivetrainSubsystem.getOdo().getPoseMeters());
     // get the default instance of NetworkTables
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     // get a reference to the subtable called "datatable"

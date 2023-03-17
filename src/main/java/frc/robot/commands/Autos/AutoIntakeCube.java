@@ -25,12 +25,12 @@ public class AutoIntakeCube extends CommandBase
         } else {
             m_extendoSubsystem.Pivot(0, 0);
         }
-        if (m_extendoSubsystem.getExtendPosition() <= 11) {
+        if (m_extendoSubsystem.getExtendPosition() <= 0) {
             m_extendoSubsystem.ExtendTelescope(0.25, 0);
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
         }
-        if (m_extendoSubsystem.getIntakeWrist() >= -27) {
+        if (m_extendoSubsystem.getIntakeWrist() >= -34) {
             m_extendoSubsystem.Wrist(-0.3, 0);
         } else {
             m_extendoSubsystem.Wrist(0, 0);
@@ -42,13 +42,13 @@ public class AutoIntakeCube extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 8 && m_extendoSubsystem.getExtendPosition() >= 5 && m_extendoSubsystem.getIntakeWrist() <= -24;
+        return m_extendoSubsystem.getPivotAngle() >= 19 && m_extendoSubsystem.getExtendPosition() >= 5 && m_extendoSubsystem.getIntakeWrist() <= -29;
     }
     public void end(boolean interrupted) {
         m_extendoSubsystem.Pivot(0, 0);
         m_extendoSubsystem.ExtendTelescope(0, 0);
         m_extendoSubsystem.Wrist(0, 0);
-        SmartDashboard.putNumber("z Command Done", 1);
     }
-}
+ }
+
 
