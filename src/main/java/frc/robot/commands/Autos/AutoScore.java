@@ -21,7 +21,7 @@ public class AutoScore extends CommandBase
     @Override
     public void execute()
     {
-        if (gamePiece == "cube") {
+        if (gamePiece == "cube" || gamePiece == "Cube") {
             if (m_extendoSubsystem.getPivotAngle() <= 80) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
@@ -39,7 +39,7 @@ public class AutoScore extends CommandBase
             }
         }
 
-        if (gamePiece == "cone") {
+        if (gamePiece == "cone" || gamePiece == "Cone") {
             if (m_extendoSubsystem.getPivotAngle() <= 80) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {

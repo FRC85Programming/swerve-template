@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putData("Field", m_field);
-    m_field.setRobotPose(m_DrivetrainSubsystem.getOdo().getPoseMeters());
+    //m_field.setRobotPose(m_DrivetrainSubsystem.getOdo().getPoseMeters());
     // get the default instance of NetworkTables
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     // get a reference to the subtable called "datatable"
