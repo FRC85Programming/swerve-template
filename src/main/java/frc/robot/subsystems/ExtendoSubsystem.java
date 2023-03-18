@@ -33,13 +33,20 @@ public class ExtendoSubsystem extends SubsystemBase {
     private double maxExtend = 210;
     private double maxWrist = -64;
     private double pivotSafeZone = 10;
+    private double extendSafeZone = 30;
     private double wristSafeZone = -15;
     private double wristSafeSpeed = 0.5;
 
     public ExtendoSubsystem() {
+        WristMotor.setIdleMode(IdleMode.kBrake);
         extendMotor.setIdleMode(IdleMode.kBrake);
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
+
+        WristMotor.setOpenLoopRampRate(0.2);
+        extendMotor.setOpenLoopRampRate(0.2);
+        pivotMotor.setOpenLoopRampRate(0.2);
+        pivotMotorTwo.setOpenLoopRampRate(0.2);
 
         extendMotor.setInverted(false);
         WristMotor.setInverted(true);
@@ -74,8 +81,10 @@ public class ExtendoSubsystem extends SubsystemBase {
             if (ExtendLimitSwitch.get()) {
                 extendMotor.getEncoder().setPosition(0);
                 extendMotor.stopMotor();
-            } else {
+            } else if (extendMotor.getEncoder().getPosition() < extendSafeZone) {
                 extendMotor.set(speed * extendSpeedScale);
+            } else {
+                extendMotor.set(speed);
             }
         } else {
             extendMotor.stopMotor();
@@ -151,15 +160,15 @@ public class ExtendoSubsystem extends SubsystemBase {
         }
         if (speed < 0) {
             if (WristMotor.getEncoder().getPosition() < maxWrist) {
-                WristMotor.stopMotor(); 
+                WristMotor.stopMotor();
+            } else if (pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
+                if (WristMotor.getEncoder().getPosition() > -12) {
+                    WristMotor.set(speed * wristSafeSpeed);
+                } else {
+                    WristMotor.stopMotor();
+                }
             } else {
                 WristMotor.set(speed * WristSpeedScale);
-            }
-
-            if (pivotMotor.getEncoder().getPosition() < pivotSafeZone && WristMotor.getEncoder().getPosition() > -12){
-                WristMotor.set(speed * wristSafeSpeed);
-            } else {
-                WristMotor.stopMotor();
             }
         } else if (speed > 0) {
             if (WristLimitSwitch.get()) {
