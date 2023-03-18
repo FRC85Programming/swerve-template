@@ -22,7 +22,7 @@ public class AutoScore extends CommandBase
     @Override
     public void execute()
     {
-        if (m_extendoSubsystem.getPivotAngle() <= 60) {
+        if (m_extendoSubsystem.getPivotAngle() <= 70) {
             m_extendoSubsystem.Pivot(0.85, 0);
         } else {
             m_extendoSubsystem.Pivot(0, 0);
@@ -43,7 +43,7 @@ public class AutoScore extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 73 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -35;
+        return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -35;
     }
     public void end(boolean interrupted) {
         m_extendoSubsystem.Pivot(0, 0);

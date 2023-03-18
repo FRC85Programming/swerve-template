@@ -23,7 +23,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new TimedIntakeCommand(intake, false),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, SmartDashboard.getNumber("Drive and Home Distance", 0)),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake),
-            new ScoreLineup(driveTrain, vision),
+            //new ScoreLineup(driveTrain, vision),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 3),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new DriveDistance(driveTrain, vision, 0, 0, 1, 0, 100, false),

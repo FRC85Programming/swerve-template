@@ -20,12 +20,12 @@ public class AutoIntakeCube extends CommandBase
     @Override
     public void execute()
     {
-        if (m_extendoSubsystem.getPivotAngle() <= 14) {
+        if (m_extendoSubsystem.getPivotAngle() <= 19) {
             m_extendoSubsystem.Pivot(0.85, 0);
         } else {
             m_extendoSubsystem.Pivot(0, 0);
         }
-        if (m_extendoSubsystem.getExtendPosition() <= 0) {
+        if (m_extendoSubsystem.getExtendPosition() <= 51) {
             m_extendoSubsystem.ExtendTelescope(0.25, 0);
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
@@ -42,7 +42,7 @@ public class AutoIntakeCube extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 19 && m_extendoSubsystem.getExtendPosition() >= 5 && m_extendoSubsystem.getIntakeWrist() <= -29;
+        return m_extendoSubsystem.getPivotAngle() >= 14 && m_extendoSubsystem.getExtendPosition() >= 47 && m_extendoSubsystem.getIntakeWrist() <= -29;
     }
     public void end(boolean interrupted) {
         m_extendoSubsystem.Pivot(0, 0);
