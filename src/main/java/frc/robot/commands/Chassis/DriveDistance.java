@@ -1,5 +1,6 @@
 package frc.robot.commands.Chassis;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.vision.VisionThread;
@@ -37,7 +38,10 @@ public class DriveDistance extends CommandBase
     public Boolean trackDone;
     private static int instanceCount = 0;
     private final VisionTracking vision;
+    private Boolean switchDone = false;
+    private double switchTime = 0;
     Timer m_timer;
+    Timer m_rampDownTimer;
     Boolean timerStarted = false;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget) {
         this(driveTrain, vision, speedY, speedX, rotateSpeed, driveTarget, 0, false);
@@ -64,6 +68,7 @@ public class DriveDistance extends CommandBase
         driveDone = false;
         instanceCount++;
         m_timer = new Timer();
+        m_rampDownTimer = new Timer();
         SmartDashboard.putNumber("instance count", instanceCount);
     }
 
@@ -82,6 +87,7 @@ public class DriveDistance extends CommandBase
         // Gets the drive distance so that we can accuratley judge how far we need to drive
         SmartDashboard.putNumber("Auto Counter", counter);
         SmartDashboard.putNumber("Fl Speed", m_frontLeftModule.getDriveVelocity());
+        PIDController acceleration = new PIDController(.5, 0, .05);
         if (constantCalc == false) {
             constantFLDistance = m_frontLeftModule.getDriveDistance();
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
@@ -101,43 +107,42 @@ public class DriveDistance extends CommandBase
             turnSpeed = 0;
             turnDone = true;
         }
-        SmartDashboard.putNumber("Turn Speed", turnSpeed);
-        SmartDashboard.putNumber("targetAngle", targetAngle);
-        if (wheelSpeedX > 0) {
-            if (m_timer.get() * 0.5 + 0.5 > wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
-            } 
-            if (m_timer.get() * 0.5 + 0.5 < wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.5 + 0.5, 0, turnSpeed));
-            } 
-        }
-        if (wheelSpeedX < 0) {
-            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.5 - 0.5, 0, turnSpeed));
-            } 
-            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedX) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, turnSpeed));
-            } 
-        }
-         if (wheelSpeedY > 0) {
-            if (m_timer.get() * 0.5 - 0.5 > wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
-            } 
-            if (m_timer.get() * 0.5 - 0.5 < wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
-            } 
-        }
-        if (wheelSpeedY < 0) {
-            if (m_timer.get() * -0.5 - 0.5 > wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, wheelSpeedY, turnSpeed));
-            } 
-            if (m_timer.get() * -0.5 - 0.5 < wheelSpeedY) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+        SmartDashboard.putNumber("Drive Distance", m_frontLeftModule.getDriveDistance());
+        SmartDashboard.putBoolean("DriveFinished", driveFinished());
+        if (driveFinished() == false) {
+            if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
+                if (switchDone = false) {
+                    switchTime = m_timer.get();
+                    m_rampDownTimer.start();
+                    switchDone = true;
+                }
+                if (wheelSpeedX > 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_rampDownTimer.get() * -0.5 + 0.5 +switchTime, 0, turnSpeed));
+                } else if (wheelSpeedX < 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_rampDownTimer.get() * 0.5 + 0.5-switchTime, 0, turnSpeed));
+                }
+                if (wheelSpeedY > 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_rampDownTimer.get() * -0.5 + 0.5+switchTime, turnSpeed));
+                } else if (wheelSpeedY < 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_rampDownTimer.get() * 0.5 + 0.5-switchTime, turnSpeed));
+                }
+            } else if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX && switchDone == false) {
+                if (wheelSpeedX > 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.5 + 0.5, 0, turnSpeed));
+                }else if (wheelSpeedX < 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.5 - 0.5, 0, turnSpeed));
+                }
+                 if (wheelSpeedY > 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+                } else if (wheelSpeedY < 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+                }
             }
-        }
+        } 
         if (wheelSpeedX == 0 && wheelSpeedY == 0) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
         } 
+        
     
     }
     private boolean driveFinished() {
@@ -155,8 +160,11 @@ public class DriveDistance extends CommandBase
     @Override
     public void end (boolean interrupted)  {
         // Stops the robot and allows the target distance to be calculated again
+        switchTime = 0;
+        switchDone = false;
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         m_timer.reset();
+        m_rampDownTimer.reset();
         init();
     }
 }

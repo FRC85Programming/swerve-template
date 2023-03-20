@@ -1,5 +1,6 @@
 package frc.robot.commands.Autos;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,20 +30,11 @@ public class ScoreLineup extends CommandBase
         vision.setPipeline(2);
         double tx = vision.getX();
         double area = vision.getArea();
+        PIDController lineup = new PIDController(1, 0, 0);
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
         if (trackDone == false) {
-            SmartDashboard.putNumber("area", area);
-            SmartDashboard.putNumber("tx", tx);
-            SmartDashboard.putNumber("target tx", 19.5 * area + 1.7);
-            if (tx - 2 < 19.5 * area + 1.7 && tx + 2 > 19.5 * area + 2){
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
-                trackDone = true;
-            } else if (tx - 2 > 19.5 * area + 1.7) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0.5));
-            } else if (tx + 2 < 19.5 * area + 1.7) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, -0.5));
-            } 
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, lineup.calculate(tx - 6, area)));
         }
     }
     @Override

@@ -24,7 +24,8 @@ public class ScoreEngageAndPickup extends SequentialCommandGroup {
             //new DriveAndIntake(driveTrain, vision, extendo, intake, 1.2),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 4.7),
             new AutoLevelPIDCommand(driveTrain)*/
-            new DriveDistance(driveTrain, vision, 0, -5, 0, 5)
+            new DriveDistance(driveTrain, vision, 0, -3, 0, 15),
+            new DriveDistance(driveTrain, vision, 0, 0, 5, 0)
         );
     }
 }

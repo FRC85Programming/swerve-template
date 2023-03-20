@@ -17,8 +17,6 @@ public class ManualCS extends SequentialCommandGroup {
             new WaitCommand(.3),
             new DriveDistance(driveTrain, vision, 0, -5, 0, 2),
             new AutoLevelCommand(driveTrain)
-
-
         );
     }
 }
