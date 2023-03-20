@@ -110,32 +110,52 @@ public class DriveDistance extends CommandBase
         SmartDashboard.putNumber("Drive Distance", m_frontLeftModule.getDriveDistance());
         SmartDashboard.putBoolean("DriveFinished", driveFinished());
         if (driveFinished() == false) {
-            if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
-                if (switchDone = false) {
-                    switchTime = m_timer.get();
-                    m_rampDownTimer.start();
-                    switchDone = true;
+            // Forwards and back speed control
+            if (wheelSpeedX > 0) {
+                if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, -(0.8*m_timer.get()-2)*(0.8*m_timer.get()-2) + wheelSpeedX, angleTarget));
+                } else if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX - 0.2) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, 0));
                 }
-                if (wheelSpeedX > 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_rampDownTimer.get() * -0.5 + 0.5 +switchTime, 0, turnSpeed));
-                } else if (wheelSpeedX < 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_rampDownTimer.get() * 0.5 + 0.5-switchTime, 0, turnSpeed));
+                if (flTarget/4 < flTarget-m_frontLeftModule.getDriveDistance()) {
+                    m_timer.reset();
+                    m_timer.start();
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-(0.6*m_timer.get()) * (0.6*m_timer.get()) + wheelSpeedX, 0, 0));
                 }
-                if (wheelSpeedY > 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_rampDownTimer.get() * -0.5 + 0.5+switchTime, turnSpeed));
-                } else if (wheelSpeedY < 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_rampDownTimer.get() * 0.5 + 0.5-switchTime, turnSpeed));
+            } else if (wheelSpeedX < 0) {
+                if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, (0.8*m_timer.get()-2)*(0.8*m_timer.get()-2) - wheelSpeedX, angleTarget));
+                } else if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX + 0.2) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, 0, 0));
                 }
-            } else if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX && switchDone == false) {
-                if (wheelSpeedX > 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * 0.5 + 0.5, 0, turnSpeed));
-                }else if (wheelSpeedX < 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get() * -0.5 - 0.5, 0, turnSpeed));
+                if (flTargetMinus/4 < flTargetMinus + -m_frontLeftModule.getDriveDistance()) {
+                    m_timer.reset();
+                    m_timer.start();
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds((0.7*m_timer.get())*(0.7*m_timer.get()) + wheelSpeedX, 0, 0));
                 }
-                 if (wheelSpeedY > 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
-                } else if (wheelSpeedY < 0) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, m_timer.get() * -0.5 - 0.5, turnSpeed));
+            }
+            // Left and right speed control
+            if (wheelSpeedY > 0) {
+                if (m_frontLeftModule.getDriveVelocity() < wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, -(0.8*m_timer.get()-2)*(0.8*m_timer.get()-2) + wheelSpeedY, angleTarget));
+                } else if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedY - 0.2) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedY, 0, 0));
+                }
+                if (flTarget/4 < flTarget-m_frontLeftModule.getDriveDistance()) {
+                    m_timer.reset();
+                    m_timer.start();
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-(0.6*m_timer.get()) * (0.6*m_timer.get()) + wheelSpeedY, 0, 0));
+                }
+            } else if (wheelSpeedY < 0) {
+                if (m_frontLeftModule.getDriveVelocity() > wheelSpeedY) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, (0.8*m_timer.get()-2)*(0.8*m_timer.get()-2) - wheelSpeedY, angleTarget));
+                } else if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedY + 0.2) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedY, 0, 0));
+                }
+                if (flTargetMinus/4 < flTargetMinus + -m_frontLeftModule.getDriveDistance()) {
+                    m_timer.reset();
+                    m_timer.start();
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds((0.7*m_timer.get())*(0.7*m_timer.get()) + wheelSpeedY, 0, 0));
                 }
             }
         } 
