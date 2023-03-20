@@ -214,6 +214,20 @@ public class ExtendoSubsystem extends SubsystemBase {
         return WristMotor.getEncoder().getPosition();
     }
 
+    public void zeroEncodersIfLimits(){
+        if (WristLimitSwitch.get()){
+            WristMotor.getEncoder().setPosition(0);
+        }
+
+        if (ExtendLimitSwitch.get()){
+            extendMotor.getEncoder().setPosition(0);
+        }
+
+        if (PivotLimitSwitch.get()){
+            pivotMotor.getEncoder().setPosition(0);
+        }
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Extendo pivot limit switch", PivotLimitSwitch.get());

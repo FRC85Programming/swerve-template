@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     m_robotContainer.checkCalibration();
+    m_robotContainer.zeroEncoders();
   }
 
   /**
