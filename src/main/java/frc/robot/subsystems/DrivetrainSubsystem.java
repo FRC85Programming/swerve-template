@@ -76,6 +76,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean timerStart = false;
   private Boolean yLevel = false;
   private Boolean xLevel = false;
+  private Boolean swerveTesting = false;
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -218,6 +219,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
     SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
     SmartDashboard.putBoolean("Set drive PID", false);
+
+  SmartDashboard.putBoolean("Swerve testing", swerveTesting);
   }
 
   /**
@@ -361,9 +364,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } else {
       swerveState(false);
     }
-
     SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
+    SmartDashboard.getBoolean("Swerve testing", swerveTesting);
+
+    if (swerveTesting){
     SmartDashboard.putNumber("Front Left Steer Absolute Angle",
         Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Front Right Steer Absolute Angle",
@@ -372,12 +377,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Units.radiansToDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Back Right Steer Absolute Angle",
         Units.radiansToDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
-
+    
     SmartDashboard.putNumber("Front Left Steer Calibration Angle", Units.radiansToDegrees(_frontLeftCalibrationValue));
     SmartDashboard.putNumber("Front Right Steer Calibration Angle",
         Units.radiansToDegrees(_frontRightCalibrationValue));
     SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
     SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
+    }
 
     if (SmartDashboard.getBoolean("Set drive PID", false)) {
       double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
