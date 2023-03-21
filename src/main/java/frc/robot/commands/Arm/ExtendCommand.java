@@ -26,19 +26,21 @@ public class ExtendCommand extends CommandBase {
     private final double wristSlowSpeed = 0.25;
     private final double pivotSlowSpeed = 0.4;
     private boolean m_enableZeroing = false;
+    private boolean m_endCommandWhenPositionMet = true;
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
             DoubleSupplier pivotAngle, DoubleSupplier intakeWrist) {
-        this(extendo, extendPosition, pivotAngle, intakeWrist, false);
+        this(extendo, extendPosition, pivotAngle, intakeWrist, false, true);
     }
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
-            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing) {
+            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing, boolean endCommandWhenPositionMet) {
         m_ExtendoSubsystem = extendo;
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
         m_IntakeWrist = intakeWrist;
         m_enableZeroing = enableZeroing;
+        m_endCommandWhenPositionMet = endCommandWhenPositionMet;
 
         addRequirements(extendo);
     }
@@ -108,7 +110,8 @@ public class ExtendCommand extends CommandBase {
         double intakeWrist = m_IntakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
-        return m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
+        return m_endCommandWhenPositionMet
+                && m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
                 && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWrist
                 && m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend
