@@ -328,4 +328,8 @@ public class RobotContainer {
     m_drivetrainSubsystem.checkCalibration();
   }
 
+  public void zeroEncoders() {
+    m_extendoSubsystem.zeroEncodersIfLimits();
+  }
+
 }
