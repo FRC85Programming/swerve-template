@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,7 +27,8 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final DigitalInput ExtendLimitSwitch = new DigitalInput(Constants.EXTEND_LIMIT_SWITCH);
     private final PIDController pivotPID = new PIDController(0, 0, 0);
     private final PIDController extendoPID = new PIDController(0, 0, 0);
-    private final double extendSpeedScale = 0.4;
+    private final double extendSpeedScaleSafe = 0.4;
+    private final double extendSpeedScale = 0.7;
     private final double pivotSpeedScale = 0.5;
     private double maxPivot = 80;
     private double maxExtend = 210;
@@ -45,9 +45,9 @@ public class ExtendoSubsystem extends SubsystemBase {
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
 
         WristMotor.setOpenLoopRampRate(0.4);
-        extendMotor.setOpenLoopRampRate(0.1);
+        extendMotor.setOpenLoopRampRate(0.0);
         pivotMotor.setOpenLoopRampRate(0.4);
-        pivotMotorTwo.setOpenLoopRampRate(0.2);
+        pivotMotorTwo.setOpenLoopRampRate(0.4);
 
         extendMotor.setInverted(false);
         WristMotor.setInverted(true);
@@ -81,12 +81,10 @@ public class ExtendoSubsystem extends SubsystemBase {
         if (speed > 0) {
             if (extendMotor.getEncoder().getPosition() > maxExtend
                     || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
-                DriverStation.reportWarning("Extend at limit.", false);
                 extendMotor.stopMotor();
             } else {
                 // doesnt stop if limit switch isnt pressed
-                DriverStation.reportWarning("Extending at speed.", false);
-                extendMotor.set(speed);
+                extendMotor.set(speed * extendSpeedScale);
             }
         } else if (speed < 0) {
             if (ExtendLimitSwitch.get()) {
@@ -95,12 +93,11 @@ public class ExtendoSubsystem extends SubsystemBase {
                 }
                 extendMotor.stopMotor();
             } else if (extendMotor.getEncoder().getPosition() < extendSafeZone) {
-                extendMotor.set(speed * extendSpeedScale);
+                extendMotor.set(speed * extendSpeedScaleSafe);
             } else {
-                extendMotor.set(speed);
+                extendMotor.set(speed * extendSpeedScale);
             }
         } else {
-            DriverStation.reportWarning("Extend speed is zero.", true);
             extendMotor.stopMotor();
         }
     }
