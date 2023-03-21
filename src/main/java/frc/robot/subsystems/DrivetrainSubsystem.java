@@ -50,9 +50,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+/**
+ * Ashley is not a cool human being
+ */
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -77,6 +82,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean yLevel = false;
   private Boolean xLevel = false;
   private Boolean swerveTesting = false;
+  private final Field2d m_field = new Field2d();
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -93,8 +99,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * line.
    */
   public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 *
-      SdsModuleConfigurations.MK4_L1.getDriveReduction() *
-      SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
+        SdsModuleConfigurations.MK4_L1.getDriveReduction() * 
+        SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -352,6 +358,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putData("Field", m_field);
+    m_field.setRobotPose(getOdo().getPoseMeters());
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition() };
     odometry.update(getRotation2d(), positions);
@@ -463,6 +471,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Yaw", ypr[0]);
     SmartDashboard.putNumber("Gyro Pitch", PitchRoll[0]);
     SmartDashboard.putNumber("Gyro Roll", PitchRoll[1]);
+    SmartDashboard.putData("Field", m_field);
+    m_field.setRobotPose(getOdo().getPoseMeters());
   }
 
   // sets true or false for brake command
@@ -531,6 +541,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Boolean getYDone() {
     return yLevel;
+  }
+
+  public SwerveDriveOdometry getOdo() {
+    return odometry;
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {

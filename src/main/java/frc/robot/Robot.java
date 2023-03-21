@@ -5,11 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import frc.robot.subsystems.DrivetrainSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -21,8 +25,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  // public final DrivetrainSubsystem m_drivetrainSubsystem;
+  private final Field2d m_field = new Field2d();
+  //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
+  private DrivetrainSubsystem m_DrivetrainSubsystem;
 
   Trajectory trajectory = new Trajectory();
 
@@ -37,6 +43,12 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our bCutton bindings,
     // and put our
     // autonomous chooser on the dashboard.
+    SmartDashboard.putNumber("Drive and Home Distance", 6.3); //6.35
+    SmartDashboard.putNumber("Rotate Speed", -1.4);
+    SmartDashboard.putNumber("Rotate Target", 1.4);
+    SmartDashboard.putNumber("Intake Start", 0);
+    SmartDashboard.putData("Field", m_field);
+
     m_robotContainer = new RobotContainer();
 
     SmartDashboard.putNumber("Roller Speed", 1);
@@ -103,7 +115,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
   }
 
   @Override
@@ -121,7 +132,68 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    // get the default instance of NetworkTables
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    // get a reference to the subtable called "datatable"
+    NetworkTable table = inst.getTable("limelight");
+    
+    inst.startClient4("85"); // Make sure you set this to your team number
+    inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
+    
+    // NetworkTableEntry TeamEntry = table.getEntry("tx");
+    NetworkTableEntry xEntry = table.getEntry("tx");
+    NetworkTableEntry yEntry = table.getEntry("ty");
+    NetworkTableEntry aEntry = table.getEntry("ta");
+    NetworkTableEntry lEntry = table.getEntry("tl");
+    NetworkTableEntry vEntry = table.getEntry("tv");
+    NetworkTableEntry sEntry = table.getEntry("ts");
+    NetworkTableEntry aprilEntry = table.getEntry("tid");
+    NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
+    
+    // double tx = xEntry.getDouble(0.0);
+    double tx = xEntry.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+    double ty = yEntry.getDouble(0.0); // Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
+    double ta = aEntry.getDouble(0.0); // Target Area (0% of image to 100% of image)
+    double tl = lEntry.getDouble(0.0); // The pipeline’s latency contribution (ms) Add at least 11ms for image capture
+                                      // latency.
+    double tv = vEntry.getDouble(0.0); // Whether the limelight has any valid targets (0 or 1)
+    double ts = sEntry.getDouble(0.0); // Skew or rotation (-90 degrees to 0 degrees)
+    double tid = aprilEntry.getDouble(0.0); // April Tag Number
+    
+    // double tshort = tshortEntry.getString(); // Sidelength of shortest side of
+    // the fitted bounding box (pixels)
+    // double tlong = tlong // Sidelength of longest side of the fitted bounding box
+    // (pixels)
+    // double thor = thor // Horizontal sidelength of the rough bounding box (0 -
+    // 320 pixels)
+    // double tvert = tvert // Vertical sidelength of the rough bounding box (0 -
+    // 320 pixels)
+    // double getpipe = getpipe // True active pipeline index of the camera (0 .. 9)
+    // double camtran = camtran // Results of a 3D position solution, 6 numbers:
+    // Translation (x,y,y) Rotation(pitch,yaw,roll)
+    ledModeEntry.setNumber(1);
+    //ledModeEntry.setNumber(0); // use the LED Mode set in the current pipeline
+    //ledModeEntry.setNumber(2); // force blink
+    //ledModeEntry.setNumber(3); // force on
+    
+    //System.out.println("X: " + tx);
+    //System.out.println("Y: " + ty);
+    //System.out.println("A: " + ta);
+    //System.out.println("L: " + tl);
+    //System.out.println("V: " + tv);
+    //System.out.println("S: " + tv);
+    
+    // post to smart dashboard periodically
+    SmartDashboard.putNumber("Limelight X", tx);
+    SmartDashboard.putNumber("Limelight Y", ty);
+    SmartDashboard.putNumber("Limelight Area", ta);
+    SmartDashboard.putNumber("Limelight Latency", tl);
+    SmartDashboard.putNumber("Limelight Valid Target", tv);
+    SmartDashboard.putNumber("Limelight Skew", ts);
+    SmartDashboard.putNumber("April Tag ID", tid);
+    // Limelight Data End
 
+    
   }
 
   @Override

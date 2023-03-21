@@ -5,6 +5,8 @@
 package frc.robot;
 
 import java.util.List;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,8 +15,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,13 +34,19 @@ import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.BalanceAuto;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ManualOnePlace;
+import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
+import frc.robot.commands.Autos.ScoreEngageAndPickup;
+import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.IntakeCommand;
+import frc.robot.commands.Arm.ManualExtendoCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -53,7 +64,13 @@ public class RobotContainer {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
-
+  private final Field2d m_field = new Field2d();
+  private final VisionTracking vision = new VisionTracking();
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  HolonomicDriveController controller = new HolonomicDriveController(
+      new PIDController(1, 0, 0), new PIDController(1, 0, 0),
+      new ProfiledPIDController(1, 0, 0,
+        new TrapezoidProfile.Constraints(6.28, 3.14)));
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -62,7 +79,7 @@ public class RobotContainer {
     m_extendoSubsystem.register();
     m_IntakeSubsystem.register();
 
-    SmartDashboard.putString("BobDashAutoMode", "None");
+    SmartDashboard.putString("BobDashAutoMode", "Normal Follow");
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -168,6 +185,7 @@ public class RobotContainer {
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -175,90 +193,92 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAuto() {
-    String autoMode = SmartDashboard.getString("BobDashAutoMode", "None");
+    String autoMode = SmartDashboard.getString("BobDashAutoMode", "Normal Follow");
     if (autoMode.equals("Manual OnePlace")) {
-      return new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Balance")) {
-      return new BalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
+      return new ManualOnePlace(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Balance")) { 
+      return new BalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Score and Engage")) {
-      return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
+      return new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
-      return new ManualMobility(m_drivetrainSubsystem, this);
-    } else if (autoMode.equals("Normal Follow")) {
-      return getAutonomousCommand();
+      return new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this);
+    }else if (autoMode.equals("Score, Pickup, and Engage")) {
+      return new ScoreEngageAndPickup(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Score and Pickup")) {
+      return new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem);
     } else {
       return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);
     }
   }
-
-  public Command getAutonomousCommand(/* String auto */) {
-    // Resets wheels so they don't fight each other
-    // m_drivetrainSubsystem.zeroWheels();
-    // Configures kinematics so the driving is accurate
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+  public Command getAutonomousCommand() {
+      // Resets wheels so they don't fight each other
+      //m_drivetrainSubsystem.zeroWheels();
+      // Configures kinematics so the driving is accurate 
+      TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
         Constants.kMaxSpeedMetersPerSecond,
         Constants.kMaxAccelerationMetersPerSecondSquared)
-        .setKinematics(Constants.kDriveKinematics);
-
-    // This sets the trajectory points that will be used as a backup if it can not
-    // load the original
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                .setKinematics(Constants.kKinematics);
+      
+      // This sets the trajectory points that will be used as a backup if it can not load the original
+      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            // Go to these locations:
-            new Translation2d(5, 0),
-            new Translation2d(1, -1)),
-        new Pose2d(2, -1, Rotation2d.fromDegrees /* spin 180 */ (180)),
+          //Go to these locations:
+          new Translation2d(1, 0),
+          new Translation2d(1, 1)),
+          new Pose2d(1, 2, Rotation2d.fromDegrees /*spin*/ (0)),
         trajectoryConfig);
 
-    // Setting up trajectory variables
-    /*
-     * String trajectoryJSON = "output/" + auto + ".wpilib.json";
-     * Trajectory temp;
-     * 
-     * //Load command and select backup if needed
-     * try{
-     * if(auto.startsWith("PW_")){
-     * Path trajectoryPath =
-     * Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-     * temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-     * }else{
-     * temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond,
-     * Constants.kMaxAccelerationMetersPerSecondSquared);
-     * }
-     * }catch(Exception e){
-     * DriverStation.reportWarning("Error loading path:" + auto +
-     * ". Loading backup....", e.getStackTrace());
-     * temp = trajectory;
-     * }
-     */
-    // Sets up PID to stay on the trajectory
-    PIDController xController = new PIDController(Constants.kPXController, 0, 0);
-    PIDController yController = new PIDController(Constants.kPYController, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        // Setting up trajectory variables
+        /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
+        Trajectory temp;
 
-    // This is what actually drives the bot. It is run in a SequentialCommandGroup
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
-        m_drivetrainSubsystem::getPose,
-        Constants.kDriveKinematics,
-        xController,
-        yController,
-        thetaController,
-        m_drivetrainSubsystem::setModuleStates,
-        m_drivetrainSubsystem);
+        //Load command and select backup if needed
+        try{
+            if(auto.startsWith("PW_")){
+                Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+                temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            }else{
+                temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
+            }
+        }catch(Exception e){
+            DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
+            temp = trajectory;
+        }
+  */
+      // Sets up PID to stay on the trajectory
+      PIDController xController = new PIDController(Constants.kPXController, 0, 0);
+      PIDController yController = new PIDController(Constants.kPYController, 0, 0);
+      ProfiledPIDController thetaController = new ProfiledPIDController(
+          Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-        swerveControllerCommand,
-        // You have to add stop modules for this error. Look at this code and copy and
-        // paste:
-        // https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
-        new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+      // This is what actually drives the bot. It is run in a SequentialCommandGroup
+      SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+          trajectory,
+          m_drivetrainSubsystem::getPose,
+          Constants.kKinematics,
+          xController,
+          yController,
+          thetaController,
+          m_drivetrainSubsystem::setModuleStates,
+          m_drivetrainSubsystem);
+
+
+      return new SequentialCommandGroup(
+                  new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
+                  swerveControllerCommand,
+                  // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
+                  new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+
   }
 
+  /**
+   * 
+   * @param value
+   * @param deadband
+   * @return
+   */
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.00) {
@@ -271,6 +291,11 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * 
+   * @param value
+   * @return
+   */
   private double getWristAxis() {
     if (m_operatorController.getRightBumper()) {
       return 1;
@@ -291,6 +316,10 @@ public class RobotContainer {
     return value;
   }
 
+  /**
+   * 
+   * @return the controller object
+   */
   public XboxController getController() {
     return m_controller;
   }

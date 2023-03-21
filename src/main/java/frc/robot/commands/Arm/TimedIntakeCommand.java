@@ -2,20 +2,20 @@ package frc.robot.commands.Arm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class TimedIntakeCommand extends CommandBase {
-    private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final IntakeSubsystem m_intakeSubsystem;
     Timer m_timer;
     Boolean timerStarted = false;
+    Boolean intakeMode = false;
 
-    public TimedIntakeCommand(DrivetrainSubsystem driveTrain, IntakeSubsystem intake) {
-        m_drivetrainSubsystem = driveTrain;
+    public TimedIntakeCommand(IntakeSubsystem intake, Boolean intakeMode)
+    {
         m_intakeSubsystem = intake;
+        this.intakeMode = intakeMode;
         m_timer = new Timer();
-        addRequirements(m_drivetrainSubsystem, intake);
+        addRequirements(intake);
     }
 
     @Override
@@ -24,13 +24,17 @@ public class TimedIntakeCommand extends CommandBase {
             m_timer.start();
             timerStarted = true;
         }
-        m_intakeSubsystem.setRollerSpeed(() -> 0.6);
+        if (this.intakeMode) {
+            m_intakeSubsystem.setRollerSpeed(() -> -0.8);
+        } else {
+            m_intakeSubsystem.setRollerSpeed(() -> 0.6);
+        }
 
     }
 
     @Override
     public boolean isFinished() {
-        return m_timer.get() >= 2;
+        return m_timer.get() >= 1.5;
     }
 
     @Override
@@ -38,5 +42,6 @@ public class TimedIntakeCommand extends CommandBase {
         m_intakeSubsystem.setRollerSpeed(() -> 0);
         timerStarted = false;
         m_timer.reset();
+        intakeMode = false;
     }
 }

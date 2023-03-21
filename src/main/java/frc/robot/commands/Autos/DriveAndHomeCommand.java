@@ -6,14 +6,15 @@ import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionTracking;
 
 public class DriveAndHomeCommand extends ParallelCommandGroup {
 
-    public DriveAndHomeCommand(DrivetrainSubsystem m_DrivetrainSubsystem, ExtendoSubsystem m_ExtendoSubsystem,
-            IntakeSubsystem m_IntakeSubsystem) {
+    public DriveAndHomeCommand(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target){
         addCommands(
-                new ExtendCommand(m_ExtendoSubsystem, () -> 0, () -> 0, () -> 0),
-                new DriveDistance(m_DrivetrainSubsystem, 0, -0.85, 0, 2.6));
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, -3, 0, target, 0, false),
+            new ExtendCommand(m_ExtendoSubsystem, () -> 0, () -> 0, () -> 0)
+        );
     }
 
 }

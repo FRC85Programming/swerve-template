@@ -25,7 +25,7 @@ public class AutoLineup extends CommandBase {
         m_visionTracking.setPipeline(1);
         double tx = m_visionTracking.getX();
         double area = m_visionTracking.getArea();
-        double thor = m_visionTracking.getThor();
+        double thor = m_visionTracking.getLength();
         double tagID = m_visionTracking.getTag();
         // double yaw = m_pigeon.getYaw();
         if (sideSelected == false) {
