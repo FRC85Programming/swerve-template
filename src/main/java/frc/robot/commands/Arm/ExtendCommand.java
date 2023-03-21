@@ -2,6 +2,7 @@ package frc.robot.commands.Arm;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubsystem;
 
@@ -20,7 +21,7 @@ public class ExtendCommand extends CommandBase {
     private final double intakePivotSpeed = 0.8;
     private final double wristSlowSpeed = 0.25;
     private final double pivotSlowSpeed = 0.4;
-    private final boolean m_enableZeroing = false;
+    private boolean m_enableZeroing = false;
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
             DoubleSupplier pivotAngle, DoubleSupplier intakeWrist) {
@@ -33,6 +34,7 @@ public class ExtendCommand extends CommandBase {
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
         m_IntakeWrist = intakeWrist;
+        m_enableZeroing = enableZeroing;
 
         addRequirements(extendo);
     }
@@ -63,6 +65,7 @@ public class ExtendCommand extends CommandBase {
 
         if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend) {
+            DriverStation.reportWarning("ExtendCommand at position.", false);
             m_ExtendoSubsystem.ExtendTelescope(0.0, 0.0);
         } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
             m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
