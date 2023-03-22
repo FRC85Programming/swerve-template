@@ -18,7 +18,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
             new AutoScore(extendo, "cone middle"),
             new TimedIntakeCommand(intake, true),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, vision, 0, -2, 0.0, 4.95)
+            new DriveDistance(driveTrain, vision, 0, -2, 0.0, 4.95, 0, false)
         );
     }
 }

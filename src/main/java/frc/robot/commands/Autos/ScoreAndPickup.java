@@ -17,23 +17,21 @@ public class ScoreAndPickup extends SequentialCommandGroup {
         addCommands(
             new zeroWheels(driveTrain),
             new ZeroGyroscopeCommand(driveTrain, 0),
-            //new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new ZeroGyroscopeCommand(driveTrain, 180),
-            //new AutoScore(extendo, "cube"),
-            //new TimedIntakeCommand(intake, false),
-            //new DriveAndHomeCommand(driveTrain, vision, extendo, intake, SmartDashboard.getNumber("Drive and Home Distance", 0)),
-            new DriveDistance(driveTrain, vision, 0, -4, 0, 4)
-            //new RotateAndIntakePosition(driveTrain, vision, extendo, intake),
-            //new ScoreLineup(driveTrain, vision),
-            //new DriveAndIntake(driveTrain, vision, extendo, intake, 3),
-            //new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            //new DriveDistance(driveTrain, vision, 1, 2, 0, 1),
-            //new DriveDistance(driveTrain, vision, 0, 2, 0, -7.5),
-            //new DriveDistance(driveTrain, vision, 0, 0, -5, 0, -5,false)
-            //new AutoScore(extendo, "cube"), 
-            //new TimedIntakeCommand(intake, false),   
-            //new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)
+            new AutoScore(extendo, "cone mid"),
+            new TimedIntakeCommand(intake, false),
+            new StrafeAndHome(driveTrain, vision, extendo, intake, 0.5),
+            new DriveDistance(driveTrain, vision, 0, -2, 1, 5, 180, false),
+            new AutoIntakeCube(extendo, intake),
+            new DriveAndIntake(driveTrain, vision, extendo, intake, 2),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 6),
+            new AutoScore(extendo, "cube mid"),
+            new TimedIntakeCommand(intake, null),
+            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)
+
+
             
         );
     }
 }
+
+ 
