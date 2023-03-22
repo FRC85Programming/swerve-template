@@ -44,7 +44,7 @@ public class ExtendoSubsystem extends SubsystemBase {
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
 
-        WristMotor.setOpenLoopRampRate(0.4);
+        wristMotor.setOpenLoopRampRate(0.4);
         extendMotor.setOpenLoopRampRate(0.1);
         pivotMotor.setOpenLoopRampRate(0.4);
         pivotMotorTwo.setOpenLoopRampRate(0.2);
@@ -229,7 +229,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public boolean allAxesHome() {
-        return PivotLimitSwitch.get() && ExtendLimitSwitch.get() && WristLimitSwitch.get();
+        return pivotLimitSwitch.get() && extendLimitSwitch.get() && wristLimitSwitch.get();
     }
 
     @Override
