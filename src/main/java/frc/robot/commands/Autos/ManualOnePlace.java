@@ -15,10 +15,10 @@ public class ManualOnePlace extends SequentialCommandGroup {
         addCommands(  
             new HomeExtendCommand(extendo),
             new ZeroGyroscopeCommand(driveTrain, 180),
-            new AutoScore(extendo, "cube high"),
-            new TimedIntakeCommand(intake, false),
+            new AutoScore(extendo, "cone middle"),
+            new TimedIntakeCommand(intake, true),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
-            new DriveDistance(driveTrain, vision, 0, -3, 0.0, 4.95)
+            new DriveDistance(driveTrain, vision, 0, -2, 0.0, 4.95)
         );
     }
 }

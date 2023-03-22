@@ -167,7 +167,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(0, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
         .build();
 
@@ -179,7 +179,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(2, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
         .build();
 
@@ -190,7 +190,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(4, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
         .build();
 
@@ -201,7 +201,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(6, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
         .build();
 

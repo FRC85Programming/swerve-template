@@ -54,7 +54,7 @@ public class AutoScore extends CommandBase
                 m_extendoSubsystem.Wrist(0, 0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            if (m_extendoSubsystem.getPivotAngle() <= 79) {
+            if (m_extendoSubsystem.getPivotAngle() <= 61) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
@@ -64,7 +64,7 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
-            if (m_extendoSubsystem.getIntakeWrist() >= -36) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -63) {
                 m_extendoSubsystem.Wrist(-0.5, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
@@ -78,11 +78,11 @@ public class AutoScore extends CommandBase
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
             return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -35;
         }
-        if (gamePiecePosition.toLowerCase().equals("cube mid")) {
+        if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -38;
         }
-        if (gamePiecePosition.toLowerCase().equals("cone mid")) {
-            return m_extendoSubsystem.getPivotAngle() >= 74 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -31;
+        if (gamePiecePosition.toLowerCase().equals("cone middle")) {
+            return m_extendoSubsystem.getPivotAngle() >= 56 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -58;
         } else {
             return true;
         }

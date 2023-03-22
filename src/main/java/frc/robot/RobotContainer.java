@@ -165,7 +165,7 @@ public class RobotContainer {
             () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
 
     new Trigger(m_controller::getLeftBumper)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
