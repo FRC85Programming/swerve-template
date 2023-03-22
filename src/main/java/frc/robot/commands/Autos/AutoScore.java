@@ -1,11 +1,8 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class AutoScore extends CommandBase
  {
@@ -24,15 +21,17 @@ public class AutoScore extends CommandBase
     @Override
     public void execute()
     {
-        if (gamePiecePosition.toLowerCase() == "cube high") {
+        if (gamePiecePosition.toLowerCase().equals("cube high")) {
             if (m_extendoSubsystem.getPivotAngle() <= 70) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
             if (m_extendoSubsystem.getExtendPosition() <= 60) {
-                m_extendoSubsystem.ExtendTelescope(0.5, 0);
+                DriverStation.reportWarning("Extend running", false);
+                m_extendoSubsystem.ExtendTelescope(0.8, 0);
             } else {
+                DriverStation.reportWarning("Extend finished.", false);
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -42) {
@@ -40,8 +39,7 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
             }
-        }
-        if (gamePiecePosition.toLowerCase() == "cube middle") {
+        } else if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             if (m_extendoSubsystem.getPivotAngle() <= 44) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
@@ -57,8 +55,7 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
             }
-        }
-        if (gamePiecePosition.toLowerCase() == "cone middle")
+        } else if (gamePiecePosition.toLowerCase().equals("cone middle")) {
             if (m_extendoSubsystem.getPivotAngle() <= 79) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
@@ -77,21 +74,23 @@ public class AutoScore extends CommandBase
         }
         /*m_intakeSubsystem.setRollerSpeed(-0.8);
         m_intakeSubsystem.StopRollers();*/
+    }
 
     public boolean isFinished() {
-        if (gamePiecePosition.toLowerCase() == "cube high") {
+        if (gamePiecePosition.toLowerCase().equals("cube high")) {
             return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -35;
         }
-        if (gamePiecePosition.toLowerCase() == "cube mid") {
+        if (gamePiecePosition.toLowerCase().equals("cube mid")) {
             return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -38;
         }
-        if (gamePiecePosition.toLowerCase() == "cube mid") {
+        if (gamePiecePosition.toLowerCase().equals("cone mid")) {
             return m_extendoSubsystem.getPivotAngle() >= 74 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -31;
         } else {
             return true;
         }
     }
     public void end(boolean interrupted) {
+        DriverStation.reportWarning("AutoScore end", interrupted);
         m_extendoSubsystem.Pivot(0, 0);
         m_extendoSubsystem.ExtendTelescope(0, 0);
         m_extendoSubsystem.Wrist(0, 0);

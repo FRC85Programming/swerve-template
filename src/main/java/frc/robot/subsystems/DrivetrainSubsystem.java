@@ -308,6 +308,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public void setOpenloopRate(double rate) {
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).setOpenLoopRampRate(rate); 
+  }
+
   public void resetOdometry(Pose2d pose) {
     // Resets the gyro
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),

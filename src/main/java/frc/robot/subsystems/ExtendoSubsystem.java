@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -43,9 +44,9 @@ public class ExtendoSubsystem extends SubsystemBase {
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
 
-        WristMotor.setOpenLoopRampRate(0.2);
+        WristMotor.setOpenLoopRampRate(0.4);
         extendMotor.setOpenLoopRampRate(0.1);
-        pivotMotor.setOpenLoopRampRate(0.2);
+        pivotMotor.setOpenLoopRampRate(0.4);
         pivotMotorTwo.setOpenLoopRampRate(0.2);
 
         extendMotor.setInverted(false);
@@ -80,18 +81,18 @@ public class ExtendoSubsystem extends SubsystemBase {
         if (speed > 0) {
             if (extendMotor.getEncoder().getPosition() > maxExtend
                     || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
-                // stops motor with upper limit switch
+                DriverStation.reportWarning("Extend at limit.", false);
                 extendMotor.stopMotor();
             } else {
                 // doesnt stop if limit switch isnt pressed
-                extendMotor.set(speed * extendSpeedScale);
+                DriverStation.reportWarning("Extending at speed.", false);
+                extendMotor.set(speed);
             }
         } else if (speed < 0) {
             if (ExtendLimitSwitch.get()) {
                 if (enableZeroing) {
                     extendMotor.getEncoder().setPosition(0);
                 }
-
                 extendMotor.stopMotor();
             } else if (extendMotor.getEncoder().getPosition() < extendSafeZone) {
                 extendMotor.set(speed * extendSpeedScale);
@@ -99,6 +100,7 @@ public class ExtendoSubsystem extends SubsystemBase {
                 extendMotor.set(speed);
             }
         } else {
+            DriverStation.reportWarning("Extend speed is zero.", true);
             extendMotor.stopMotor();
         }
     }
@@ -212,6 +214,10 @@ public class ExtendoSubsystem extends SubsystemBase {
 
     public double getIntakeWrist() {
         return WristMotor.getEncoder().getPosition();
+    }
+
+    public boolean allAxesHome() {
+        return PivotLimitSwitch.get() && ExtendLimitSwitch.get() && WristLimitSwitch.get();
     }
 
     @Override
