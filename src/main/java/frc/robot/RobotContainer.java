@@ -27,6 +27,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
+import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.HomeExtendCommand;
+import frc.robot.commands.Arm.IntakeCommand;
+import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.BalanceAuto;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ManualOnePlace;
@@ -164,7 +168,7 @@ public class RobotContainer {
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
 
     new Trigger(m_operatorController::getAButton)
-        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision));
+        .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)

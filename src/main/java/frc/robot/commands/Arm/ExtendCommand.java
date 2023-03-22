@@ -20,9 +20,15 @@ public class ExtendCommand extends CommandBase {
     private final double intakePivotSpeed = 0.8;
     private final double wristSlowSpeed = 0.25;
     private final double pivotSlowSpeed = 0.4;
+    private final boolean m_enableZeroing = false;
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
             DoubleSupplier pivotAngle, DoubleSupplier intakeWrist) {
+        this(extendo, extendPosition, pivotAngle, intakeWrist, false);
+    }
+
+    public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
+            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing) {
         m_ExtendoSubsystem = extendo;
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
@@ -50,18 +56,18 @@ public class ExtendCommand extends CommandBase {
         }
 
         if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle) {
-            m_ExtendoSubsystem.Pivot(-pivotSpeed, 0.0);
+            m_ExtendoSubsystem.Pivot(-pivotSpeed, 0.0, m_enableZeroing);
         } else {
-            m_ExtendoSubsystem.Pivot(pivotSpeed, 0.0);
+            m_ExtendoSubsystem.Pivot(pivotSpeed, 0.0, m_enableZeroing);
         }
 
         if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend) {
             m_ExtendoSubsystem.ExtendTelescope(0.0, 0.0);
         } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
-            m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0);
+            m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
         } else {
-            m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0);
+            m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
         }
 
         double wristSpeed;
@@ -76,9 +82,9 @@ public class ExtendCommand extends CommandBase {
         }
 
         if (m_ExtendoSubsystem.getIntakeWrist() > intakeWrist) {
-            m_ExtendoSubsystem.Wrist(-wristSpeed, 0.0);
+            m_ExtendoSubsystem.Wrist(-wristSpeed, 0.0, m_enableZeroing);
         } else {
-            m_ExtendoSubsystem.Wrist(wristSpeed, 0.0);
+            m_ExtendoSubsystem.Wrist(wristSpeed, 0.0, m_enableZeroing);
         }
     }
 

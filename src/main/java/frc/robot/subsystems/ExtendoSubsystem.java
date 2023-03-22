@@ -33,22 +33,39 @@ public class ExtendoSubsystem extends SubsystemBase {
     private double maxExtend = 210;
     private double maxWrist = -64;
     private double pivotSafeZone = 10;
+    private double extendSafeZone = 30;
     private double wristSafeZone = -15;
+    private double wristSafeSpeed = 0.5;
 
     public ExtendoSubsystem() {
+        WristMotor.setIdleMode(IdleMode.kBrake);
         extendMotor.setIdleMode(IdleMode.kBrake);
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotorTwo.setIdleMode(IdleMode.kBrake);
+
+        WristMotor.setOpenLoopRampRate(0.2);
+        extendMotor.setOpenLoopRampRate(0.1);
+        pivotMotor.setOpenLoopRampRate(0.2);
+        pivotMotorTwo.setOpenLoopRampRate(0.2);
 
         extendMotor.setInverted(false);
         WristMotor.setInverted(true);
         pivotMotor.setInverted(false);
         pivotMotorTwo.setInverted(false);
 
+        WristMotor.burnFlash();
+        extendMotor.burnFlash();
+        pivotMotor.burnFlash();
+        pivotMotorTwo.burnFlash();
+
         SmartDashboard.putNumber("Max Pivot", maxPivot);
     }
 
     public void ExtendTelescope(double speed, double desiredPosition) {
+        ExtendTelescope(speed, desiredPosition, false);
+    }
+
+    public void ExtendTelescope(double speed, double desiredPosition, boolean enableZeroing) {
         if (SmartDashboard.getBoolean("Set extend PID", false)) {
             double kp = SmartDashboard.getNumber("kp Extendo", 1);
             double ki = SmartDashboard.getNumber("ki Extendo", 0);
@@ -71,10 +88,15 @@ public class ExtendoSubsystem extends SubsystemBase {
             }
         } else if (speed < 0) {
             if (ExtendLimitSwitch.get()) {
-                extendMotor.getEncoder().setPosition(0);
+                if (enableZeroing) {
+                    extendMotor.getEncoder().setPosition(0);
+                }
+
                 extendMotor.stopMotor();
-            } else {
+            } else if (extendMotor.getEncoder().getPosition() < extendSafeZone) {
                 extendMotor.set(speed * extendSpeedScale);
+            } else {
+                extendMotor.set(speed);
             }
         } else {
             extendMotor.stopMotor();
@@ -82,6 +104,10 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public void Pivot(double speed, double desiredPosition) {
+        Pivot(speed, desiredPosition, false);
+    }
+
+    public void Pivot(double speed, double desiredPosition, boolean enableZeroing) {
         if (SmartDashboard.getBoolean("Set pivot PID", false)) {
             double kp = SmartDashboard.getNumber("kp Pivot", 1);
             double ki = SmartDashboard.getNumber("ki Pivot", 0);
@@ -94,7 +120,8 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = pivotPID.calculate(pivotMotor.getEncoder().getPosition(), desiredPosition);
         }
 
-        if (pivotMotor.getEncoder().getPosition() < pivotSafeZone && WristMotor.getEncoder().getPosition() < wristSafeZone) {
+        if (pivotMotor.getEncoder().getPosition() < pivotSafeZone
+                && WristMotor.getEncoder().getPosition() < wristSafeZone) {
             pivotMotor.stopMotor();
             pivotMotorTwo.stopMotor();
         } else if (speed > 0) {
@@ -107,9 +134,12 @@ public class ExtendoSubsystem extends SubsystemBase {
             }
         } else if (speed < 0) {
             if (PivotLimitSwitch.get()) {
-                pivotMotor.getEncoder().setPosition(0);
+                if (enableZeroing) {
+                    pivotMotor.getEncoder().setPosition(0);
+                    pivotMotorTwo.getEncoder().setPosition(0);
+                }
+
                 pivotMotor.stopMotor();
-                pivotMotorTwo.getEncoder().setPosition(0);
                 pivotMotorTwo.stopMotor();
             } else if (pivotMotor.getEncoder().getPosition() < 20 && extendMotor.getEncoder().getPosition() > 20) {
                 pivotMotor.stopMotor();
@@ -136,6 +166,10 @@ public class ExtendoSubsystem extends SubsystemBase {
     }
 
     public void Wrist(double speed, double desiredPosition) {
+        Wrist(speed, desiredPosition, false);
+    }
+
+    public void Wrist(double speed, double desiredPosition, boolean enableZeroing) {
         if (SmartDashboard.getBoolean("Set wrist PID", false)) {
             double kp = SmartDashboard.getNumber("kp Intake", 1);
             double ki = SmartDashboard.getNumber("ki Intake", 0);
@@ -148,15 +182,23 @@ public class ExtendoSubsystem extends SubsystemBase {
             speed = WristPID.calculate(WristMotor.getEncoder().getPosition(), desiredPosition);
         }
         if (speed < 0) {
-            if (WristMotor.getEncoder().getPosition() < maxWrist
-                    || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
+            if (WristMotor.getEncoder().getPosition() < maxWrist) {
                 WristMotor.stopMotor();
+            } else if (pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
+                if (WristMotor.getEncoder().getPosition() > -12) {
+                    WristMotor.set(speed * wristSafeSpeed);
+                } else {
+                    WristMotor.stopMotor();
+                }
             } else {
                 WristMotor.set(speed * WristSpeedScale);
             }
         } else if (speed > 0) {
             if (WristLimitSwitch.get()) {
-                WristMotor.getEncoder().setPosition(0);
+                if (enableZeroing) {
+                    WristMotor.getEncoder().setPosition(0);
+                }
+
                 WristMotor.stopMotor();
             } else if (WristMotor.getEncoder().getPosition() > -14) {
                 WristMotor.set(speed * 0.2);
