@@ -2,6 +2,8 @@ package frc.robot.commands.Autos;
 
 import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
+import frc.robot.commands.Autos.AutoUtilities.AutoScore;
+import frc.robot.commands.Autos.AutoUtilities.DriveAndHomeCommand;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;

@@ -8,6 +8,7 @@ import frc.robot.subsystems.*;
 import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
+import frc.robot.commands.Autos.AutoUtilities.AutoScore;
 
 public class ManualOnePlace extends SequentialCommandGroup {
 

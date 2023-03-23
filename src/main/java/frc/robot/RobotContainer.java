@@ -37,7 +37,7 @@ import frc.robot.commands.Autos.ManualOnePlace;
 import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
-import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Autos.AutoUtilities.ScoreLineup;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;

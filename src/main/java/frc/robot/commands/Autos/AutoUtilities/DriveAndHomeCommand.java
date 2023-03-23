@@ -1,4 +1,4 @@
-package frc.robot.commands.Autos;
+package frc.robot.commands.Autos.AutoUtilities;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Arm.ExtendCommand;
