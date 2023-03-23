@@ -13,7 +13,7 @@ public class StrafeAndHome extends ParallelCommandGroup {
 
     public StrafeAndHome(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target){
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, -1, -1, 0, target, 0, false),
+            new StrafeIntoDrive(m_DrivetrainSubsystem, vision, m_ExtendoSubsystem, m_IntakeSubsystem, target),
             new HomeExtendCommand(m_ExtendoSubsystem)
         );
     }

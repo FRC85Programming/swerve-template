@@ -99,7 +99,6 @@ public class DriveDistance extends CommandBase
             } 
         }
             
-    
     }
     private boolean driveFinished() {
         return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
