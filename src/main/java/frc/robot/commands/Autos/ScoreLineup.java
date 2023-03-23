@@ -21,6 +21,7 @@ public class ScoreLineup extends CommandBase
     private double area;
     boolean driveLeftStarted = false;
     boolean driveRightStarted = false;
+    private double turnMultiply = 1;
     public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision) {
         m_drivetrainSubsystem = driveTrain;
         this.vision = vision;
@@ -38,46 +39,26 @@ public class ScoreLineup extends CommandBase
             areaValue = area;
             areaChecked = true;
         }
-
-        if (areaValue == 0) {
-            while (true) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 0, 0));
-            }
-        }
-
-        if (tx > -3.441302*areaValue-3.473436) {
-            if (driveLeftStarted != true) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, -0.5, 0));
-                driveRightStarted = true;
-            }
+        if (tx-0.2 > -3.441302*areaValue-3.473436 && tx +0.2 < -3.441302*areaValue-3.473436) {
+            turnMultiply = 0;
         }
         if (tx < -3.441302*areaValue-3.473436) {
-            if (driveRightStarted != true) { }
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0.5, 0.5, 0));
-                driveLeftStarted = true;
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnMultiply*0.5));
+        } else if (tx < -3.441302*areaValue-3.473436) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnMultiply*-0.5));
         }
     }
 
 
     @Override
     public boolean isFinished(){
-        if (driveLeftStarted == true) {
-            return tx < -3.441302*areaValue-3.473436;
-        }
-        if (driveRightStarted == true) {
-            return tx > -3.441302*areaValue-3.473436;
-        } else {
-            return false;
-        }
+       return turnMultiply == 0 || tx-0.2 > -3.441302*areaValue-3.473436 && tx +0.2 < -3.441302*areaValue-3.473436;
     }
 
     @Override
     public void end (boolean interrupted)  {
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
-        trackDone = false;
         areaChecked = false;
-        driveLeftStarted = false;
-        driveRightStarted = false;
     }
 }
