@@ -48,7 +48,7 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getIntakeWrist() >= -65) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -67) {
                 m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);

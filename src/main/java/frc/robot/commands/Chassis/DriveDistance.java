@@ -91,10 +91,9 @@ public class DriveDistance extends CommandBase
         if (driveFinished() == false) {
             if (wheelSpeedY != 0 && wheelSpeedX != 0) {
                 if (color == DriverStation.Alliance.Blue) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(1, 1, 0));
-                }
-                if (color == DriverStation.Alliance.Red) {
                     m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, -1, 0));
+                } else if (color == DriverStation.Alliance.Red) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 1, 0));
                 }
             }
 

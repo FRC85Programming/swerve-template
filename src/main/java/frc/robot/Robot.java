@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", m_field);
 
     m_robotContainer = new RobotContainer();
-    m_robotContainer.getVision().setLED(1);;
+    m_robotContainer.getVision().setLED(1);
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
@@ -142,6 +142,7 @@ public class Robot extends TimedRobot {
     NetworkTable table = inst.getTable("limelight");
     
     inst.startClient4("85"); // Make sure you set this to your team number
+    m_robotContainer.getVision().setLED(1); 
     inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
     
     // NetworkTableEntry TeamEntry = table.getEntry("tx");
