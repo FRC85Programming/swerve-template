@@ -22,34 +22,34 @@ public class AutoScore extends CommandBase
     {
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
             if (m_extendoSubsystem.getPivotAngle() <= 70) {
-                m_extendoSubsystem.Pivot(0.85, 0);
+                m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -30) {
-                m_extendoSubsystem.Wrist(-0.5, 0);
+                m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0,0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             if (m_extendoSubsystem.getPivotAngle() <= 44) {
-                m_extendoSubsystem.Pivot(0.85, 0);
+                m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -33) {
-                m_extendoSubsystem.Wrist(-0.5, 0);
+                m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cone middle")) {
             if (m_extendoSubsystem.getPivotAngle() <= 69) {
-                m_extendoSubsystem.Pivot(0.85, 0);
+                m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -65) {
-                m_extendoSubsystem.Wrist(-0.5, 0);
+                m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
             }
