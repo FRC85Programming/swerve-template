@@ -14,7 +14,7 @@ public class CubeHighAndMobility extends SequentialCommandGroup {
     public CubeHighAndMobility(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         addCommands(  
             new HomeExtendCommand(extendo),
-            new ZeroGyroscopeCommand(driveTrain, 170),
+            new ZeroGyroscopeCommand(driveTrain, 180),
             new TimedIntakeCommand(intake, true, 0.5),
             new AutoScore(extendo, "cube high"),
             new AutoScoreExtend(extendo, "cube high"),

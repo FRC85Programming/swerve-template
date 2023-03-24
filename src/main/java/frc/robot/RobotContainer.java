@@ -177,10 +177,10 @@ public class RobotContainer {
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
 
-    new Trigger(m_controller::getXButton)
+    new Trigger(m_controller::getYButton)
         .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
 
-    new Trigger(m_controller::getYButton)
+    new Trigger(m_controller::getXButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
         () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
         () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),

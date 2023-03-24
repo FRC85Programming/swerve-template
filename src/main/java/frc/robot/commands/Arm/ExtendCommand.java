@@ -107,6 +107,19 @@ public class ExtendCommand extends CommandBase {
         double intakeWrist = m_IntakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
+        if (pivotAngle > ExtendoSubsystem.maxPivot) {
+            pivotAngle = ExtendoSubsystem.maxPivot;
+        }
+
+        if (intakeWrist < ExtendoSubsystem.maxWrist) {
+            intakeWrist = ExtendoSubsystem.maxWrist;
+        }
+
+        if (extendPosition > ExtendoSubsystem.maxExtend) {
+            extendPosition = ExtendoSubsystem.maxExtend;
+        }
+        
+
         return m_endCommandWhenPositionMet
                 && m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
                 && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWrist
