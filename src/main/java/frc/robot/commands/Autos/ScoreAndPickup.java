@@ -18,6 +18,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
         addCommands(
             new zeroWheels(driveTrain),
             new ZeroGyroscopeCommand(driveTrain, 180),
+            new HomeExtendCommand(extendo),
             new AutoScore(extendo, "cone middle"),
             new AutoScoreExtend(extendo, "cone middle"),
             new TimedIntakeCommand(intake, true, 1.5),
