@@ -30,9 +30,9 @@ import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
-import frc.robot.commands.Autos.BalanceAuto;
+import frc.robot.commands.Autos.CubeHighAndMobility;
 import frc.robot.commands.Autos.ManualMobility;
-import frc.robot.commands.Autos.ManualOnePlace;
+import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
@@ -60,6 +60,7 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
   private final VisionTracking vision = new VisionTracking();
+  private final ScoreAndBalance m_scorePosition = new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, null);
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   HolonomicDriveController controller = new HolonomicDriveController(
       new PIDController(1, 0, 0), new PIDController(1, 0, 0),
@@ -189,10 +190,21 @@ public class RobotContainer {
   public Command getAuto() {
     String autoMode = SmartDashboard.getString("BobDashAutoMode", "Normal Follow");
     if (autoMode.equals("Manual OnePlace")) {
-      return new ManualOnePlace(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Balance")) { 
-      return new BalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Cube High And Engage")) {
+      return new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
+    } else if (autoMode.equals("Cube High And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high");
+    } else if (autoMode.equals("Cube Middle And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube middle");
+    } else if (autoMode.equals("Cube Low And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube low");
+    } else if (autoMode.equals("Cone High And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high");
+    } else if (autoMode.equals("Cone Middle And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle");
+    } else if (autoMode.equals("Cone Low And Balance")) { 
+      return new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone low");
+    } 
+    else if (autoMode.equals("Cube High And Engage")) {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
       return new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this);
