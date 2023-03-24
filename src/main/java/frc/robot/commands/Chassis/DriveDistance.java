@@ -89,7 +89,7 @@ public class DriveDistance extends CommandBase
         if (driveFinished() == false) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
             if (flTarget/4 <  flTarget - m_frontLeftModule.getDriveDistance() || flTargetMinus/4 > flTargetMinus + m_frontLeftModule.getDriveDistance()) {
-                m_drivetrainSubsystem.setOpenloopRate(-1.3);
+                m_drivetrainSubsystem.setOpenloopRate(0);
             }
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
