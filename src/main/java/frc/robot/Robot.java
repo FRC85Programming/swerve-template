@@ -28,7 +28,6 @@ public class Robot extends TimedRobot {
   private final Field2d m_field = new Field2d();
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
-  private VisionTracking vision;
 
   Trajectory trajectory = new Trajectory();
 
@@ -44,7 +43,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    vision.setLED(0);
     // Instantiate our RobotContainer. This will perform all our bCutton bindings,
     // and put our
     // autonomous chooser on the dashboard.
@@ -55,6 +53,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", m_field);
 
     m_robotContainer = new RobotContainer();
+    m_robotContainer.getVision().setLED(1);;
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);

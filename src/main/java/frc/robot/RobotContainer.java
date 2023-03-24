@@ -212,6 +212,9 @@ public class RobotContainer {
     // -> -60.5));
   }
 
+    public VisionTracking getVision() {
+      return vision;
+    }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
