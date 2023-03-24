@@ -6,7 +6,7 @@ public class HomeExtendCommand extends ExtendCommand {
     private ExtendoSubsystem m_ExtendoSubsystem;
 
     public HomeExtendCommand(ExtendoSubsystem extendo) {
-        super(extendo, () -> -100, () -> -100, () -> 100, true);
+        super(extendo, () -> -100, () -> -100, () -> 100, true, true);
         m_ExtendoSubsystem = extendo;
     }
     

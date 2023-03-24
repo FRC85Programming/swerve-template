@@ -156,13 +156,13 @@ public class RobotContainer {
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
             () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+            () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
 
     new Trigger(m_controller::getYButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
             () -> 0,
             () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+            () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
 
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));

@@ -28,10 +28,8 @@ public class AutoScore extends CommandBase
                 m_extendoSubsystem.Pivot(0, 0);
             }
             if (m_extendoSubsystem.getExtendPosition() <= 60) {
-                DriverStation.reportWarning("Extend running", false);
                 m_extendoSubsystem.ExtendTelescope(0.8, 0);
             } else {
-                DriverStation.reportWarning("Extend finished.", false);
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -42) {
@@ -90,7 +88,6 @@ public class AutoScore extends CommandBase
         }
     }
     public void end(boolean interrupted) {
-        DriverStation.reportWarning("AutoScore end", interrupted);
         m_extendoSubsystem.Pivot(0, 0);
         m_extendoSubsystem.ExtendTelescope(0, 0);
         m_extendoSubsystem.Wrist(0, 0);

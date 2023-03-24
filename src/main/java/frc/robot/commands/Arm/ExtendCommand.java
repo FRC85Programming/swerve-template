@@ -2,6 +2,8 @@ package frc.robot.commands.Arm;
 
 import java.util.function.DoubleSupplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubsystem;
@@ -12,29 +14,33 @@ public class ExtendCommand extends CommandBase {
     private final DoubleSupplier m_PivotAngle;
     private final DoubleSupplier m_IntakeWrist;
     private final double tolerancePivot = 1;
-    private final double tolerancePivotSlow = 2;
+    private final double tolerancePivotSlow = 4;
     private final double toleranceExtend = 1;
+    private final double toleranceExtendSlow = 12;
     private final double toleranceWrist = 0.6;
     private final double toleranceWristSlow = 4;
-    private final double extendSpeed = 0.9;
+    private final double extendSpeedFast = 0.9;
+    private final double extendSpeedSlow = 0.5;
     private final double pivotFastSpeed = 0.8;
     private final double intakePivotSpeed = 0.8;
     private final double wristSlowSpeed = 0.25;
     private final double pivotSlowSpeed = 0.4;
     private boolean m_enableZeroing = false;
+    private boolean m_endCommandWhenPositionMet = true;
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
             DoubleSupplier pivotAngle, DoubleSupplier intakeWrist) {
-        this(extendo, extendPosition, pivotAngle, intakeWrist, false);
+        this(extendo, extendPosition, pivotAngle, intakeWrist, false, true);
     }
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
-            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing) {
+            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing, boolean endCommandWhenPositionMet) {
         m_ExtendoSubsystem = extendo;
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
         m_IntakeWrist = intakeWrist;
         m_enableZeroing = enableZeroing;
+        m_endCommandWhenPositionMet = endCommandWhenPositionMet;
 
         addRequirements(extendo);
     }
@@ -63,11 +69,18 @@ public class ExtendCommand extends CommandBase {
             m_ExtendoSubsystem.Pivot(pivotSpeed, 0.0, m_enableZeroing);
         }
 
+        double extendSpeed;
         if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend) {
-            DriverStation.reportWarning("ExtendCommand at position.", false);
-            m_ExtendoSubsystem.ExtendTelescope(0.0, 0.0);
-        } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
+            extendSpeed = 0;
+        } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtendSlow
+        && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtendSlow) { 
+            extendSpeed = extendSpeedSlow;
+        } else {
+            extendSpeed = extendSpeedFast;
+        }
+        
+        if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
             m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
         } else {
             m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
@@ -97,7 +110,8 @@ public class ExtendCommand extends CommandBase {
         double intakeWrist = m_IntakeWrist.getAsDouble();
         double extendPosition = m_ExtendPosition.getAsDouble();
 
-        return m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
+        return m_endCommandWhenPositionMet
+                && m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
                 && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWrist
                 && m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
                 && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend
