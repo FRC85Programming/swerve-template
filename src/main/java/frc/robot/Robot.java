@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DrivetrainSubsystem;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -28,7 +27,6 @@ public class Robot extends TimedRobot {
   private final Field2d m_field = new Field2d();
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
-  private DrivetrainSubsystem m_DrivetrainSubsystem;
 
   Trajectory trajectory = new Trajectory();
 

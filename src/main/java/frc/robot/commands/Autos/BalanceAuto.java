@@ -7,7 +7,6 @@ import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 import frc.robot.subsystems.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -15,7 +14,6 @@ public class BalanceAuto extends SequentialCommandGroup{
     
         public BalanceAuto(DrivetrainSubsystem driveTrain, VisionTracking vision, ExtendoSubsystem extendo, IntakeSubsystem intake) {
 
-            SmartDashboard.putBoolean("BalanceAuto started", true);
             addCommands(
                 new ZeroGyroscopeCommand(driveTrain, 180),
                 new ZeroPitchRollCommand(driveTrain),

@@ -1,6 +1,5 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.Chassis.DriveAndIntake;
@@ -26,10 +25,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -5),
             new AutoScore(extendo, "cube middle"),
             new TimedIntakeCommand(intake, null),
-            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)
-
-
-            
+            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)            
         );
     }
 }

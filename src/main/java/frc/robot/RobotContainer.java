@@ -18,7 +18,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,16 +36,12 @@ import frc.robot.commands.Autos.ManualOnePlace;
 import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
-import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
-import frc.robot.commands.Arm.ExtendCommand;
-import frc.robot.commands.Arm.IntakeCommand;
-import frc.robot.commands.Arm.ManualExtendoCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -64,7 +59,6 @@ public class RobotContainer {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
-  private final Field2d m_field = new Field2d();
   private final VisionTracking vision = new VisionTracking();
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   HolonomicDriveController controller = new HolonomicDriveController(
