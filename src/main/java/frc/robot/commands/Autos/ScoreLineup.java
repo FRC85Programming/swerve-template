@@ -44,9 +44,9 @@ public class ScoreLineup extends CommandBase
             turnMultiply = 0;
         }
         if (tx < -3.441302*areaValue-3.473436) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnMultiply*0.5));
-        } else if (tx < -3.441302*areaValue-3.473436) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnMultiply*-0.5));
+        } else if (tx < -3.441302*areaValue-3.473436) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnMultiply*0.5));
         }
     }
 

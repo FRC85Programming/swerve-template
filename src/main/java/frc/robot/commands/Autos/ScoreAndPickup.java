@@ -21,15 +21,13 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new AutoScore(extendo, "cone middle"),
             new AutoScoreExtend(extendo, "cone middle"),
             new TimedIntakeCommand(intake, true, 1.5),
-            new StrafeAndHome(driveTrain, vision, extendo, intake, 0),
-            new DriveDistance(driveTrain, vision, 0, -2, 0, 2.2, 0, false),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.7),
             new DriveDistance(driveTrain, vision, 0, 0, 2, 0, 180, false),
             new AutoIntakeCube(extendo, intake),
             new ScoreLineup(driveTrain, vision),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -1.5),
-            new DriveDistance(driveTrain, vision, 0, 0, 2, 0, 180, false),
-            new TimedIntakeCommand(intake, false, 0.5) 
+            new DriveDistance(driveTrain, vision, 0, 0, 2, 0, 180, false)
         );
     }
     
