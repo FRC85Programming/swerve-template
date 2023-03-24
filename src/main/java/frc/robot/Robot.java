@@ -36,6 +36,10 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
 
+  public void win() {
+    // I did this for fun lol
+  } 
+
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer. This will perform all our bCutton bindings,

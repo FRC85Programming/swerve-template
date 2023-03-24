@@ -192,7 +192,7 @@ public class RobotContainer {
       return new ManualOnePlace(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Balance")) { 
       return new BalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Score and Engage")) {
+    } else if (autoMode.equals("Cube High And Engage")) {
       return new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem);
     } else if (autoMode.equals("Manual Mobility")) {
       return new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this);

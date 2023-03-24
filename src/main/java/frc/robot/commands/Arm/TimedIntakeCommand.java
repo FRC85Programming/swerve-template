@@ -9,13 +9,15 @@ public class TimedIntakeCommand extends CommandBase {
     Timer m_timer;
     Boolean timerStarted = false;
     Boolean intakeMode = false;
+    double time;
 
-    public TimedIntakeCommand(IntakeSubsystem intake, Boolean intakeMode)
+    public TimedIntakeCommand(IntakeSubsystem intake, Boolean intakeMode, double time)
     {
         m_intakeSubsystem = intake;
         this.intakeMode = intakeMode;
         m_timer = new Timer();
         addRequirements(intake);
+        this.time = time;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class TimedIntakeCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_timer.get() >= 1.5;
+        return m_timer.get() >= time;
     }
 
     @Override

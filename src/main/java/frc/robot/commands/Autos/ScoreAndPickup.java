@@ -17,14 +17,14 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new zeroWheels(driveTrain),
             new ZeroGyroscopeCommand(driveTrain, 0),
             new AutoScore(extendo, "cone middle"),
-            new TimedIntakeCommand(intake, false),
+            new TimedIntakeCommand(intake, false, 1.5),
             new StrafeAndHome(driveTrain, vision, extendo, intake, 0.5),
             new DriveDistance(driveTrain, vision, 0, -2, 0, 4.5, 0, false),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 2),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -5),
             new AutoScore(extendo, "cube middle"),
-            new TimedIntakeCommand(intake, null),
+            new TimedIntakeCommand(intake, null, 1.5),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0)            
         );
     }

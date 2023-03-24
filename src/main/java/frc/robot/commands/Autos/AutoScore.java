@@ -26,26 +26,16 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getExtendPosition() <= 60) {
-                m_extendoSubsystem.ExtendTelescope(0.8, 0);
-            } else {
-                m_extendoSubsystem.ExtendTelescope(0, 0);
-            }
-            if (m_extendoSubsystem.getIntakeWrist() >= -42) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -30) {
                 m_extendoSubsystem.Wrist(-0.5, 0);
             } else {
-                m_extendoSubsystem.Wrist(0, 0);
+                m_extendoSubsystem.Wrist(0,0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             if (m_extendoSubsystem.getPivotAngle() <= 44) {
                 m_extendoSubsystem.Pivot(0.85, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
-            }
-            if (m_extendoSubsystem.getExtendPosition() <= 5) {
-                m_extendoSubsystem.ExtendTelescope(0.5, 0);
-            } else {
-                m_extendoSubsystem.ExtendTelescope(0, 0);
             }
             if (m_extendoSubsystem.getIntakeWrist() >= -33) {
                 m_extendoSubsystem.Wrist(-0.5, 0);
@@ -58,11 +48,6 @@ public class AutoScore extends CommandBase
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getExtendPosition() <= 5) {
-                m_extendoSubsystem.ExtendTelescope(0.5, 0);
-            } else {
-                m_extendoSubsystem.ExtendTelescope(0, 0);
-            }
             if (m_extendoSubsystem.getIntakeWrist() >= -65) {
                 m_extendoSubsystem.Wrist(-0.5, 0);
             } else {
@@ -73,15 +58,15 @@ public class AutoScore extends CommandBase
         m_intakeSubsystem.StopRollers();*/
     }
 
-    public boolean isFinished() {
+    public boolean isFinished() {                       
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
-            return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getExtendPosition() >= 53 && m_extendoSubsystem.getIntakeWrist() <= -35;
+            return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getIntakeWrist() <= -33;
         }
         if (gamePiecePosition.toLowerCase().equals("cube middle")) {
-            return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -38;
+            return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getIntakeWrist() <= -38;
         }
         if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            return m_extendoSubsystem.getPivotAngle() >= 56 && m_extendoSubsystem.getExtendPosition() >= 0 && m_extendoSubsystem.getIntakeWrist() <= -62;
+            return m_extendoSubsystem.getPivotAngle() >= 56 && m_extendoSubsystem.getIntakeWrist() <= -62;
         } else {
             return true;
         }

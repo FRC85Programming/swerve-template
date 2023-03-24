@@ -16,7 +16,7 @@ public class ManualOnePlace extends SequentialCommandGroup {
             new HomeExtendCommand(extendo),
             new ZeroGyroscopeCommand(driveTrain, 180),
             new AutoScore(extendo, "cone middle"),
-            new TimedIntakeCommand(intake, true),
+            new TimedIntakeCommand(intake, true, 2),
             new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
             new DriveDistance(driveTrain, vision, -1, -1, 0, 0.3, 0, null),
             new DriveDistance(driveTrain, vision, 0, -2, 0.0, 4.95, 0, false)
