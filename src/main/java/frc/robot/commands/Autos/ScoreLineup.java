@@ -32,6 +32,7 @@ public class ScoreLineup extends CommandBase
     @Override
     public void execute() {
         vision.setPipeline(2);
+        vision.setLED(1);
         tx = vision.getX();
         area = vision.getArea();
 
@@ -60,5 +61,6 @@ public class ScoreLineup extends CommandBase
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         areaChecked = false;
+        vision.setLED(0);
     }
 }

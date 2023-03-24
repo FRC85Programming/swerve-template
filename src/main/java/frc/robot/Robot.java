@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.VisionTracking;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   private final Field2d m_field = new Field2d();
   //public final DrivetrainSubsystem m_drivetrainSubsystem;
   private RobotContainer m_robotContainer;
+  private VisionTracking vision;
 
   Trajectory trajectory = new Trajectory();
 
@@ -42,6 +44,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    vision.setLED(0);
     // Instantiate our RobotContainer. This will perform all our bCutton bindings,
     // and put our
     // autonomous chooser on the dashboard.
