@@ -43,9 +43,6 @@ public class DriveDistance extends CommandBase
     Timer m_timer;
     Timer m_rampDownTimer;
     Boolean timerStarted = false;
-    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget) {
-        this(driveTrain, vision, speedY, speedX, rotateSpeed, driveTarget, 0, false);
-    }
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
