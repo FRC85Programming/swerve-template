@@ -39,6 +39,7 @@ import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
+import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
@@ -124,7 +125,7 @@ public class RobotContainer {
     m_autoCommands.put("Score, Pickup, and Engage",
       new ScoreEngageAndPickup(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Score and Pickup",
-      new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
+      new ScoreAndPickup(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     Set<String> autoKeys = m_autoCommands.keySet();
     SmartDashboard.putStringArray("AutoModes", autoKeys.toArray(new String[autoKeys.size()]));
   }

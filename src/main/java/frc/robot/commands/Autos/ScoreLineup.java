@@ -14,12 +14,13 @@ public class ScoreLineup extends CommandBase
     public Boolean track;
     public Boolean trackDone;
     private final VisionTracking vision;
-    Timer m_timer;
     Boolean timerStarted = false;
     private double areaValue;
     private Boolean areaChecked = false;
     private double tx;
     private double area;
+    boolean driveLeftStarted = false;
+    boolean driveRightStarted = false;
     public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision) {
         m_drivetrainSubsystem = driveTrain;
         this.vision = vision;
@@ -40,25 +41,34 @@ public class ScoreLineup extends CommandBase
 
         if (areaValue == 0) {
             while (true) {
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 0, 0));
             }
         }
 
         if (tx > -3.441302*areaValue-3.473436) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(-0.5, 0, 0));
+            if (driveLeftStarted != true) {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, -0.5, 0));
+                driveRightStarted = true;
+            }
         }
         if (tx < -3.441302*areaValue-3.473436) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(0.5, 0, 0));
+            if (driveRightStarted != true) { }
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0.5, 0.5, 0));
+                driveLeftStarted = true;
         }
+    }
 
-    }
-    public Boolean lineupDone(){
-        return tx - 0.2 > -3.441302*areaValue-3.473436 && tx + 0.2 < -3.441302*areaValue-3.473436;
-    }
 
     @Override
     public boolean isFinished(){
-        return lineupDone();
+        if (driveLeftStarted == true) {
+            return tx < -3.441302*areaValue-3.473436;
+        }
+        if (driveRightStarted == true) {
+            return tx > -3.441302*areaValue-3.473436;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -67,6 +77,7 @@ public class ScoreLineup extends CommandBase
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         trackDone = false;
         areaChecked = false;
-        m_timer.reset();
+        driveLeftStarted = false;
+        driveRightStarted = false;
     }
 }

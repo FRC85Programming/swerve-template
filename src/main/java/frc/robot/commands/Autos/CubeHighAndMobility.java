@@ -15,11 +15,11 @@ public class CubeHighAndMobility extends SequentialCommandGroup {
         addCommands(  
             new HomeExtendCommand(extendo),
             new ZeroGyroscopeCommand(driveTrain, 180),
+            new TimedIntakeCommand(intake, true, 0.5),
             new AutoScore(extendo, "cube high"),
             new AutoScoreExtend(extendo, "cube high"),
-            new TimedIntakeCommand(intake, true, 2),
+            new TimedIntakeCommand(intake, false, 1.5),
             new HomeExtendCommand(extendo),
-            new DriveDistance(driveTrain, vision, -1, -1, 0, 0.3, 0, null),
             new DriveDistance(driveTrain, vision, 0, -1, 0.0, 4.95, 0, false)
         );
     }

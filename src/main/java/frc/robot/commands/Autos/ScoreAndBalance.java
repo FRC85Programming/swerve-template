@@ -8,6 +8,7 @@ import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.commands.Vision.AutoLineup;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -27,9 +28,9 @@ public class ScoreAndBalance  extends SequentialCommandGroup{
                     new AutoScoreExtend(extendo, scorePosition),
                     new TimedIntakeCommand(intake, false, 1.5),
                     new HomeExtendCommand(extendo),
-                    new DriveDistance(driveTrain, vision, 0, -1.7, 0, 0, 0, false),
+                    new DriveDistance(driveTrain, vision, 0, -1, 0, 4.35, 0, false),
                     new WaitCommand(0.1),
-                    new DriveDistance(driveTrain, vision, 0, 1.5, 0, -2.5, 0, false),
+                    new DriveDistance(driveTrain, vision, 0, 1, 0, -2.5, 0, false),
                     new AutoLevelPIDCommand(driveTrain),
                     new BrakeWheelsCommand(driveTrain)
 

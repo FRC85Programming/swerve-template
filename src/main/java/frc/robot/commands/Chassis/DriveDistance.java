@@ -38,7 +38,6 @@ public class DriveDistance extends CommandBase
         turnSpeed = rotateSpeed;
         encoderTarget = driveTarget;
         this.angleTarget = angleTarget;
-        m_drivetrainSubsystem.setOpenloopRate(1);
         init();
         addRequirements(m_drivetrainSubsystem);
     }
@@ -90,12 +89,16 @@ public class DriveDistance extends CommandBase
             m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
             if (flTarget/4 <  flTarget - m_frontLeftModule.getDriveDistance() || flTargetMinus/4 > flTargetMinus + m_frontLeftModule.getDriveDistance()) {
                 m_drivetrainSubsystem.setOpenloopRate(0);
+            } else {
+                m_drivetrainSubsystem.setOpenloopRate(1);
             }
+        }
+        if (turnFinished() == false) {
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
             } 
         }
-        
+            
     
     }
     private boolean driveFinished() {
