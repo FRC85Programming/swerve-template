@@ -41,6 +41,7 @@ import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
 import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
@@ -107,6 +108,8 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     m_autoCommands.put("Cube High and Mobility",
       new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+      m_autoCommands.put("Cube High and Mobility + Spin",
+      new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Cube High And Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
     m_autoCommands.put("Cube Middle And Balance",

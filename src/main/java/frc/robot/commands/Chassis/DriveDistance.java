@@ -31,6 +31,7 @@ public class DriveDistance extends CommandBase
     private static int instanceCount = 0;
     Boolean timerStarted = false;
     DriverStation.Alliance color;
+    double degrees360;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
@@ -57,9 +58,10 @@ public class DriveDistance extends CommandBase
     @Override
     public void execute() {
         color = DriverStation.getAlliance();
+        degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         if (turnSpeed != 0) {
             if (angleCalc == false) {
-                targetAngle = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() + angleTarget;
+                targetAngle = degrees360 + angleTarget;
                 angleCalc = true;
             }
         }
@@ -116,7 +118,7 @@ public class DriveDistance extends CommandBase
         return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
     }
     private boolean turnFinished() {
-        return turnSpeed == 0 || (Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle >= -3 && Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle <= 3);
+        return turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
     }
 
     @Override

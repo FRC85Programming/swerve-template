@@ -9,15 +9,26 @@ public class ExtendPauseCommand extends SequentialCommandGroup {
 
     public ExtendPauseCommand(ExtendoSubsystem extendo) {
         m_extendoSubsystem = extendo;
-        addCommands(
-                new ExtendCommand(m_extendoSubsystem,
-                        () -> 5,
-                        () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-                        () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, true),
-                new ExtendCommand(m_extendoSubsystem,
-                        () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
-                        () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-                        () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
+        double desiredExtend = SmartDashboard.getNumber("DesiredExtendPosition", 0);
+        String positionName = SmartDashboard.getString(("DesiredPositionName"), "");
+
+        if (positionName.toLowerCase().equals("home")) {
+                addCommands(
+                        new ExtendCommand(m_extendoSubsystem,
+                                () -> desiredExtend,
+                                () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+                                () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
+        } else {
+                addCommands(
+                        new ExtendCommand(m_extendoSubsystem,
+                                null,
+                                () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+                                () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, true),
+                        new ExtendCommand(m_extendoSubsystem,
+                                () -> desiredExtend,
+                                () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+                                () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
+        }
     }
 
 }

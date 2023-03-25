@@ -14,7 +14,7 @@ public class ExtendCommand extends CommandBase {
     private final double tolerancePivotSlow = 4;
     private final double toleranceExtend = 1;
     private final double toleranceExtendSlow = 12;
-    private final double toleranceWrist = 0.6;
+    private final double toleranceWrist = 1;
     private final double toleranceWristSlow = 4;
     private final double extendSpeedFast = 0.9;
     private final double extendSpeedSlow = 0.5;
@@ -31,7 +31,8 @@ public class ExtendCommand extends CommandBase {
     }
 
     public ExtendCommand(ExtendoSubsystem extendo, DoubleSupplier extendPosition,
-            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing, boolean endCommandWhenPositionMet) {
+            DoubleSupplier pivotAngle, DoubleSupplier intakeWrist, boolean enableZeroing,
+            boolean endCommandWhenPositionMet) {
         m_ExtendoSubsystem = extendo;
         m_ExtendPosition = extendPosition;
         m_PivotAngle = pivotAngle;
@@ -47,7 +48,6 @@ public class ExtendCommand extends CommandBase {
 
         double pivotAngle = m_PivotAngle.getAsDouble();
         double intakeWrist = m_IntakeWrist.getAsDouble();
-        double extendPosition = m_ExtendPosition.getAsDouble();
 
         double pivotSpeed;
         if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
@@ -66,21 +66,24 @@ public class ExtendCommand extends CommandBase {
             m_ExtendoSubsystem.Pivot(pivotSpeed, 0.0, m_enableZeroing);
         }
 
-        double extendSpeed;
-        if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
-                && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend) {
-            extendSpeed = 0;
-        } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtendSlow
-        && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtendSlow) { 
-            extendSpeed = extendSpeedSlow;
-        } else {
-            extendSpeed = extendSpeedFast;
-        }
-        
-        if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
-            m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
-        } else {
-            m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
+        if (m_ExtendPosition != null) {
+            double extendPosition = m_ExtendPosition.getAsDouble();
+            double extendSpeed;
+            if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
+                    && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend) {
+                extendSpeed = 0;
+            } else if (m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtendSlow
+                    && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtendSlow) {
+                extendSpeed = extendSpeedSlow;
+            } else {
+                extendSpeed = extendSpeedFast;
+            }
+
+            if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
+                m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
+            } else {
+                m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
+            }
         }
 
         double wristSpeed;
@@ -104,27 +107,38 @@ public class ExtendCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = m_IntakeWrist.getAsDouble();
-        double extendPosition = m_ExtendPosition.getAsDouble();
+        double intakeWrist = Math.abs(m_IntakeWrist.getAsDouble());
+        boolean extendFinsished = false;
+        if (m_ExtendPosition != null) {
+            double extendPosition = m_ExtendPosition.getAsDouble();
+
+            if (extendPosition > ExtendoSubsystem.maxExtend) {
+                extendPosition = ExtendoSubsystem.maxExtend;
+            }
+            extendFinsished = m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
+                    && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend;
+        } else {
+            extendFinsished = true;
+        }
 
         if (pivotAngle > ExtendoSubsystem.maxPivot) {
             pivotAngle = ExtendoSubsystem.maxPivot;
         }
 
-        if (intakeWrist < ExtendoSubsystem.maxWrist) {
-            intakeWrist = ExtendoSubsystem.maxWrist;
+        double wristMax = Math.abs(ExtendoSubsystem.maxWrist);
+        if (intakeWrist > wristMax) {
+            intakeWrist = wristMax;
         }
 
-        if (extendPosition > ExtendoSubsystem.maxExtend) {
-            extendPosition = ExtendoSubsystem.maxExtend;
+        double currentWrist = Math.abs(m_ExtendoSubsystem.getIntakeWrist());
+        if (currentWrist > wristMax) {
+            currentWrist = wristMax;
         }
-        
 
         return m_endCommandWhenPositionMet
-                && m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
-                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWrist
-                && m_ExtendoSubsystem.getExtendPosition() > extendPosition - toleranceExtend
-                && m_ExtendoSubsystem.getExtendPosition() < extendPosition + toleranceExtend
+                && currentWrist > intakeWrist - toleranceWrist
+                && currentWrist < intakeWrist + toleranceWrist
+                && extendFinsished
                 && m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
                 && m_ExtendoSubsystem.getPivotAngle() < pivotAngle + tolerancePivot;
     }
