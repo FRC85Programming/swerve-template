@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
 import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.ExtendPauseCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
@@ -41,6 +42,7 @@ import frc.robot.commands.Autos.ScoreAndPickup;
 import frc.robot.commands.Autos.ScoreBalanceAuto;
 import frc.robot.commands.Autos.ScoreEngageAndPickup;
 import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
@@ -105,27 +107,27 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
-    m_autoCommands.put("Manual OnePlace",
+    m_autoCommands.put("Cube High and Mobility",
       new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+      m_autoCommands.put("Cube High and Mobility + Spin",
+      new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Cube High And Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
     m_autoCommands.put("Cube Middle And Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube middle"));
-    m_autoCommands.put("Cube Low And Balance",
-      new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube low"));
-    m_autoCommands.put("Cone High And Balance",
-      new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
+    // m_autoCommands.put("Cube Low And Balance",
+    //   new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube low"));
+    // m_autoCommands.put("Cone High And Balance",
+    //   new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
     m_autoCommands.put("Cone Middle And Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
-    m_autoCommands.put("Cone Low And Balance",
-      new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone low"));
-    m_autoCommands.put("Cube High And Engage",
-      new ScoreBalanceAuto(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem));
-    m_autoCommands.put("Manual Mobility",
+    // m_autoCommands.put("Cone Low And Balance",
+    //   new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone low"));
+    m_autoCommands.put("Mobility",
       new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this));
-    m_autoCommands.put("Score, Pickup, and Engage",
-      new ScoreEngageAndPickup(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem));
-    m_autoCommands.put("Score and Pickup",
+    // m_autoCommands.put("Score, Pickup, and Engage",
+    //   new ScoreEngageAndPickup(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("Cone Mid and Cube Pickup",
       new ScoreAndPickup(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     Set<String> autoKeys = m_autoCommands.keySet();
     SmartDashboard.putStringArray("AutoModes", autoKeys.toArray(new String[autoKeys.size()]));
@@ -179,17 +181,14 @@ public class RobotContainer {
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
 
+    new Trigger(m_controller::getYButton)
+        .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
+
     new Trigger(m_controller::getXButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
-            () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
-
-    new Trigger(m_controller::getYButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem,
-            () -> 0,
-            () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
+        () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
+        () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+        () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
 
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
@@ -213,6 +212,9 @@ public class RobotContainer {
     // -> -60.5));
   }
 
+    public VisionTracking getVision() {
+      return vision;
+    }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

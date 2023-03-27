@@ -1,6 +1,7 @@
 package frc.robot.commands.Chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionTracking;
@@ -29,6 +30,8 @@ public class DriveDistance extends CommandBase
     public Boolean trackDone;
     private static int instanceCount = 0;
     Boolean timerStarted = false;
+    DriverStation.Alliance color;
+    double degrees360;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
@@ -54,9 +57,11 @@ public class DriveDistance extends CommandBase
 
     @Override
     public void execute() {
+        color = DriverStation.getAlliance();
+        degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         if (turnSpeed != 0) {
             if (angleCalc == false) {
-                targetAngle = m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() + angleTarget;
+                targetAngle = degrees360 + angleTarget;
                 angleCalc = true;
             }
         }
@@ -86,12 +91,21 @@ public class DriveDistance extends CommandBase
         SmartDashboard.putNumber("Drive Distance", m_frontLeftModule.getDriveDistance());
         SmartDashboard.putBoolean("DriveFinished", driveFinished());
         if (driveFinished() == false) {
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-            if (flTarget/4 <  flTarget - m_frontLeftModule.getDriveDistance() || flTargetMinus/4 > flTargetMinus + m_frontLeftModule.getDriveDistance()) {
-                m_drivetrainSubsystem.setOpenloopRate(0);
-            } else {
-                m_drivetrainSubsystem.setOpenloopRate(1);
+            if (wheelSpeedY != 0 && wheelSpeedX != 0) {
+                if (color == DriverStation.Alliance.Blue) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, -1, 0));
+                } else if (color == DriverStation.Alliance.Red) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 1, 0));
+                }
             }
+
+
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
+                if (flTarget/4 <  flTarget - m_frontLeftModule.getDriveDistance() || flTargetMinus/4 > flTargetMinus + m_frontLeftModule.getDriveDistance()) {
+                    m_drivetrainSubsystem.setOpenloopRate(0);
+                } else {
+                    m_drivetrainSubsystem.setOpenloopRate(1);
+                }
         }
         if (turnFinished() == false) {
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
@@ -104,7 +118,7 @@ public class DriveDistance extends CommandBase
         return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
     }
     private boolean turnFinished() {
-        return turnSpeed == 0 || (Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle >= -1 && Math.abs(m_drivetrainSubsystem.getGyroscopeRotation().getDegrees()) - targetAngle <= 1);
+        return turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
     }
 
     @Override

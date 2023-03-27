@@ -43,12 +43,12 @@ public class AutoScore extends CommandBase
                 m_extendoSubsystem.Wrist(0, 0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            if (m_extendoSubsystem.getPivotAngle() <= 69) {
+            if (m_extendoSubsystem.getPivotAngle() <= 66) {
                 m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getIntakeWrist() >= -65) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -67) {
                 m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
@@ -66,7 +66,7 @@ public class AutoScore extends CommandBase
             return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getIntakeWrist() <= -38;
         }
         if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            return m_extendoSubsystem.getPivotAngle() >= 64 && m_extendoSubsystem.getIntakeWrist() <= -62;
+            return m_extendoSubsystem.getPivotAngle() >= 61 && m_extendoSubsystem.getIntakeWrist() <= -62;
         } else {
             return true;
         }

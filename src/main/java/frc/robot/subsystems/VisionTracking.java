@@ -93,8 +93,8 @@ public class VisionTracking extends SubsystemBase {
     return thor.getDouble(0.0); // Size of target horizontal
   }
 
-  public void setLED(int LEDMode) {
-    ledModeEntry.setNumber(LEDMode);
+  public void setLED(int ledPower) {
+    ledModeEntry.setNumber(ledPower);
   }
 
   public void setPipeline(int pipeline) {

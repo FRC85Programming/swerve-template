@@ -30,9 +30,9 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final double extendSpeedScaleSafe = 0.4;
     private final double extendSpeedScale = 0.7;
     private final double pivotSpeedScale = 0.5;
-    private double maxPivot = 80;
-    private double maxExtend = 210;
-    private double maxWrist = -64;
+    public static final double maxPivot = 80;
+    public static final double maxExtend = 210;
+    public static final double maxWrist = -64;
     private double pivotSafeZone = 10;
     private double extendSafeZone = 30;
     private double wristSafeZone = -15;
@@ -76,6 +76,7 @@ public class ExtendoSubsystem extends SubsystemBase {
         if (desiredPosition != 0) {
             speed = extendoPID.calculate(extendMotor.getEncoder().getPosition(), desiredPosition);
         }
+
         if (speed > 0) {
             if (extendMotor.getEncoder().getPosition() > maxExtend
                     || pivotMotor.getEncoder().getPosition() < pivotSafeZone) {
