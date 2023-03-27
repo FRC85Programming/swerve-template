@@ -8,9 +8,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ScoreLineup extends CommandBase
 {
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
+    private final VisionTracking vision;
+    // Variables are created and set to default values
+    double tx;
+    double area;
+    // PID values that adjust the distance from the offset
+    double headingError;
+    double Kp = 0.1;
+    double steering_adjust;
+    // Switch boolean that makes sure we only set the pipline once
+    boolean lineSwitched = false;
+
     public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision) {
-        createSystems();
-        init();
+        vision.setLED(0);
         m_drivetrainSubsystem = driveTrain;
         this.vision = vision;
         addRequirements(m_drivetrainSubsystem);
@@ -26,25 +37,6 @@ public class ScoreLineup extends CommandBase
         
     }
 
-    public void init() {
-        // Variables are created and set to default values
-        private double tx;
-        private double area;
-        // PID values that adjust the distance from the offset
-        double headingError;
-        double Kp = 0.1f;
-        double steering_adjust;
-        // Switch boolean that makes sure we only set the pipline once
-        double lineSwitched = false;
-        vision.setLED(0);
-    }
-    
-    public void createSystems() {
-        // Our two subsystems for this are set up. Vision for detecting cubes and Drivetrain to correct our rotation
-        private final DrivetrainSubsystem m_drivetrainSubsystem;
-        private final VisionTracking vision;
-    }
-
     public void collectValues() {
         // Sets the values of the targets position ad size
         tx = vision.getX();
@@ -54,7 +46,7 @@ public class ScoreLineup extends CommandBase
     public void setCorrectionValues() {
         // Sets the values that will be driven in proportion to feedback
         headingError = tx;
-        steering_adjust = Kp * tx;
+        steering_adjust = Kp * tx-7.5;
     }
 
     public void switchPipeline() {
@@ -69,7 +61,7 @@ public class ScoreLineup extends CommandBase
     @Override
     public boolean isFinished(){ 
         // Latency window of x to be lined up
-       return headingError-0.2 < 0 && headingError+0.2 > 0;
+       return headingError-0.5 < 0 && headingError+0.5 > 0;
     }
 
     @Override
