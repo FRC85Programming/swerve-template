@@ -34,6 +34,7 @@ import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.CubeHighAndMobility;
+import frc.robot.commands.Autos.ManualCS;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
