@@ -12,15 +12,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class DriveDistance extends CommandBase
 {
     private final SwerveModule m_frontLeftModule;
+    private final SwerveModule m_frontRightModule;
+    private final SwerveModule m_backLeftModule;
+    private final SwerveModule m_backRightModule;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private double wheelSpeedX;
     private double wheelSpeedY;
     private double turnSpeed;
     private double encoderTarget;
-    private double constantFLDistance;
+    private double constantDistance;
     private Boolean constantCalc;
-    private double flTarget;
-    private double flTargetMinus;
+    private double tickTarget;
+    private double tickTargetMinus;
     private double targetAngle;
     private boolean angleCalc;
     private double angleTarget;
@@ -32,9 +35,13 @@ public class DriveDistance extends CommandBase
     Boolean timerStarted = false;
     DriverStation.Alliance color;
     double degrees360;
+    double avgEncoderDistance;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
+        m_frontRightModule = m_drivetrainSubsystem.getFrontRight();
+        m_backRightModule = m_drivetrainSubsystem.getBackRight();
+        m_backLeftModule = m_drivetrainSubsystem.getBackLeft();
         this.track = track;
         wheelSpeedX = speedX;
         wheelSpeedY = speedY;
@@ -58,6 +65,7 @@ public class DriveDistance extends CommandBase
     @Override
     public void execute() {
         color = DriverStation.getAlliance();
+        avgEncoderDistance = (m_backLeftModule.getDriveDistance() + m_backRightModule.getDriveDistance() + m_frontLeftModule.getDriveDistance() + m_frontRightModule.getDriveDistance()) / 4;
         degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         if (turnSpeed != 0) {
             if (angleCalc == false) {
@@ -70,12 +78,12 @@ public class DriveDistance extends CommandBase
         }
         // Gets the drive distance so that we can accuratley judge how far we need to drive
         if (constantCalc == false) {
-            constantFLDistance = m_frontLeftModule.getDriveDistance();
+            constantDistance = avgEncoderDistance;
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
-            flTarget = constantFLDistance + encoderTarget;
+            tickTarget = constantDistance + encoderTarget;
             constantCalc = true;
 
-            flTargetMinus = constantFLDistance - encoderTarget;
+            tickTarget = constantDistance - encoderTarget;
         }
         //One encoder tic = 2.75 feet
         // Drives the robot given the specified values
@@ -101,7 +109,7 @@ public class DriveDistance extends CommandBase
 
 
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-                if (flTarget/4 <  flTarget - m_frontLeftModule.getDriveDistance() || flTargetMinus/4 > flTargetMinus + m_frontLeftModule.getDriveDistance()) {
+                if (tickTarget/4 <  tickTarget - avgEncoderDistance || tickTargetMinus/4 > tickTargetMinus + avgEncoderDistance) {
                     m_drivetrainSubsystem.setOpenloopRate(0);
                 } else {
                     m_drivetrainSubsystem.setOpenloopRate(1);
@@ -115,7 +123,7 @@ public class DriveDistance extends CommandBase
             
     }
     private boolean driveFinished() {
-        return m_frontLeftModule.getDriveDistance() - flTarget >= -0.3 && m_frontLeftModule.getDriveDistance() - flTarget <= 0.3 || m_frontLeftModule.getDriveDistance() - flTargetMinus >= -0.3 && m_frontLeftModule.getDriveDistance() - flTargetMinus <= 0.3;
+        return avgEncoderDistance- tickTarget >= -0.3 && avgEncoderDistance- tickTarget <= 0.3 || avgEncoderDistance - tickTargetMinus >= -0.3 && avgEncoderDistance - tickTargetMinus <= 0.3;
     }
     private boolean turnFinished() {
         return turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
