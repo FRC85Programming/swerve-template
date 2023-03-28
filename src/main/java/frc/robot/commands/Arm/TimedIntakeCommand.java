@@ -10,14 +10,16 @@ public class TimedIntakeCommand extends CommandBase {
     Boolean timerStarted = false;
     Boolean intakeMode = false;
     double time;
+    double intakePower;
 
-    public TimedIntakeCommand(IntakeSubsystem intake, Boolean intakeMode, double time)
+    public TimedIntakeCommand(IntakeSubsystem intake, Boolean intakeMode, double time, double intakePower)
     {
         m_intakeSubsystem = intake;
         this.intakeMode = intakeMode;
         m_timer = new Timer();
         addRequirements(intake);
         this.time = time;
+        this.intakePower = intakePower;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class TimedIntakeCommand extends CommandBase {
         if (this.intakeMode) {
             m_intakeSubsystem.setRollerSpeed(() -> -0.8);
         } else {
-            m_intakeSubsystem.setRollerSpeed(() -> 0.6);
+            m_intakeSubsystem.setRollerSpeed(() -> intakePower);
         }
 
     }

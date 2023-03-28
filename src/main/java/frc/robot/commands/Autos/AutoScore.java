@@ -32,12 +32,12 @@ public class AutoScore extends CommandBase
                 m_extendoSubsystem.Wrist(0,0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cube middle")) {
-            if (m_extendoSubsystem.getPivotAngle() <= 44) {
+            if (m_extendoSubsystem.getPivotAngle() <= 10) {
                 m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getIntakeWrist() >= -33) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -10) {
                 m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0, 0);
@@ -63,7 +63,7 @@ public class AutoScore extends CommandBase
             return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getIntakeWrist() <= -33;
         }
         if (gamePiecePosition.toLowerCase().equals("cube middle")) {
-            return m_extendoSubsystem.getPivotAngle() >= 39 && m_extendoSubsystem.getIntakeWrist() <= -38;
+            return m_extendoSubsystem.getPivotAngle() >= 7 && m_extendoSubsystem.getIntakeWrist() <= -7;
         }
         if (gamePiecePosition.toLowerCase().equals("cone middle")) {
             return m_extendoSubsystem.getPivotAngle() >= 61 && m_extendoSubsystem.getIntakeWrist() <= -62;

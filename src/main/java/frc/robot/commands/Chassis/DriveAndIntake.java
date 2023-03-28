@@ -13,7 +13,7 @@ public class DriveAndIntake extends ParallelCommandGroup {
         SmartDashboard.putNumber("Intake Start", 1);
         addCommands(
             new DriveDistance(m_DrivetrainSubsystem, vision, 0, 1.5, 0, target, 0, false),
-            new TimedIntakeCommand(m_IntakeSubsystem, true, 2)
+            new TimedIntakeCommand(m_IntakeSubsystem, true, 2, -0.8)
         );
     }
 

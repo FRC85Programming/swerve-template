@@ -34,9 +34,11 @@ import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.ConeMidAndMobility;
 import frc.robot.commands.Autos.CubeHighAndMobility;
+import frc.robot.commands.Autos.CubeHighBalanceNoMobility;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
+import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
@@ -114,6 +116,10 @@ public class RobotContainer {
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Center-HighCube-Mobility-Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
+      m_autoCommands.put("Center-HighCube-Balance",
+      new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
+      m_autoCommands.put("Center-MidCone-Balance",
+      new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
     m_autoCommands.put("Mobility-NoScore", 
       new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, null));
     m_autoCommands.put("BumpSide-MidCone-Mobility", 
@@ -183,8 +189,14 @@ public class RobotContainer {
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
 
+    new Trigger(m_controller::getAButton)
+        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
+
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
+
+    new Trigger(m_operatorController::getYButton)
+        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
@@ -217,6 +229,10 @@ public class RobotContainer {
     } else {
       return new HomeExtendCommand(m_extendoSubsystem);
     }
+  }
+
+  public double getLeftY() {
+    return -modifyAxis(m_controller.getLeftY());
   }
 
   public Command getAutonomousCommand() {

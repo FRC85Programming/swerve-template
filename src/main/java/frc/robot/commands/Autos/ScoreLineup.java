@@ -1,6 +1,7 @@
 package frc.robot.commands.Autos;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionTracking;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,20 +10,25 @@ public class ScoreLineup extends CommandBase
 {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final VisionTracking vision;
+    private final RobotContainer robotContainer;
     // Variables are created and set to default values
     double tx;
     double area;
     // PID values that adjust the distance from the offset
     double headingError;
-    double Kp = 0.1;
+    double Kp = -0.05;
     double steering_adjust;
     // Switch boolean that makes sure we only set the pipline once
     boolean lineSwitched = false;
+    double leftStickY;
+    boolean endWhenFound;
 
-    public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision) {
+    public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, boolean endWhenFound) {
         vision.setLED(0);
         m_drivetrainSubsystem = driveTrain;
         this.vision = vision;
+        this.robotContainer = robotContainer;
+        this.endWhenFound = endWhenFound;
         addRequirements(m_drivetrainSubsystem);
     }
 
@@ -31,8 +37,16 @@ public class ScoreLineup extends CommandBase
         switchPipeline();
         collectValues();
         setCorrectionValues();
-        
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, steering_adjust));
+        if (robotContainer!= null) {
+            leftStickY = robotContainer.getLeftY();
+        }
+
+        if (tx != 0) {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(leftStickY, 0, steering_adjust));
+        } else {
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
+        }
+
         
     }
 
@@ -45,7 +59,7 @@ public class ScoreLineup extends CommandBase
     public void setCorrectionValues() {
         // Sets the values that will be driven in proportion to feedback
         headingError = tx;
-        steering_adjust = Kp * tx-7.5;
+        steering_adjust = Kp * (tx);
     }
 
     public void switchPipeline() {
@@ -59,8 +73,14 @@ public class ScoreLineup extends CommandBase
 
     @Override
     public boolean isFinished(){ 
-        // Latency window of x to be lined up
-       return headingError-0.5 < 0 && headingError+0.5 > 0;
+        if (tx == 0) {
+            return false;
+        } else if (endWhenFound == true) {
+            // Latency window of x to be lined up
+            return headingError - 1.4 < 0 && headingError + 1.4 > 0;
+        } else {
+            return false;
+        }
     }
 
     @Override

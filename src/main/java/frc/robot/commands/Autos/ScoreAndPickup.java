@@ -19,14 +19,13 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new HomeExtendCommand(extendo),
             new AutoScore(extendo, "cone middle"),
             new AutoScoreExtend(extendo, "cone middle"),
-            new TimedIntakeCommand(intake, true, 1.5),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.7),
-            new DriveDistance(driveTrain, vision, 0, 0, 2, 0, 180, false),
-            new AutoIntakeCube(extendo, intake),
-            new ScoreLineup(driveTrain, vision),
-            new DriveAndIntake(driveTrain, vision, extendo, intake, 1),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -1.5),
-            new DriveDistance(driveTrain, vision, 0, 0, 2, 0, 180, false)
+            new DriveDistance(driveTrain, vision, 1, -1, 0, 0.4, 0, null),
+            new TimedIntakeCommand(intake, true, 1.5, 0.8),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.3),
+            new RotateAndIntakePosition(driveTrain, vision, extendo, intake),
+            new ScoreLineup(driveTrain, vision, robotContainer, true),
+            new DriveAndIntake(driveTrain, vision, extendo, intake, 2),
+            new HomeExtendCommand(extendo)
         );
     }
     

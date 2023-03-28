@@ -564,6 +564,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     drive(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
 
+  public void resetDriveEncoders() {
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).getEncoder().setPosition(0);
+  }
+
   public SparkMaxPIDController getDrivePID() {
     return ((CANSparkMax) m_frontLeftModule.getDriveMotor()).getPIDController();
   }
