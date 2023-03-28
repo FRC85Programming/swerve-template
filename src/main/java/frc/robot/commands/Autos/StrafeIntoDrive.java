@@ -1,10 +1,6 @@
 package frc.robot.commands.Autos;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Arm.ExtendCommand;
-import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;

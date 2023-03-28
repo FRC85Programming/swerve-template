@@ -2,13 +2,11 @@ package frc.robot.commands.Autos;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
-import frc.robot.commands.Chassis.AutoLevelCommand;
 import frc.robot.commands.Chassis.DriveAndIntake;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.*;
-import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 

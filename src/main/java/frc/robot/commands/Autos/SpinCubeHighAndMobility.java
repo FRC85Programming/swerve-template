@@ -5,7 +5,6 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.subsystems.*;
-import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 

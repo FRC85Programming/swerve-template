@@ -1,11 +1,6 @@
 package frc.robot.commands.Chassis;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.Arm.HomeExtendCommand;
-import frc.robot.commands.Arm.TimedIntakeCommand;
-import frc.robot.commands.Autos.AutoScore;
-import frc.robot.commands.Autos.AutoScoreExtend;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class ZeroGyroscopeCommand extends CommandBase {

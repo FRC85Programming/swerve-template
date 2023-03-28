@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -36,13 +34,9 @@ import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
 import frc.robot.commands.Autos.ConeMidAndMobility;
 import frc.robot.commands.Autos.CubeHighAndMobility;
-import frc.robot.commands.Autos.ManualCS;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
-import frc.robot.commands.Autos.ScoreBalanceAuto;
-import frc.robot.commands.Autos.ScoreEngageAndPickup;
-import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
@@ -108,6 +102,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
+    m_autoCommands.put("BumpSide-MidCone-Pickup", 
+      new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("BumpSide-HighCube-Mobility",
       new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
       m_autoCommands.put("BumpSide-MidCube-Mobility",
