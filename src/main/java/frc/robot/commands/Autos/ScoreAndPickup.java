@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.Chassis.DriveAndIntake;
 import frc.robot.commands.Chassis.DriveDistance;
+import frc.robot.commands.Chassis.SideDependentStrafe;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.*;
@@ -19,7 +20,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new HomeExtendCommand(extendo),
             new AutoScore(extendo, "cone middle"),
             new AutoScoreExtend(extendo, "cone middle"),
-            new DriveDistance(driveTrain, vision, 1, -1, 0, 0.4, 0, null),
+            new SideDependentStrafe(driveTrain, 0.5),
             new TimedIntakeCommand(intake, true, 1.5, 0.8),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.3),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake),
