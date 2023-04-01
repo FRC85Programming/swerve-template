@@ -235,6 +235,14 @@ public class RobotContainer {
     return -modifyAxis(m_controller.getLeftY());
   }
 
+  public void writeDriveSpeeds() {
+    SmartDashboard.putNumber("FL Drive Speed", m_drivetrainSubsystem.getFrontLeft().getDriveMotor().get());
+    SmartDashboard.putNumber("FR Drive Speed", m_drivetrainSubsystem.getFrontRight().getDriveMotor().get());
+    SmartDashboard.putNumber("BL Drive Speed", m_drivetrainSubsystem.getBackLeft().getDriveMotor().get());
+    SmartDashboard.putNumber("BR Drive Speed", m_drivetrainSubsystem.getBackRight().getDriveMotor().get());
+
+  }
+
   public Command getAutonomousCommand() {
       // Resets wheels so they don't fight each other
       //m_drivetrainSubsystem.zeroWheels();

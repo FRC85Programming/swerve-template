@@ -65,14 +65,14 @@ public class DriveDistance extends CommandBase
     public void execute() {
         if (constantCalc == false) {
             m_drivetrainSubsystem.resetDriveEncoders();
+            init();
             //constantDistance = avgEncoderDistance;
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
             constantCalc = true;
         }
-
+        avgEncoderDistance = (Math.abs(m_backLeftModule.getDriveDistance()) + Math.abs(m_backRightModule.getDriveDistance()) + Math.abs(m_frontLeftModule.getDriveDistance()) + Math.abs(m_frontRightModule.getDriveDistance())) / 4;
  
         color = DriverStation.getAlliance();
-        avgEncoderDistance = (Math.abs(m_backLeftModule.getDriveDistance()) + Math.abs(m_backRightModule.getDriveDistance()) + Math.abs(m_frontLeftModule.getDriveDistance()) + Math.abs(m_frontRightModule.getDriveDistance())) / 4;
         if (!encoderResetDone) {
             if (avgEncoderDistance != 0) {
                 return;
@@ -84,6 +84,8 @@ public class DriveDistance extends CommandBase
         degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         SmartDashboard.putNumber("auto Target", encoderTarget);
         SmartDashboard.putNumber("auto Avg Encoder Distance", avgEncoderDistance);
+        SmartDashboard.putNumber("auto Angle Target", targetAngle);
+        SmartDashboard.putNumber("auto Current Rotation", degrees360);
         SmartDashboard.putNumber("auto Front Left encoder", m_frontLeftModule.getDriveDistance());
         SmartDashboard.putNumber("auto Front Right encoder", m_frontRightModule.getDriveDistance());
         SmartDashboard.putNumber("auto Back Left encoder", m_backLeftModule.getDriveDistance());
@@ -91,7 +93,7 @@ public class DriveDistance extends CommandBase
 
         if (turnSpeed != 0) {
             if (angleCalc == false) {
-                targetAngle = (degrees360 + angleTarget) % 360;
+                targetAngle = angleTarget;
                 angleCalc = true;
             }
         }
@@ -113,20 +115,14 @@ public class DriveDistance extends CommandBase
         SmartDashboard.putBoolean("DriveFinished", driveFinished());
         //Aliance based strafe
         if (driveFinished() == false) {
-            if (wheelSpeedY != 0 && wheelSpeedX != 0) {
-                if (color == DriverStation.Alliance.Blue) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, -1, 0));
-                } else if (color == DriverStation.Alliance.Red) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 1, 0));
-                }
-            }
-
                 // If more than 3/4 of the wat through the drive, start rampdown
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-                if (encoderTarget/4 <  encoderTarget - avgEncoderDistance) {
-                    m_drivetrainSubsystem.setOpenloopRate(0);
-                } else {
-                    m_drivetrainSubsystem.setOpenloopRate(1);
+                if (turnSpeed == 0) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, 0));
+                    if (encoderTarget/4 <  encoderTarget - avgEncoderDistance) {
+                        m_drivetrainSubsystem.setOpenloopRate(0);
+                    } else {
+                        m_drivetrainSubsystem.setOpenloopRate(1);
+                    }
                 }
         }
         if (turnFinished() == false) {
@@ -138,7 +134,7 @@ public class DriveDistance extends CommandBase
             
     }
     private boolean driveFinished() {
-        return constantCalc && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
+        return driveDone || Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
     }
     private boolean turnFinished() {
         return turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
@@ -146,7 +142,7 @@ public class DriveDistance extends CommandBase
 
     @Override
     public boolean isFinished(){
-        return turnDone == true && driveDone == true;
+        return turnDone == true && driveDone == true && encoderResetDone;
     }
 
     @Override
@@ -154,6 +150,5 @@ public class DriveDistance extends CommandBase
         // Stops the robot and allows the target distance to be calculated again
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         m_drivetrainSubsystem.setOpenloopRate(0);
-        init();
     }
 }

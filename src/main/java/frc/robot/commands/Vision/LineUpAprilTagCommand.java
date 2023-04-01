@@ -27,19 +27,19 @@ public class LineUpAprilTagCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        m_visionTracking.setPipeline(0);
+        m_visionTracking.setPipeline1(0);
         if (wheelReset == true) {
             // Stops the robot so that nobody dies
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
             // Make sure Ashley isn't around when this happens... (It turns the Limelight on)
-            m_visionTracking.setLED(0);
+            m_visionTracking.setLED1(0);
             // Switch variable so that this happens once per command run
             wheelReset = false;
         }
         //Sets the variables of the targets x, area, and ID
-        double area = m_visionTracking.getArea();
-        double tagID = m_visionTracking.getTag();
-        double ty = m_visionTracking.getY();
+        double area = m_visionTracking.getArea1();
+        double tagID = m_visionTracking.getTag1();
+        double ty = m_visionTracking.getY1();
 
         if (tagID > -1) {
             if(ty < -0.5)
@@ -59,6 +59,6 @@ public class LineUpAprilTagCommand extends CommandBase {
         wheelAngle = 0;
         wheelReset = true;
         // Makes Ashley not complain. (Turns Limelight off)
-        m_visionTracking.setLED(1);
+        m_visionTracking.setLED1(1);
     }
 }

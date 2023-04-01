@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   Trajectory trajectory = new Trajectory();
+  NetworkTableInstance inst;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -52,7 +54,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", m_field);
 
     m_robotContainer = new RobotContainer();
-    m_robotContainer.getVision().setLED(1);
+    m_robotContainer.getVision().setLED1(1);
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);
@@ -61,6 +63,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("kp", 1.5);
     SmartDashboard.putNumber("ki", 0);
     SmartDashboard.putNumber("kd", 0.5);
+    inst = NetworkTableInstance.getDefault();
+    inst.startClient4("85"); // Make sure you set this to your team number
+    inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
   }
 
   /**
@@ -135,14 +140,13 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("BobDashMatchTime", DriverStation.getMatchTime());
     // get the default instance of NetworkTables
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
     // get a reference to the subtable called "datatable"
     NetworkTable table = inst.getTable("limelight");
     
-    inst.startClient4("85"); // Make sure you set this to your team number
-    m_robotContainer.getVision().setLED(1); 
-    inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
+    m_robotContainer.getVision().setLED1(1);
+    m_robotContainer.getVision().setLED2(1); 
     
     // NetworkTableEntry TeamEntry = table.getEntry("tx");
     NetworkTableEntry xEntry = table.getEntry("tx");
@@ -196,6 +200,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Limelight Skew", ts);
     SmartDashboard.putNumber("April Tag ID", tid);
     // Limelight Data End
+
+    m_robotContainer.writeDriveSpeeds();
 
     
   }

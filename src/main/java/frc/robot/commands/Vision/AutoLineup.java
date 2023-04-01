@@ -21,12 +21,12 @@ public class AutoLineup extends CommandBase {
 
     @Override
     public void execute() {
-        m_visionTracking.setLED(0);
-        m_visionTracking.setPipeline(1);
-        double tx = m_visionTracking.getX();
-        double area = m_visionTracking.getArea();
-        double thor = m_visionTracking.getLength();
-        double tagID = m_visionTracking.getTag();
+        m_visionTracking.setLED1(0);
+        m_visionTracking.setPipeline1(1);
+        double tx = m_visionTracking.getX1();
+        double area = m_visionTracking.getArea1();
+        double thor = m_visionTracking.getLength1();
+        double tagID = m_visionTracking.getTag1();
         // double yaw = m_pigeon.getYaw();
         if (sideSelected == false) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, -tx));
@@ -58,7 +58,7 @@ public class AutoLineup extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_visionTracking.setLED(1);
+        m_visionTracking.setLED1(1);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         sideSelected = false;
     }

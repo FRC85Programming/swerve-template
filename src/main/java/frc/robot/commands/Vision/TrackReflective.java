@@ -22,8 +22,8 @@ public class TrackReflective extends CommandBase {
     @Override
     public void execute() {
         // Sets the limelight LEDs to "Force on"
-        double tx = m_visionTracking.getX();
-        double area = m_visionTracking.getArea();
+        double tx = m_visionTracking.getX1();
+        double area = m_visionTracking.getArea1();
         // Grabs the tapes distance from the crosshair (tx) and the area the tape takes
         // up on the screen (area) as a percentage
         if (area >= 1) {
@@ -40,7 +40,7 @@ public class TrackReflective extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_visionTracking.setLED(1);
+        m_visionTracking.setLED1(1);
         // Sets limelight LEDs to "Force off"
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         lrDecided = false;

@@ -23,10 +23,10 @@ public class TrackGamePiece extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_visionTracking.setLED(0);
+    m_visionTracking.setLED1(0);
         // Sets the limelight LEDs to "Force on"
-        double tx = m_visionTracking.getX();
-        double area = m_visionTracking.getArea();
+        double tx = m_visionTracking.getX1();
+        double area = m_visionTracking.getArea1();
         // Grabs the game piece's distance from the crosshair (tx) and the area it takes up on the screen (area) as a percentage
         if (area >= 1) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(3, 0.0, -tx * area * .08));
@@ -46,7 +46,7 @@ public class TrackGamePiece extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
     public void end(boolean interrupted)  {
-        m_visionTracking.setLED(1);
+        m_visionTracking.setLED1(1);
         // Sets limelight LEDs to "Force off"
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         // Tells the robot to stop moving even if it detects someone
