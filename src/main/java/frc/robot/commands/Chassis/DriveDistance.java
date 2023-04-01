@@ -81,6 +81,8 @@ public class DriveDistance extends CommandBase
         degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         SmartDashboard.putNumber("auto Target", encoderTarget);
         SmartDashboard.putNumber("auto Avg Encoder Distance", avgEncoderDistance);
+        SmartDashboard.putNumber("auto Angle Target", targetAngle);
+        SmartDashboard.putNumber("auto Current Rotation", degrees360);
         SmartDashboard.putNumber("auto Front Left encoder", m_frontLeftModule.getDriveDistance());
         SmartDashboard.putNumber("auto Front Right encoder", m_frontRightModule.getDriveDistance());
         SmartDashboard.putNumber("auto Back Left encoder", m_backLeftModule.getDriveDistance());
@@ -136,7 +138,7 @@ public class DriveDistance extends CommandBase
 
     @Override
     public boolean isFinished(){
-        return turnDone == true && driveDone == true;
+        return turnDone == true && driveDone == true && encoderResetDone;
     }
 
     @Override
@@ -145,6 +147,5 @@ public class DriveDistance extends CommandBase
         DriverStation.reportWarning("DriveDistance command end", false);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         m_drivetrainSubsystem.setOpenloopRate(0);
-        init();
     }
 }

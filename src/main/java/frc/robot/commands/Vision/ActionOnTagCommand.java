@@ -25,12 +25,12 @@ public class ActionOnTagCommand extends CommandBase {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0));
             // Make sure Ashley isn't arounf when this happens... (It turns the Limelight
             // on)
-            m_visionTracking.setLED(0);
+            m_visionTracking.setLED1(0);
             // Switch variable so that this happens once per command run
             wheelReset = false;
         }
         // Sets the variables of the targets x, area, and ID
-        double tagID = m_visionTracking.getTag();
+        double tagID = m_visionTracking.getTag1();
         if (tagID == 4) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 1, 0.0));
         }
@@ -49,6 +49,6 @@ public class ActionOnTagCommand extends CommandBase {
         wheelAngle = 0;
         wheelReset = true;
         // Makes Ashley not complain. (Turns Limelight off)
-        m_visionTracking.setLED(1);
+        m_visionTracking.setLED1(1);
     }
 }
