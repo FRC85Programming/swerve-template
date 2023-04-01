@@ -28,23 +28,23 @@ public class ScoreLineup extends CommandBase {
 
     public ScoreLineup(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer,
             boolean endWhenFound) {
-        vision.setLED1(0);
-        vision.setLED2(0);
         m_drivetrainSubsystem = driveTrain;
         this.vision = vision;
         this.robotContainer = robotContainer;
         this.endWhenFound = endWhenFound;
         addRequirements(m_drivetrainSubsystem);
+        addRequirements(vision);
     }
 
     @Override
-    public void execute() {
+    public void execute() {        
+        vision.setLED1(0);
+        vision.setLED2(0);
         switchPipeline();
         collectValues();
         setCorrectionValues();
 
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, steering_adjust));
-
     }
 
     public void collectValues() {

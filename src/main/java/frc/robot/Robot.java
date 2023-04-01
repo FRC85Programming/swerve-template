@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer = new RobotContainer();
     m_robotContainer.getVision().setLED1(1);
+    m_robotContainer.getVision().setLED2(1);
 
     SmartDashboard.putNumber("Roller Speed", 1);
     SmartDashboard.putNumber("AutoLevel Constant", 0.2);

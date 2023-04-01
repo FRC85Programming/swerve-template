@@ -32,6 +32,7 @@ public class DriveDistance extends CommandBase
     private static int instanceCount = 0;
     DriverStation.Alliance color;
     double degrees360;
+    double startDegrees;
     double avgEncoderDistance = 0;
     public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
         m_drivetrainSubsystem = driveTrain;
@@ -70,15 +71,18 @@ public class DriveDistance extends CommandBase
         }
  
         avgEncoderDistance = (Math.abs(m_backLeftModule.getDriveDistance()) + Math.abs(m_backRightModule.getDriveDistance()) + Math.abs(m_frontLeftModule.getDriveDistance()) + Math.abs(m_frontRightModule.getDriveDistance())) / 4;
+        degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
+        
         if (!encoderResetDone) {
-            if (avgEncoderDistance != 0) {
+            if (avgEncoderDistance > 0.05) {
+                DriverStation.reportWarning("Encoder Position Average: " + avgEncoderDistance, false);
                 return;
             }
-            DriverStation.reportWarning("Encoders reset", false);
+            DriverStation.reportWarning("Encoders Reset", false);
             encoderResetDone = true;
+            startDegrees = degrees360;
         }
 
-        degrees360 = (m_drivetrainSubsystem.getGyroscopeRotation().getDegrees() +360)% 360;
         SmartDashboard.putNumber("auto Target", encoderTarget);
         SmartDashboard.putNumber("auto Avg Encoder Distance", avgEncoderDistance);
         SmartDashboard.putNumber("auto Angle Target", targetAngle);
@@ -110,14 +114,21 @@ public class DriveDistance extends CommandBase
         SmartDashboard.putBoolean("DriveFinished", driveFinished());
 
         if (!driveDone && (wheelSpeedX != 0 || wheelSpeedY != 0)) {
-            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
-            // If more than 3/4 of the wat through the drive, start rampdown
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-            if (encoderTarget/4 <  encoderTarget - avgEncoderDistance) {
-                m_drivetrainSubsystem.setOpenloopRate(0);
-            } else {
-                m_drivetrainSubsystem.setOpenloopRate(1);
+            double correctionTurnSpeed = 0;
+            if (degrees360 > startDegrees + 1) {
+                correctionTurnSpeed = -0.3;
+            } else if (degrees360 < startDegrees - 1) {
+                correctionTurnSpeed = 0.3;
             }
+            
+            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
+            // If first 10% or more than 3/4 of the way through the drive, start rampdown
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+            // if (encoderTarget / 4 > encoderTarget - avgEncoderDistance || 0.9 * encoderTarget < encoderTarget - avgEncoderDistance) {
+            //     m_drivetrainSubsystem.setOpenloopRate(0.8);
+            // } else {
+            //     m_drivetrainSubsystem.setOpenloopRate(0);
+            // }
         }
         
         if (turnFinished() == false) {

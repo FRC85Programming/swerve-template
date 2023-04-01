@@ -1,6 +1,7 @@
 package frc.robot.commands.Autos;
 
 import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class ScoreBalanceAuto extends SequentialCommandGroup {
     public ScoreBalanceAuto(DrivetrainSubsystem driveTrain, VisionTracking vision, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         addCommands(
-            new ExtendCommand(extendo, () -> 0, () -> 0, () -> 0),
+            new HomeExtendCommand(extendo),
             new TimedIntakeCommand(intake, true, 0.5, -0.8),
             new ZeroGyroscopeCommand(driveTrain, 180),
             new ZeroPitchRollCommand(driveTrain),

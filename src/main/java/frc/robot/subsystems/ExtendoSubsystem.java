@@ -28,7 +28,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController pivotPID = new PIDController(0, 0, 0);
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScaleSafe = 0.4;
-    private final double extendSpeedScale = 0.7;
+    private final double extendSpeedScale = 1;
     private final double pivotSpeedScale = 0.5;
     public static final double maxPivot = 80;
     public static final double maxExtend = 210;
@@ -87,7 +87,7 @@ public class ExtendoSubsystem extends SubsystemBase {
             }
         } else if (speed < 0) {
             if (extendLimitSwitch.get()) {
-                if (enableZeroing) {
+                if (enableZeroing || extendMotor.getEncoder().getPosition() < 0) {
                     extendMotor.getEncoder().setPosition(0);
                 }
                 extendMotor.stopMotor();
