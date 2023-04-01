@@ -20,7 +20,7 @@ public class DriveDistance extends CommandBase
     private double wheelSpeedY;
     private double turnSpeed;
     private double encoderTarget;
-    private Boolean constantCalc;
+    private Boolean encoderResetTrigger;
     private Boolean encoderResetDone;
     private double targetAngle;
     private boolean angleCalc;
@@ -30,7 +30,6 @@ public class DriveDistance extends CommandBase
     public Boolean track;
     public Boolean trackDone;
     private static int instanceCount = 0;
-    Boolean timerStarted = false;
     DriverStation.Alliance color;
     double degrees360;
     double avgEncoderDistance = 0;
@@ -47,37 +46,35 @@ public class DriveDistance extends CommandBase
         encoderTarget = driveTarget;
         this.angleTarget = angleTarget;
         init();
-        addRequirements(m_drivetrainSubsystem);
-    }
-
-    private void init() {
-        // Sets up variables for each subsystem
-        constantCalc = false;
-        encoderResetDone = false;
-        angleCalc = false;
-        turnDone = false;
-        driveDone = false;
+        addRequirements(m_drivetrainSubsystem);        
         instanceCount++;
         SmartDashboard.putNumber("instance count", instanceCount);
     }
 
+    private void init() {
+        // Sets up variables for each subsystem
+        encoderResetTrigger = false;
+        encoderResetDone = false;
+        angleCalc = false;
+        turnDone = false;
+        driveDone = false;
+    }
+
     @Override
     public void execute() {
-        if (constantCalc == false) {
+        if (encoderResetTrigger == false) {
+            DriverStation.reportWarning("Reseting Encoders", false);
             m_drivetrainSubsystem.resetDriveEncoders();
-            //constantDistance = avgEncoderDistance;
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
-            constantCalc = true;
+            encoderResetTrigger = true;
         }
-
  
-        color = DriverStation.getAlliance();
         avgEncoderDistance = (Math.abs(m_backLeftModule.getDriveDistance()) + Math.abs(m_backRightModule.getDriveDistance()) + Math.abs(m_frontLeftModule.getDriveDistance()) + Math.abs(m_frontRightModule.getDriveDistance())) / 4;
         if (!encoderResetDone) {
             if (avgEncoderDistance != 0) {
                 return;
             }
-
+            DriverStation.reportWarning("Encoders reset", false);
             encoderResetDone = true;
         }
 
@@ -91,57 +88,50 @@ public class DriveDistance extends CommandBase
 
         if (turnSpeed != 0) {
             if (angleCalc == false) {
+                DriverStation.reportWarning("Calculating target angle", false);
                 targetAngle = (degrees360 + angleTarget) % 360;
                 angleCalc = true;
             }
         }
-        if (timerStarted == false) {
-            timerStarted = true;
-        }
         //One encoder tic = 2.75 feet (old)
         // Makes sure the robot stops when drive is done
         if (driveFinished()) {
-            wheelSpeedX = 0;
-            wheelSpeedY = 0;
+            DriverStation.reportWarning("Drive to " + encoderTarget + " Finished", false);
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
             driveDone = true;
         }
         if (turnFinished()) {
-            turnSpeed = 0;
+            DriverStation.reportWarning("Turn Finished", false);
             turnDone = true;
         }
         SmartDashboard.putNumber("Drive Distance", m_frontLeftModule.getDriveDistance());
         SmartDashboard.putBoolean("DriveFinished", driveFinished());
-        //Aliance based strafe
-        if (driveFinished() == false) {
-            if (wheelSpeedY != 0 && wheelSpeedX != 0) {
-                if (color == DriverStation.Alliance.Blue) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, -1, 0));
-                } else if (color == DriverStation.Alliance.Red) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(-1, 1, 0));
-                }
-            }
 
-                // If more than 3/4 of the wat through the drive, start rampdown
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
-                if (encoderTarget/4 <  encoderTarget - avgEncoderDistance) {
-                    m_drivetrainSubsystem.setOpenloopRate(0);
-                } else {
-                    m_drivetrainSubsystem.setOpenloopRate(1);
-                }
+        if (!driveDone && (wheelSpeedX != 0 || wheelSpeedY != 0)) {
+            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
+            // If more than 3/4 of the wat through the drive, start rampdown
+            m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, turnSpeed));
+            if (encoderTarget/4 <  encoderTarget - avgEncoderDistance) {
+                m_drivetrainSubsystem.setOpenloopRate(0);
+            } else {
+                m_drivetrainSubsystem.setOpenloopRate(1);
+            }
         }
+        
         if (turnFinished() == false) {
             // Only rotate if driveforward and side speeds are zero
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
+                DriverStation.reportWarning("Turning", false);
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
             } 
         }
             
     }
     private boolean driveFinished() {
-        return constantCalc && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
+        return encoderResetDone && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
     }
     private boolean turnFinished() {
-        return turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
+        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
     }
 
     @Override
@@ -152,6 +142,7 @@ public class DriveDistance extends CommandBase
     @Override
     public void end (boolean interrupted)  {
         // Stops the robot and allows the target distance to be calculated again
+        DriverStation.reportWarning("DriveDistance command end", false);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         m_drivetrainSubsystem.setOpenloopRate(0);
         init();

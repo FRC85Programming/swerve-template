@@ -43,6 +43,7 @@ import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
+import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
@@ -197,6 +198,9 @@ public class RobotContainer {
 
     new Trigger(m_operatorController::getYButton)
         .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
+
+    new Trigger(m_operatorController::getBButton)
+        .whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
