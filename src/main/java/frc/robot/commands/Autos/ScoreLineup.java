@@ -1,6 +1,7 @@
 package frc.robot.commands.Autos;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionTracking;
@@ -17,7 +18,7 @@ public class ScoreLineup extends CommandBase {
     double area2;
     // PID values that adjust the distance from the offset
     double headingError;
-    double Kp = -0.05;
+    double Kp = -0.15;
     double steering_adjust;
     // Switch boolean that makes sure we only set the pipline once
     boolean lineSwitched = false;
@@ -37,7 +38,9 @@ public class ScoreLineup extends CommandBase {
     }
 
     @Override
-    public void execute() {        
+    public void execute() {    
+        SmartDashboard.putNumber("Auto Heading Error", headingError);
+        SmartDashboard.putBoolean("Auto IsFinished", isFinished());
         vision.setLED1(0);
         vision.setLED2(0);
         switchPipeline();
@@ -63,13 +66,13 @@ public class ScoreLineup extends CommandBase {
                 rightCamUse = true;
             }
         }
-        if (tx1 == 0 && tx2 != 0) {
+        else if (tx1 == 0 && tx2 != 0) {
             if (rightCamUse == false) {
                 headingError = tx2;
                 leftCamUse = true;
             }
         }
-        if (tx1 != 0 && tx2 != 0) {
+        else if (tx1 != 0 && tx2 != 0) {
             if (rightCamUse == false && leftCamUse == false) {
                 headingError = tx1;
             }
@@ -92,7 +95,7 @@ public class ScoreLineup extends CommandBase {
     public boolean isFinished() {
         if (endWhenFound == true) {
             // Latency window of x to be lined up
-            return 0 < headingError && headingError < 1.2;
+            return -2.5 < headingError && headingError < 1.2;
         } else {
             return false;
         }

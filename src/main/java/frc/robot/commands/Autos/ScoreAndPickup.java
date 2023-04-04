@@ -32,7 +32,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.3),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side),
             new ScoreLineup(driveTrain, vision, robotContainer, true),
-            new DriveAndIntake(driveTrain, vision, extendo, intake, 2),
+            new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3),
             new HomeExtendCommand(extendo)
         );
     }

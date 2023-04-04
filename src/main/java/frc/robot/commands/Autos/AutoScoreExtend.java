@@ -33,8 +33,8 @@ public class AutoScoreExtend extends CommandBase
                     m_extendoSubsystem.ExtendTelescope(0, 0);
                 }
         } else if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            if (m_extendoSubsystem.getExtendPosition() <= 5) {
-                m_extendoSubsystem.ExtendTelescope(0.5, 0);
+            if (m_extendoSubsystem.getExtendPosition() <= 50) {
+                m_extendoSubsystem.ExtendTelescope(0.8, 0);
             } else {
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
@@ -51,7 +51,7 @@ public class AutoScoreExtend extends CommandBase
             return m_extendoSubsystem.getExtendPosition() >= 0;
         }
         if (gamePiecePosition.toLowerCase().equals("cone middle")) {
-            return m_extendoSubsystem.getExtendPosition() >= 0;
+            return m_extendoSubsystem.getExtendPosition() >= 50;
         } else {
             return true;
         }
