@@ -107,13 +107,13 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     m_autoCommands.put("BumpSide-MidCone-Pickup", 
       new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
-    m_autoCommands.put("BumpSide-HighCube-Mobility",
-      new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-      m_autoCommands.put("BumpSide-MidCube-Mobility",
-      new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-    m_autoCommands.put("BumpSide-HighCube-Mobility-Spin",
+    // m_autoCommands.put("BumpSide-HighCube-Mobility",
+    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    //   m_autoCommands.put("BumpSide-MidCube-Mobility",
+    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("HighCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-      m_autoCommands.put("BumpSide-MidCube-Mobility",
+      m_autoCommands.put("MidCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Center-HighCube-Mobility-Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
@@ -123,8 +123,8 @@ public class RobotContainer {
       new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
     m_autoCommands.put("Mobility-NoScore", 
       new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, null));
-    m_autoCommands.put("BumpSide-MidCone-Mobility", 
-      new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
+    // m_autoCommands.put("BumpSide-MidCone-Mobility", 
+    //   new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
 
     Set<String> autoKeys = m_autoCommands.keySet();
     SmartDashboard.putStringArray("AutoModes", autoKeys.toArray(new String[autoKeys.size()]));

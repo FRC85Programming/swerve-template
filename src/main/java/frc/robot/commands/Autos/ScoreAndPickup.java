@@ -15,6 +15,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
 
     public ScoreAndPickup(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         Alliance side = DriverStation.getAlliance();
+        DriverStation.reportWarning("Alliance:" + side, false);
         double strafeSpeed;
         if (side == Alliance.Blue){
             strafeSpeed = -0.5;
@@ -29,7 +30,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new AutoScoreExtend(extendo, "cone middle"),
             new TimedIntakeCommand(intake, true, 1.5, 0.8),
             new DriveDistance(driveTrain, vision, strafeSpeed, 0, 0, 0.3, 0, false),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.3),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side),
             new ScoreLineup(driveTrain, vision, robotContainer, true),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3),
