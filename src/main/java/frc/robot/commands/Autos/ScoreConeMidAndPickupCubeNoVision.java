@@ -11,9 +11,9 @@ import frc.robot.subsystems.*;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 
-public class ScoreAndPickup extends SequentialCommandGroup {
+public class ScoreConeMidAndPickupCubeNoVision extends SequentialCommandGroup {
 
-    public ScoreAndPickup(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance side) {
+    public ScoreConeMidAndPickupCubeNoVision(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance side) {
         double strafeSpeed;
         if (side == Alliance.Blue){
             strafeSpeed = -0.5;
@@ -29,7 +29,7 @@ public class ScoreAndPickup extends SequentialCommandGroup {
             new TimedIntakeCommand(intake, true, 1.5, 0.8),
             new DriveDistance(driveTrain, vision, strafeSpeed, 0, 0, 0.3, 0, false),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5),
-            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side),
+            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side, "cube"),
             new ScoreLineup(driveTrain, vision, robotContainer, true),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3),
             new HomeExtendCommand(extendo)
