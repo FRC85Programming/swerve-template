@@ -37,6 +37,7 @@ import frc.robot.commands.Autos.CubeHighBalanceNoMobility;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
+import frc.robot.commands.Autos.ScoreCubeHighAndPickupConeNoVision;
 import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
 import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
@@ -112,8 +113,12 @@ public class RobotContainer {
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     m_autoCommands.put("BumpSide-MidCone-Pickup-Red-No-Vision", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
-    m_autoCommands.put("BumpSide-MidCone-Pickup-Blue-No-Vision", 
+    m_autoCommands.put("BumpSide-MidCone-Pickup-Cube-Blue-No-Vision", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("Bumpside-CubeHigh-Pickup-Cone-Blue-NoVision",
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("Bumpside-CubeHigh-Pickup-Cone-Red-NoVision",
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     // m_autoCommands.put("BumpSide-HighCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     //   m_autoCommands.put("BumpSide-MidCube-Mobility",
