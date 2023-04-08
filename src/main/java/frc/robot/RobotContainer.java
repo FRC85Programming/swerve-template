@@ -107,21 +107,21 @@ public class RobotContainer {
 
     m_autoCommands = new HashMap<String, Command>();
 
-    m_autoCommands.put("BumpSide-MidCone-Pickup-Red", 
+    m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
-    m_autoCommands.put("BumpSide-MidCone-Pickup-Blue", 
+    m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
-    m_autoCommands.put("BumpSide-MidCone-Pickup-Red-No-Vision", 
+    m_autoCommands.put("Bump-MidCone-Pickup-Red-No-Vision", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
-    m_autoCommands.put("BumpSide-MidCone-Pickup-Cube-Blue-No-Vision", 
+    m_autoCommands.put("Bump-MidCone-Pickup-Cube-Blue-No-Vision", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
-    m_autoCommands.put("Bumpside-CubeHigh-Pickup-Cone-Blue-NoVision",
+    m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Blue-NoVision",
       new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
-    m_autoCommands.put("Bumpside-CubeHigh-Pickup-Cone-Red-NoVision",
+    m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Red-NoVision",
       new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
-    // m_autoCommands.put("BumpSide-HighCube-Mobility",
+    // m_autoCommands.put("Bump-HighCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-    //   m_autoCommands.put("BumpSide-MidCube-Mobility",
+    //   m_autoCommands.put("Bump-MidCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("HighCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
@@ -135,7 +135,7 @@ public class RobotContainer {
       new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
     m_autoCommands.put("Mobility-NoScore", 
       new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, null));
-    // m_autoCommands.put("BumpSide-MidCone-Mobility", 
+    // m_autoCommands.put("Bump-MidCone-Mobility", 
     //   new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
 
     Set<String> autoKeys = m_autoCommands.keySet();
