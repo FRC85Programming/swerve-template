@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,12 +33,11 @@ import frc.robot.commands.Arm.ExtendPauseCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
-import frc.robot.commands.Autos.ConeMidAndMobility;
-import frc.robot.commands.Autos.CubeHighAndMobility;
 import frc.robot.commands.Autos.CubeHighBalanceNoMobility;
 import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreAndPickup;
+import frc.robot.commands.Autos.ScoreAndPickupNoVision;
 import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
@@ -105,8 +105,15 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
-    m_autoCommands.put("BumpSide-MidCone-Pickup", 
-      new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
+
+    m_autoCommands.put("BumpSide-MidCone-Pickup-Red", 
+      new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+    m_autoCommands.put("BumpSide-MidCone-Pickup-Blue", 
+      new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("BumpSide-MidCone-Pickup-Red-No-Vision", 
+      new ScoreAndPickupNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+    m_autoCommands.put("BumpSide-MidCone-Pickup-Blue-No-Vision", 
+      new ScoreAndPickupNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     // m_autoCommands.put("BumpSide-HighCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     //   m_autoCommands.put("BumpSide-MidCube-Mobility",
