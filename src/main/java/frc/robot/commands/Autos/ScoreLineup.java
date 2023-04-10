@@ -18,7 +18,7 @@ public class ScoreLineup extends CommandBase {
     double area2;
     // PID values that adjust the distance from the offset
     double headingError;
-    double Kp = -0.15;
+    double Kp = -0.05;
     double steering_adjust;
     // Switch boolean that makes sure we only set the pipline once
     boolean lineSwitched = false;

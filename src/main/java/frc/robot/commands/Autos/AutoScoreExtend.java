@@ -22,13 +22,13 @@ public class AutoScoreExtend extends CommandBase
     {
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
             if (m_extendoSubsystem.getExtendPosition() <= 60) {
-                m_extendoSubsystem.ExtendTelescope(0.5, 0);
+                m_extendoSubsystem.ExtendTelescope(1, 0);
             } else {
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
         } else if (gamePiecePosition.toLowerCase().equals("cube middle")) {
                 if (m_extendoSubsystem.getExtendPosition() <= 5) {
-                    m_extendoSubsystem.ExtendTelescope(0.5, 0);
+                    m_extendoSubsystem.ExtendTelescope(1, 0);
                 } else {
                     m_extendoSubsystem.ExtendTelescope(0, 0);
                 }
