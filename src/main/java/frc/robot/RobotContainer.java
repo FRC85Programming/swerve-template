@@ -105,6 +105,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
+    m_autoCommands.put("Basic Path", 
+        getAutonomousCommand());
     m_autoCommands.put("BumpSide-MidCone-Pickup", 
       new ScoreAndPickup(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("BumpSide-HighCube-Mobility",
@@ -263,26 +265,9 @@ public class RobotContainer {
           //Go to these locations:
           new Translation2d(1, 0),
           new Translation2d(1, 1)),
-          new Pose2d(1, 2, Rotation2d.fromDegrees /*spin*/ (0)),
+          new Pose2d(0, 0, Rotation2d.fromDegrees /*spin*/ (0)),
         trajectoryConfig);
 
-        // Setting up trajectory variables
-        /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
-        Trajectory temp;
-
-        //Load command and select backup if needed
-        try{
-            if(auto.startsWith("PW_")){
-                Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-                temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            }else{
-                temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
-            }
-        }catch(Exception e){
-            DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
-            temp = trajectory;
-        }
-  */
       // Sets up PID to stay on the trajectory
       PIDController xController = new PIDController(Constants.kPXController, 0, 0);
       PIDController yController = new PIDController(Constants.kPYController, 0, 0);

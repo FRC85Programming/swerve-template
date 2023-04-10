@@ -47,6 +47,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -330,20 +331,56 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Sets the desired states of the modules (this is where the error is)
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
-    setDesiredState(desiredStates[0], m_frontLeftModule);
-    setDesiredState(desiredStates[1], m_frontRightModule);
-    setDesiredState(desiredStates[2], m_backLeftModule);
-    setDesiredState(desiredStates[3], m_backRightModule);
+
+    DriverStation.reportWarning("FL State: " + desiredStates[0], null);
+    DriverStation.reportWarning("FR State: " + desiredStates[1], null);
+    DriverStation.reportWarning("FL State: " + desiredStates[2], null);
+    DriverStation.reportWarning("FL State: " + desiredStates[3], null);
+
+    setFLDesiredState(desiredStates[0]);
+    setFRDesiredState(desiredStates[1]);
+    setBLDesiredState(desiredStates[2]);
+    setBRDesiredState(desiredStates[3]);
   }
 
-  public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+  public void setFLDesiredState(SwerveModuleState state) {
     if (Math.abs(state.speedMetersPerSecond) < 0.001) {
       stop();
       return;
     }
-    state = SwerveModuleState.optimize(state, getState(module).angle);
-    module.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
+    state = SwerveModuleState.optimize(state, getState(m_frontLeftModule).angle);
+    m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_frontLeftModule), state.angle.getRadians()));
+  }
+
+  public void setFRDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_frontRightModule).angle);
+    m_frontRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_frontRightModule), state.angle.getRadians()));
+  }
+
+  public void setBLDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState( m_backLeftModule).angle);
+    m_backLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition( m_backLeftModule), state.angle.getRadians()));
+  }
+
+  public void setBRDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_backRightModule).angle);
+    m_backRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_backRightModule), state.angle.getRadians()));
   }
 
   public SwerveModuleState getState(SwerveModule module) {
