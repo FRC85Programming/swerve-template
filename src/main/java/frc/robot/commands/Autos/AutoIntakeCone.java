@@ -8,12 +8,11 @@ public class AutoIntakeCone extends CommandBase
  {
     private final ExtendoSubsystem m_extendoSubsystem;
 
-
-    public AutoIntakeCone(ExtendoSubsystem extendo, IntakeSubsystem intake)
+    public AutoIntakeCone(ExtendoSubsystem extendo)
     {
         m_extendoSubsystem = extendo;
-
-        addRequirements(extendo, intake);
+        
+        addRequirements(extendo);
     }
 
     @Override

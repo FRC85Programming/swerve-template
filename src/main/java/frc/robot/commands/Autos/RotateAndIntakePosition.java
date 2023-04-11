@@ -28,7 +28,7 @@ public class RotateAndIntakePosition extends ParallelCommandGroup {
         } else if (gamePiece.toLowerCase().equals("cone")) {
             addCommands(
             new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0, turnSpeed, 0, 187.5, false),
-            new AutoIntakeCone(m_ExtendoSubsystem, m_IntakeSubsystem)
+            new AutoIntakeCone(m_ExtendoSubsystem)
         ); 
         }
         
