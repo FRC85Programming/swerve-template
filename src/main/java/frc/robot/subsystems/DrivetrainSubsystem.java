@@ -50,10 +50,15 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.Constants;
+
+/**
+ * Ashley is not a cool human being
+ */
 
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
@@ -77,6 +82,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean timerStart = false;
   private Boolean yLevel = false;
   private Boolean xLevel = false;
+  private Boolean swerveTesting = false;
+  private final Field2d m_field = new Field2d();
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -93,8 +100,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * line.
    */
   public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 *
-      SdsModuleConfigurations.MK4_L1.getDriveReduction() *
-      SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
+        SdsModuleConfigurations.MK4_L1.getDriveReduction() * 
+        SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -161,7 +168,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(0, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
         .build();
 
@@ -173,7 +180,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(2, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
         .build();
 
@@ -184,7 +191,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(4, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
         .build();
 
@@ -195,7 +202,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // .withSize(2, 4)
         // .withPosition(6, 0))
         .withSteerOffset(0)
-        .withGearRatio(SdsModuleConfigurations.MK4_L2)
+        .withGearRatio(SdsModuleConfigurations.MK4_L1)
         .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
         .build();
 
@@ -203,6 +210,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition(), m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
     });
+
+    setOpenloopRate(0);
 
     turningPidController = new PIDController(Constants.kPTurning, 0, 0);
     turningPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -219,6 +228,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
     SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
     SmartDashboard.putBoolean("Set drive PID", false);
+
+  SmartDashboard.putBoolean("Swerve testing", swerveTesting);
   }
 
   /**
@@ -303,6 +314,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public void setOpenloopRate(double rate) {
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).setOpenLoopRampRate(rate);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).setOpenLoopRampRate(rate); 
+  }
+
   public void resetOdometry(Pose2d pose) {
     // Resets the gyro
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
@@ -350,6 +368,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putData("Field", m_field);
+    m_field.setRobotPose(getOdo().getPoseMeters());
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition() };
     odometry.update(getRotation2d(), positions);
@@ -362,9 +382,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } else {
       swerveState(false);
     }
-
     SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
+    SmartDashboard.getBoolean("Swerve testing", swerveTesting);
+
+    if (swerveTesting){
     SmartDashboard.putNumber("Front Left Steer Absolute Angle",
         Units.radiansToDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Front Right Steer Absolute Angle",
@@ -373,12 +395,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Units.radiansToDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
     SmartDashboard.putNumber("Back Right Steer Absolute Angle",
         Units.radiansToDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
-
+    
     SmartDashboard.putNumber("Front Left Steer Calibration Angle", Units.radiansToDegrees(_frontLeftCalibrationValue));
     SmartDashboard.putNumber("Front Right Steer Calibration Angle",
         Units.radiansToDegrees(_frontRightCalibrationValue));
     SmartDashboard.putNumber("Back Left Steer Calibration Angle", Units.radiansToDegrees(_backLeftCalibrationValue));
     SmartDashboard.putNumber("Back Right Steer Calibration Angle", Units.radiansToDegrees(_backRightCalibrationValue));
+    }
 
     if (SmartDashboard.getBoolean("Set drive PID", false)) {
       double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
@@ -458,6 +481,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Yaw", ypr[0]);
     SmartDashboard.putNumber("Gyro Pitch", PitchRoll[0]);
     SmartDashboard.putNumber("Gyro Roll", PitchRoll[1]);
+    SmartDashboard.putData("Field", m_field);
+    m_field.setRobotPose(getOdo().getPoseMeters());
   }
 
   // sets true or false for brake command
@@ -528,12 +553,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return yLevel;
   }
 
+  public SwerveDriveOdometry getOdo() {
+    return odometry;
+  }
+
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_frontLeftModule.getDriveVelocity(), m_backRightModule.getDriveVelocity());
   }
 
   public void stop() {
     drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+  }
+
+  public void resetDriveEncoders() {
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).getEncoder().setPosition(0);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).getEncoder().setPosition(0);
   }
 
   public SparkMaxPIDController getDrivePID() {
