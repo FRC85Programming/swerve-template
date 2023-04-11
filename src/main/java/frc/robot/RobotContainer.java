@@ -47,6 +47,7 @@ import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -196,7 +197,7 @@ public class RobotContainer {
     new Trigger(m_controller::getYButton)
         .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
 
-    new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashPositionHold", false))
+    new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashHoldPosition", false))
         .whileTrue(new ExtendAndIntakeCommand(m_extendoSubsystem, m_IntakeSubsystem,
         () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
         () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
@@ -216,7 +217,8 @@ public class RobotContainer {
         .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
 
     new Trigger(m_operatorController::getBButton)
-        .whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
+        .whileTrue(new zeroWheels(m_drivetrainSubsystem));
+        //.whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
