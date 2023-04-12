@@ -100,7 +100,6 @@ public class RobotContainer {
         () -> modifyAxis(-m_operatorController.getRightY()),
         () -> getWristAxis()));
 
-    // m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
 
     // Configure the button bindings
@@ -121,10 +120,6 @@ public class RobotContainer {
       new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Red-NoVision",
       new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
-    // m_autoCommands.put("Bump-HighCube-Mobility",
-    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-    //   m_autoCommands.put("Bump-MidCube-Mobility",
-    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("HighCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("MidCube-Mobility-Spin",
@@ -137,8 +132,6 @@ public class RobotContainer {
       new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
     m_autoCommands.put("Mobility-NoScore", 
       new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this));
-    // m_autoCommands.put("Bump-MidCone-Mobility", 
-    //   new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("ScorePickUpandBalance",
       new ScorePickupAndBalance(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
 
@@ -164,17 +157,6 @@ public class RobotContainer {
     new Trigger(() -> m_controller.getPOV() == 180)
         .whileTrue(new AutoLevelPIDCommand(m_drivetrainSubsystem));
 
-    // tracks april tag using limelight
-    // new Trigger(m_controller::getYButton)
-    // .whileTrue(new TrackAprilTagCommand(m_drivetrainSubsystem,
-    // m_visionTracking));
-
-    // new Trigger(m_controller::getLeftBumper)
-    // .whileTrue(new IntakeCommand(m_IntakeSubsystem, true));
-
-    // new Trigger(m_controller::getRightBumper)
-    // .whileTrue(new IntakeCommand(m_IntakeSubsystem, false));
-
     // intake
     new Trigger(() -> m_controller.getLeftTriggerAxis() != 0)
         .whileTrue(new IntakeCommand(m_IntakeSubsystem, () -> m_controller.getLeftTriggerAxis()));
@@ -189,10 +171,6 @@ public class RobotContainer {
     // // Cuts robot speed in half
     new Trigger(() -> m_controller.getPOV() == 270)
         .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
-
-    // new Trigger(m_operatorController::getBButton)
-    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
-    // -> -60.5));
 
     new Trigger(m_controller::getYButton)
         .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
@@ -217,21 +195,6 @@ public class RobotContainer {
 
     new Trigger(m_operatorController::getBButton)
         .whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
-
-    // cube pick up position
-    // new Trigger(m_controller::getAButton)
-    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, ()
-    // -> -23.0));
-
-    // cone pick up position (Tipped)
-    // new Trigger(m_controller::getXButton)
-    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, ()
-    // -> -44.0));
-
-    // // cone pick up position (Upright)
-    // new Trigger(m_controller::getYButton)
-    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
-    // -> -60.5));
   }
 
     public VisionTracking getVision() {
@@ -265,7 +228,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
       // Resets wheels so they don't fight each other
-      //m_drivetrainSubsystem.zeroWheels();
       // Configures kinematics so the driving is accurate 
       TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
         Constants.kMaxSpeedMetersPerSecond,

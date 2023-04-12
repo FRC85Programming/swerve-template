@@ -110,11 +110,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // m_autonomousCommand = new CS(m_drivetrainSubsystem, m_robotContainer);
     m_autonomousCommand = m_robotContainer.getAuto();
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand("sda");
 
-    // new Comm_L(m_drivetrainSubsystem, m_robotContainer);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -149,7 +146,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.getVision().setLED1(1);
     m_robotContainer.getVision().setLED2(1); 
     
-    // NetworkTableEntry TeamEntry = table.getEntry("tx");
     NetworkTableEntry xEntry = table.getEntry("tx");
     NetworkTableEntry yEntry = table.getEntry("ty");
     NetworkTableEntry aEntry = table.getEntry("ta");
@@ -159,7 +155,6 @@ public class Robot extends TimedRobot {
     NetworkTableEntry aprilEntry = table.getEntry("tid");
     NetworkTableEntry ledModeEntry = table.getEntry("ledMode");
     
-    // double tx = xEntry.getDouble(0.0);
     double tx = xEntry.getDouble(0.0); // Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
     double ty = yEntry.getDouble(0.0); // Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
     double ta = aEntry.getDouble(0.0); // Target Area (0% of image to 100% of image)
@@ -169,28 +164,7 @@ public class Robot extends TimedRobot {
     double ts = sEntry.getDouble(0.0); // Skew or rotation (-90 degrees to 0 degrees)
     double tid = aprilEntry.getDouble(0.0); // April Tag Number
     
-    // double tshort = tshortEntry.getString(); // Sidelength of shortest side of
-    // the fitted bounding box (pixels)
-    // double tlong = tlong // Sidelength of longest side of the fitted bounding box
-    // (pixels)
-    // double thor = thor // Horizontal sidelength of the rough bounding box (0 -
-    // 320 pixels)
-    // double tvert = tvert // Vertical sidelength of the rough bounding box (0 -
-    // 320 pixels)
-    // double getpipe = getpipe // True active pipeline index of the camera (0 .. 9)
-    // double camtran = camtran // Results of a 3D position solution, 6 numbers:
-    // Translation (x,y,y) Rotation(pitch,yaw,roll)
     ledModeEntry.setNumber(1);
-    //ledModeEntry.setNumber(0); // use the LED Mode set in the current pipeline
-    //ledModeEntry.setNumber(2); // force blink
-    //ledModeEntry.setNumber(3); // force on
-    
-    //System.out.println("X: " + tx);
-    //System.out.println("Y: " + ty);
-    //System.out.println("A: " + ta);
-    //System.out.println("L: " + tl);
-    //System.out.println("V: " + tv);
-    //System.out.println("S: " + tv);
     
     // post to smart dashboard periodically
     SmartDashboard.putNumber("Limelight X", tx);
