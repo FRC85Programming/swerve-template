@@ -11,17 +11,17 @@ public class ExtendCommand extends CommandBase {
     private final DoubleSupplier m_PivotAngle;
     private final DoubleSupplier m_IntakeWrist;
     private final double tolerancePivot = 1;
-    private final double tolerancePivotSlow = 4;
+    private final double tolerancePivotSlow = 10;
     private final double toleranceExtend = 1;
     private final double toleranceExtendSlow = 12;
     private final double toleranceWrist = 1;
     private final double toleranceWristSlow = 4;
-    private final double extendSpeedFast = 0.9;
-    private final double extendSpeedSlow = 0.5;
-    private final double pivotFastSpeed = 0.8;
-    private final double intakePivotSpeed = 0.8;
+    private final double extendSpeedFast = 1;
+    private final double extendSpeedSlow = 0.2;
+    private final double pivotFastSpeed = 1;
+    private final double intakePivotSpeed = 1;
     private final double wristSlowSpeed = 0.25;
-    private final double pivotSlowSpeed = 0.4;
+    private final double pivotSlowSpeed = 0.2;
     private boolean m_enableZeroing = false;
     private boolean m_endCommandWhenPositionMet = true;
 
@@ -84,6 +84,8 @@ public class ExtendCommand extends CommandBase {
             } else {
                 m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
             }
+        } else {
+            m_ExtendoSubsystem.ExtendTelescope(0, 0);
         }
 
         double wristSpeed;

@@ -40,6 +40,7 @@ import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
 import frc.robot.commands.Autos.ScoreCubeHighAndPickupConeNoVision;
 import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Autos.ScorePickupAndBalance;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
@@ -111,37 +112,40 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
-
+    m_autoCommands.put("Basic Path", 
+        getAutonomousCommand());
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
-      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
-      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     m_autoCommands.put("Bump-MidCone-Pickup-Red-No-Vision", 
-      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Cube-Blue-No-Vision", 
-      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Blue-NoVision",
-      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
     m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Red-NoVision",
-      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     // m_autoCommands.put("Bump-HighCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     //   m_autoCommands.put("Bump-MidCube-Mobility",
     //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("HighCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
-      m_autoCommands.put("MidCube-Mobility-Spin",
+    m_autoCommands.put("MidCube-Mobility-Spin",
       new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
     m_autoCommands.put("Center-HighCube-Mobility-Balance",
       new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
-      m_autoCommands.put("Center-HighCube-Balance",
+    m_autoCommands.put("Center-HighCube-Balance",
       new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
-      m_autoCommands.put("Center-MidCone-Balance",
+    m_autoCommands.put("Center-MidCone-Balance",
       new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
     m_autoCommands.put("Mobility-NoScore", 
-      new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, null));
+      new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this));
     // m_autoCommands.put("Bump-MidCone-Mobility", 
     //   new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("ScorePickUpandBalance",
+      new ScorePickupAndBalance(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
 
     Set<String> autoKeys = m_autoCommands.keySet();
     SmartDashboard.putStringArray("AutoModes", autoKeys.toArray(new String[autoKeys.size()]));
@@ -287,26 +291,9 @@ public class RobotContainer {
           //Go to these locations:
           new Translation2d(1, 0),
           new Translation2d(1, 1)),
-          new Pose2d(1, 2, Rotation2d.fromDegrees /*spin*/ (0)),
+          new Pose2d(0, 0, Rotation2d.fromDegrees /*spin*/ (0)),
         trajectoryConfig);
 
-        // Setting up trajectory variables
-        /*String trajectoryJSON = "output/" + auto + ".wpilib.json";
-        Trajectory temp;
-
-        //Load command and select backup if needed
-        try{
-            if(auto.startsWith("PW_")){
-                Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-                temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            }else{
-                temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationMetersPerSecondSquared);
-            }
-        }catch(Exception e){
-            DriverStation.reportWarning("Error loading path:" + auto + ". Loading backup....", e.getStackTrace());
-            temp = trajectory;
-        }
-  */
       // Sets up PID to stay on the trajectory
       PIDController xController = new PIDController(Constants.kPXController, 0, 0);
       PIDController yController = new PIDController(Constants.kPYController, 0, 0);

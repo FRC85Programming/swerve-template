@@ -97,9 +97,9 @@ public final class Constants {
         new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
 );
 
-      public static final double kPXController = 1;
-      public static final double kPYController = 1;
-      public static final double kPThetaController = 1;
+      public static final double kPXController = 4;
+      public static final double kPYController = 4;
+      public static final double kPThetaController = 0.2;
       public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0 * SdsModuleConfigurations.MK4_L1.getDriveReduction() * SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;;
       public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
