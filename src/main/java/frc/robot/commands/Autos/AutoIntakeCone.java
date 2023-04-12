@@ -1,25 +1,29 @@
 package frc.robot.commands.Autos;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoIntakeCone extends CommandBase
+public class AutoIntakeCone extends ExtendCommand
  {
-    private final ExtendoSubsystem m_extendoSubsystem;
+    //private final ExtendoSubsystem m_extendoSubsystem;
 
     public AutoIntakeCone(ExtendoSubsystem extendo)
     {
-        m_extendoSubsystem = extendo;
+        super(extendo, () -> 107, () -> 21.8, () -> -39.3, false, true);
+       // m_extendoSubsystem = extendo;
         
-        addRequirements(extendo);
+        //addRequirements(extendo);
     }
 
     @Override
     public void execute()
     {
-        if (m_extendoSubsystem.getPivotAngle() <= 22) {
-            m_extendoSubsystem.Pivot(0.85, 0);
+        super.execute();
+
+        /*if (m_extendoSubsystem.getPivotAngle() <= 21) {
+            m_extendoSubsystem.Pivot(1, 0);
         } else {
             m_extendoSubsystem.Pivot(0, 0);
         }
@@ -40,12 +44,10 @@ public class AutoIntakeCone extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 22 && m_extendoSubsystem.getExtendPosition() >= 108 && m_extendoSubsystem.getIntakeWrist() <= -40;
+        return super.isFinished();
     }
     public void end(boolean interrupted) {
-        m_extendoSubsystem.Pivot(0, 0);
-        m_extendoSubsystem.ExtendTelescope(0, 0);
-        m_extendoSubsystem.Wrist(0, 0);
+        super.end(interrupted);
     }
  }
 
