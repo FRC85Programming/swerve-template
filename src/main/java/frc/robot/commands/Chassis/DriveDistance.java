@@ -124,11 +124,6 @@ public class DriveDistance extends CommandBase
             DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
             // If first 10% or more than 3/4 of the way through the drive, start rampdown
             m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
-            // if (encoderTarget / 4 > encoderTarget - avgEncoderDistance || 0.9 * encoderTarget < encoderTarget - avgEncoderDistance) {
-            //     m_drivetrainSubsystem.setOpenloopRate(0.8);
-            // } else {
-            //     m_drivetrainSubsystem.setOpenloopRate(0);
-            // }
         }
         
         if (turnFinished() == false) {

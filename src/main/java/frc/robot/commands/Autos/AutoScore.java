@@ -54,8 +54,6 @@ public class AutoScore extends CommandBase
                 m_extendoSubsystem.Wrist(0, 0);
             }
         }
-        /*m_intakeSubsystem.setRollerSpeed(-0.8);
-        m_intakeSubsystem.StopRollers();*/
     }
 
     public boolean isFinished() {                       

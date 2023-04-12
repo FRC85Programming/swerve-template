@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.Arm.TimedIntakeCommand;
-import frc.robot.commands.Chassis.AutoLevelCommand;
+import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.*;

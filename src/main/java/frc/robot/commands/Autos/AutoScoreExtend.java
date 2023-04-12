@@ -39,8 +39,6 @@ public class AutoScoreExtend extends CommandBase
                 m_extendoSubsystem.ExtendTelescope(0, 0);
             }
         }
-        /*m_intakeSubsystem.setRollerSpeed(-0.8);
-        m_intakeSubsystem.StopRollers();*/
     }
 
     public boolean isFinished() {

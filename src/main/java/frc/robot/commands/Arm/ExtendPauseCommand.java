@@ -14,7 +14,7 @@ public class ExtendPauseCommand extends SequentialCommandGroup {
 
         addCommands(
             new ExtendCommand(m_extendoSubsystem,
-                null, //() -> getDesiredExtend().getAsDouble(),
+                null, 
                 () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
                 () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, true),
             new ExtendCommand(m_extendoSubsystem,

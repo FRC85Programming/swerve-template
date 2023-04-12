@@ -12,7 +12,6 @@ public class PivotCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // m_ExtendoSubsystem.PivotArmTelescope(0.1);
         m_ExtendoSubsystem.Pivot(0.1, 0);
     }
 

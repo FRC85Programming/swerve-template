@@ -34,10 +34,6 @@ public class AutoIntakeCube extends CommandBase
         } else {
             m_extendoSubsystem.Wrist(0, 0);
         }
-        /*m_intakeSubsystem.setRollerSpeed(-0.8);
-
-        m_intakeSubsystem.StopRollers();*/
-
     }
 
     public boolean isFinished() {

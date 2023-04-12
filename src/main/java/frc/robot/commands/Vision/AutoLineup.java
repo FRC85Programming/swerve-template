@@ -8,7 +8,6 @@ import frc.robot.subsystems.*;
 public class AutoLineup extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final VisionTracking m_visionTracking;
-    // private final Pigeon2 m_pigeon;
     boolean left = false;
     boolean sideSelected = false;
     double tagFinal = -1;
@@ -27,7 +26,6 @@ public class AutoLineup extends CommandBase {
         double area = m_visionTracking.getArea1();
         double thor = m_visionTracking.getLength1();
         double tagID = m_visionTracking.getTag1();
-        // double yaw = m_pigeon.getYaw();
         if (sideSelected == false) {
             m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, -tx));
             if (tx < 3 && tx > -3) {
