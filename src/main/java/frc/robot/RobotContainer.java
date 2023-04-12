@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
 import frc.robot.commands.Arm.ExtendCommand;
-import frc.robot.commands.Arm.ExtendPauseCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
@@ -193,9 +192,6 @@ public class RobotContainer {
     // new Trigger(m_operatorController::getBButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
-
-    new Trigger(m_controller::getYButton)
-        .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
 
     new Trigger(m_controller::getXButton)
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
