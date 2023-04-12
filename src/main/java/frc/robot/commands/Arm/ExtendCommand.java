@@ -84,6 +84,8 @@ public class ExtendCommand extends CommandBase {
             } else {
                 m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
             }
+        } else {
+            m_ExtendoSubsystem.ExtendTelescope(0, 0);
         }
 
         double wristSpeed;
