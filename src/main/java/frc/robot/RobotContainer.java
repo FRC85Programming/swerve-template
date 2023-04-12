@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -264,11 +265,10 @@ public class RobotContainer {
   }
 
   public void writeDriveSpeeds() {
-    SmartDashboard.putNumber("FL Drive Speed", m_drivetrainSubsystem.getFrontLeft().getDriveMotor().get());
-    SmartDashboard.putNumber("FR Drive Speed", m_drivetrainSubsystem.getFrontRight().getDriveMotor().get());
-    SmartDashboard.putNumber("BL Drive Speed", m_drivetrainSubsystem.getBackLeft().getDriveMotor().get());
-    SmartDashboard.putNumber("BR Drive Speed", m_drivetrainSubsystem.getBackRight().getDriveMotor().get());
-
+    SmartDashboard.putNumber("FL Drive Speed", ((CANSparkMax)m_drivetrainSubsystem.getFrontLeft().getDriveMotor()).getAppliedOutput());
+    SmartDashboard.putNumber("FR Drive Speed", ((CANSparkMax)m_drivetrainSubsystem.getFrontRight().getDriveMotor()).getAppliedOutput());
+    SmartDashboard.putNumber("BL Drive Speed", ((CANSparkMax)m_drivetrainSubsystem.getBackLeft().getDriveMotor()).getAppliedOutput());
+    SmartDashboard.putNumber("BR Drive Speed", ((CANSparkMax)m_drivetrainSubsystem.getBackRight().getDriveMotor()).getAppliedOutput());
   }
 
   public Command getAutonomousCommand() {

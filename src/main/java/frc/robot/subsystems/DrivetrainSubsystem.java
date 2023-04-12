@@ -159,7 +159,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Swerve Calibrate", false);
 
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    //ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    SmartDashboard.putBoolean("Set drive current limits", false);
+    SmartDashboard.putNumber("Drive current limit stall", 80);
+    SmartDashboard.putNumber("Drive current limit free", 20);
 
     m_frontLeftModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
         .withDriveMotor(MotorType.NEO, FRONT_LEFT_MODULE_DRIVE_MOTOR)
@@ -220,9 +223,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     this.zeroGyroscope(0);
 
-    tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
-    tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
-    tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+    //tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+    //tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
+    //tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
 
     SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
     SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
@@ -321,6 +324,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     ((CANSparkMax) m_frontRightModule.getDriveMotor()).setOpenLoopRampRate(rate); 
   }
 
+  public void setSmartCurrentLimits(int stallLimit, int freeLimit) {
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit); 
+  }
+
   public void resetOdometry(Pose2d pose) {
     // Resets the gyro
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
@@ -384,7 +394,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
-    SmartDashboard.getBoolean("Swerve testing", swerveTesting);
+    swerveTesting = SmartDashboard.getBoolean("Swerve testing", false);
 
     if (swerveTesting){
     SmartDashboard.putNumber("Front Left Steer Absolute Angle",
@@ -409,6 +419,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
       double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
       setDrivePID(p, i, d);
       SmartDashboard.putBoolean("Set drive PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set drive current limits", false)) {
+      setSmartCurrentLimits((int)SmartDashboard.getNumber("Drive current limit stall", 80), (int)SmartDashboard.getNumber("Drive current limit free", 20));
+      SmartDashboard.putBoolean("Set drive current limits", false);
     }
   }
 
