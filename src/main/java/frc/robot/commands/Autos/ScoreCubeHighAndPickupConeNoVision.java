@@ -7,6 +7,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.Chassis.DriveAndIntake;
 import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
+import frc.robot.commands.Chassis.ZeroWheelsSideways;
 import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.*;
 import frc.robot.commands.Arm.HomeExtendCommand;
@@ -25,7 +26,7 @@ public class ScoreCubeHighAndPickupConeNoVision extends SequentialCommandGroup{
         addCommands(
             new ZeroGyroscopeCommand(driveTrain, 180),
             new HomeExtendCommand(extendo),
-            new zeroWheels(driveTrain),
+            new ZeroWheelsSideways(driveTrain),
             new AutoScore(extendo, "cube high"),
             new AutoScoreExtend(extendo, "cube high"),
             new TimedIntakeCommand(intake, false, .5, 0.4),

@@ -186,8 +186,8 @@ public class RobotContainer {
         .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // // Cuts robot speed in half
-    new Trigger(() -> m_controller.getPOV() == 270)
-        .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+    // new Trigger(() -> m_controller.getPOV() == 270)
+    //     .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // new Trigger(m_operatorController::getBButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
