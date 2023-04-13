@@ -30,7 +30,7 @@ public class ScoreCubeHighAndPickupConeNoVision extends SequentialCommandGroup{
             new AutoScoreExtend(extendo, "cube high"),
             new TimedIntakeCommand(intake, false, .5, 0.4),
             new DriveDistance(driveTrain, vision, strafeSpeed, 0, 0, 0.2, 0, false),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5, -2.5),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side, "cone"),
             new zeroWheels(driveTrain),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3, "cone"),

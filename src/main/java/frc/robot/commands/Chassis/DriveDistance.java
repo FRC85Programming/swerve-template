@@ -132,7 +132,7 @@ public class DriveDistance extends CommandBase
             // If first 10% or more than 3/4 of the way through the drive, start rampdown
             if (wheelSpeedX > 0) {
                 if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.4+.5, wheelSpeedY, correctionTurnSpeed));
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.75+.75, wheelSpeedY, correctionTurnSpeed));
                 }
                 if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
                     m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
@@ -140,7 +140,7 @@ public class DriveDistance extends CommandBase
             }
             if (wheelSpeedX < 0) {
                 if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.4-.5, wheelSpeedY, correctionTurnSpeed));
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.75-.75, wheelSpeedY, correctionTurnSpeed));
                 }
                 if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
                     m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
