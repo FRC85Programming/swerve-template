@@ -18,16 +18,16 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.*;
+import frc.robot.commands.Arm.ExtendAndIntakeCommand;
 import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
@@ -37,7 +37,6 @@ import frc.robot.commands.Autos.ManualMobility;
 import frc.robot.commands.Autos.ScoreAndBalance;
 import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
 import frc.robot.commands.Autos.ScoreCubeHighAndPickupConeNoVision;
-import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
 import frc.robot.commands.Autos.ScoreLineup;
 import frc.robot.commands.Autos.ScorePickupAndBalance;
 import frc.robot.commands.Autos.SpinCubeHighAndMobility;
@@ -48,6 +47,10 @@ import frc.robot.commands.Chassis.DriveDistance;
 import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.ExtendoSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionTracking;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -193,11 +196,12 @@ public class RobotContainer {
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
 
-    new Trigger(m_controller::getXButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem,
+    new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashPositionHold", false))
+        .whileTrue(new ExtendAndIntakeCommand(m_extendoSubsystem, m_IntakeSubsystem,
         () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
         () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-        () -> SmartDashboard.getNumber("DesiredWristPosition", 0), false, false));
+        () -> SmartDashboard.getNumber("DesiredWristPosition", 0),
+        () -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
 
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
