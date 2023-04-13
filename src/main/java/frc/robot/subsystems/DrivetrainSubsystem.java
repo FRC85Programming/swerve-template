@@ -49,8 +49,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -228,12 +227,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     //tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
     //tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
 
-    SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
-    SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
-    SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
+    SmartDashboard.putNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+    SmartDashboard.putNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+    SmartDashboard.putNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
     SmartDashboard.putBoolean("Set drive PID", false);
+    SmartDashboard.putBoolean("Set front right drive PID", false);
 
-  SmartDashboard.putBoolean("Swerve testing", swerveTesting);
+    SmartDashboard.putNumber("SwerveSteer P", getPID(m_frontLeftModule.getSteerMotor()).getP());
+    SmartDashboard.putNumber("SwerveSteer I", getPID(m_frontLeftModule.getSteerMotor()).getI());
+    SmartDashboard.putNumber("SwerveSteer D", getPID(m_frontLeftModule.getSteerMotor()).getD());
+    SmartDashboard.putBoolean("Set steer PID", false);
+
+    SmartDashboard.putBoolean("Swerve testing", swerveTesting);
   }
 
   /**
@@ -451,11 +456,27 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     if (SmartDashboard.getBoolean("Set drive PID", false)) {
-      double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
-      double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
-      double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
-      setDrivePID(p, i, d);
+      double p = SmartDashboard.getNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
+      setAllDrivePIDs(p, i, d);
       SmartDashboard.putBoolean("Set drive PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set front right drive PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
+      setPID(m_frontRightModule.getDriveMotor(), p, i, d);
+      SmartDashboard.putBoolean("Set front right drive PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set steer PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveSteer P", getPID(m_frontLeftModule.getSteerMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveSteer I", getPID(m_frontLeftModule.getSteerMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveSteer D", getPID(m_frontLeftModule.getSteerMotor()).getD());
+      setAllSteerPIDs(p, i, d);
+      SmartDashboard.putBoolean("Set steer PID", false);
     }
 
     if (SmartDashboard.getBoolean("Set drive current limits", false)) {
@@ -624,29 +645,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
     ((CANSparkMax) m_backRightModule.getDriveMotor()).getEncoder().setPosition(0);
   }
 
-  public SparkMaxPIDController getDrivePID() {
-    return ((CANSparkMax) m_frontLeftModule.getDriveMotor()).getPIDController();
+  public SparkMaxPIDController getPID(MotorController controller) {
+    return ((CANSparkMax) controller).getPIDController();
+  }
+  
+  public void setAllDrivePIDs(double p, double i, double d) {
+    setPID(m_frontLeftModule.getDriveMotor(), p, i, d);
+    setPID(m_frontRightModule.getDriveMotor(), p, i, d);
+    setPID(m_backLeftModule.getDriveMotor(), p, i, d);
+    setPID(m_backRightModule.getDriveMotor(), p, i, d);
   }
 
-  public void setDrivePID(double p, double i, double d) {
-    CANSparkMax frontLeft = (CANSparkMax) m_frontLeftModule.getDriveMotor();
-    frontLeft.getPIDController().setP(p);
-    frontLeft.getPIDController().setI(i);
-    frontLeft.getPIDController().setD(d);
+  public void setAllSteerPIDs(double p, double i, double d) {
+    setPID(m_frontLeftModule.getSteerMotor(), p, i, d);
+    setPID(m_frontRightModule.getSteerMotor(), p, i, d);
+    setPID(m_backLeftModule.getSteerMotor(), p, i, d);
+    setPID(m_backRightModule.getSteerMotor(), p, i, d);
+  }
 
-    CANSparkMax frontRight = (CANSparkMax) m_frontRightModule.getDriveMotor();
-    frontRight.getPIDController().setP(p);
-    frontRight.getPIDController().setI(i);
-    frontRight.getPIDController().setD(d);
-
-    CANSparkMax backRight = (CANSparkMax) m_backRightModule.getDriveMotor();
-    backRight.getPIDController().setP(p);
-    backRight.getPIDController().setI(i);
-    backRight.getPIDController().setD(d);
-
-    CANSparkMax backLeft = (CANSparkMax) m_backLeftModule.getDriveMotor();
-    backLeft.getPIDController().setP(p);
-    backLeft.getPIDController().setI(i);
-    backLeft.getPIDController().setD(d);
+  public void setPID(MotorController controller, double p, double i, double d) {
+    CANSparkMax spark = (CANSparkMax) controller;
+    spark.getPIDController().setP(p);
+    spark.getPIDController().setI(i);
+    spark.getPIDController().setD(d);
   }
 }
