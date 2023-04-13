@@ -12,7 +12,7 @@ public class HomeIntoCubeIntake extends SequentialCommandGroup {
     public HomeIntoCubeIntake(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target){
         addCommands(
             new HomeExtendCommand(m_ExtendoSubsystem),
-            new AutoIntakeCube(m_ExtendoSubsystem, m_IntakeSubsystem)
+            new AutoIntakeCube(m_ExtendoSubsystem)
         );
     }
 

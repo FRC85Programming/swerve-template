@@ -13,8 +13,8 @@ public class DriveAndIntake extends ParallelCommandGroup {
         SmartDashboard.putNumber("Intake Start", 1);
         boolean intakeMode = gamePiece.toLowerCase().equals("cube");
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 1, 0, target, 0, false),
-            new TimedIntakeCommand(m_IntakeSubsystem, intakeMode, 2, -0.8)
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0.5, 0, target, 0, false),
+            new TimedIntakeCommand(m_IntakeSubsystem, intakeMode, 2.5, -0.8)
         );
     }
 

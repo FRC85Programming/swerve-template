@@ -1,35 +1,38 @@
 package frc.robot.commands.Autos;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.Arm.ExtendCommand;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoIntakeCube extends CommandBase
+public class AutoIntakeCube extends ExtendCommand
  {
-    private final ExtendoSubsystem m_extendoSubsystem;
+    //private final ExtendoSubsystem m_extendoSubsystem;
 
-
-    public AutoIntakeCube(ExtendoSubsystem extendo, IntakeSubsystem intake)
+    public AutoIntakeCube(ExtendoSubsystem extendo)
     {
-        m_extendoSubsystem = extendo;
-
-        addRequirements(extendo, intake);
+        super(extendo, () -> 72, () -> 21, () -> -22, false, true);
+       // m_extendoSubsystem = extendo;
+        
+        //addRequirements(extendo);
     }
 
     @Override
     public void execute()
     {
-        if (m_extendoSubsystem.getPivotAngle() <= 20) {
-            m_extendoSubsystem.Pivot(0.85, 0);
+        super.execute();
+
+        /*if (m_extendoSubsystem.getPivotAngle() <= 21) {
+            m_extendoSubsystem.Pivot(1, 0);
         } else {
             m_extendoSubsystem.Pivot(0, 0);
         }
-        if (m_extendoSubsystem.getExtendPosition() <= 75) {
+        if (m_extendoSubsystem.getExtendPosition() <= 108) {
             m_extendoSubsystem.ExtendTelescope(0.25, 0);
         } else {
             m_extendoSubsystem.ExtendTelescope(0, 0);
         }
-        if (m_extendoSubsystem.getIntakeWrist() >= -24) {
+        if (m_extendoSubsystem.getIntakeWrist() >= -40) {
             m_extendoSubsystem.Wrist(-0.3, 0);
         } else {
             m_extendoSubsystem.Wrist(0, 0);
@@ -41,13 +44,12 @@ public class AutoIntakeCube extends CommandBase
     }
 
     public boolean isFinished() {
-        return m_extendoSubsystem.getPivotAngle() >= 20 && m_extendoSubsystem.getExtendPosition() >= 75 && m_extendoSubsystem.getIntakeWrist() <= -24;
+        return super.isFinished();
     }
     public void end(boolean interrupted) {
-        m_extendoSubsystem.Pivot(0, 0);
-        m_extendoSubsystem.ExtendTelescope(0, 0);
-        m_extendoSubsystem.Wrist(0, 0);
+        super.end(interrupted);
     }
  }
+
 
 

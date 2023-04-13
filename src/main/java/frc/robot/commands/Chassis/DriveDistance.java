@@ -120,17 +120,19 @@ public class DriveDistance extends CommandBase
 
         if (!driveDone && (wheelSpeedX != 0 || wheelSpeedY != 0)) {
             double correctionTurnSpeed = 0;
-            if (degrees360 > startDegrees + 1) {
-                correctionTurnSpeed = -0.3;
-            } else if (degrees360 < startDegrees - 1) {
-                correctionTurnSpeed = 0.3;
+            if (Math.abs(wheelSpeedX) > 0.7 || Math.abs(wheelSpeedY) > 0.7) {
+                if (degrees360 > startDegrees + 1) {
+                    correctionTurnSpeed = -0.3;
+                } else if (degrees360 < startDegrees - 1) {
+                    correctionTurnSpeed = 0.3;
+                }
             }
             
-            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
+            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ") with correction " + correctionTurnSpeed, false);
             // If first 10% or more than 3/4 of the way through the drive, start rampdown
             if (wheelSpeedX > 0) {
                 if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.25+.5, wheelSpeedY, correctionTurnSpeed));
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.4+.5, wheelSpeedY, correctionTurnSpeed));
                 }
                 if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
                     m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
@@ -138,7 +140,7 @@ public class DriveDistance extends CommandBase
             }
             if (wheelSpeedX < 0) {
                 if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.25-.5, wheelSpeedY, correctionTurnSpeed));
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.4-.5, wheelSpeedY, correctionTurnSpeed));
                 }
                 if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
                     m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
@@ -157,7 +159,11 @@ public class DriveDistance extends CommandBase
             // Only rotate if driveforward and side speeds are zero
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
                 DriverStation.reportWarning("Turning", false);
-                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
+                if (degrees360 - targetAngle <= 10) {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed/2));
+                } else {
+                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
+                }
             } 
         }
             
@@ -166,7 +172,7 @@ public class DriveDistance extends CommandBase
         return encoderResetDone && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
     }
     private boolean turnFinished() {
-        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
+        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -1 && degrees360 - targetAngle <= 1;
     }
 
     @Override
