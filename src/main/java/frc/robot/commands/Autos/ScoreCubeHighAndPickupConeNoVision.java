@@ -16,12 +16,25 @@ import frc.robot.commands.Arm.TimedIntakeCommand;
 
 public class ScoreCubeHighAndPickupConeNoVision extends SequentialCommandGroup{
 
-    public ScoreCubeHighAndPickupConeNoVision(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance side) {
+    public ScoreCubeHighAndPickupConeNoVision(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance allianceSide, String autoSide) {
         double strafeSpeed;
-        if (side == Alliance.Blue){
-            strafeSpeed = 0.5;
+
+        if (autoSide.toLowerCase().equals("Bumpside")) {
+
+            if (allianceSide == Alliance.Blue){
+                strafeSpeed = -0.5;
+            } else {
+                strafeSpeed = 0.5;
+            }
+
+        } else if(autoSide.toLowerCase().equals("SmoothSide")) {
+            if (allianceSide == Alliance.Blue){
+                strafeSpeed = 0.5;
+            } else {
+                strafeSpeed = -0.5;
+            }
         } else {
-            strafeSpeed = -0.5;
+            strafeSpeed = 0;
         }
         
         addCommands(
@@ -37,7 +50,7 @@ public class ScoreCubeHighAndPickupConeNoVision extends SequentialCommandGroup{
             new zeroWheels(driveTrain), 
             new WaitCommand(0.1),
             new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5, -2.5, true, 0.75),
-            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side, "cone"),
+            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, allianceSide, "cone"),
             new zeroWheels(driveTrain),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3, "cone"),
             new HomeExtendCommand(extendo)
