@@ -37,7 +37,8 @@ public class DriveDistance extends CommandBase
     double avgEncoderDistance = 0;
     Timer m_timer;
     Boolean useRamp;
-    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean useRamp) {
+    Double rampSpeed;
+    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean useRamp, Double rampSpeed) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
         m_frontRightModule = m_drivetrainSubsystem.getFrontRight();
@@ -49,6 +50,7 @@ public class DriveDistance extends CommandBase
         turnSpeed = rotateSpeed;
         encoderTarget = driveTarget;
         this.angleTarget = angleTarget;
+        this.rampSpeed = rampSpeed;
         init();
         addRequirements(m_drivetrainSubsystem);        
         instanceCount++;
@@ -134,7 +136,7 @@ public class DriveDistance extends CommandBase
             if (useRamp == true) {
                 if (wheelSpeedX > 0) {
                     if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
-                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.75+.75, wheelSpeedY, correctionTurnSpeed));
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*rampSpeed+.75, wheelSpeedY, correctionTurnSpeed));
                     }
                     if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
                         m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
@@ -142,7 +144,7 @@ public class DriveDistance extends CommandBase
                 }
                 if (wheelSpeedX < 0) {
                     if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
-                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.75-.75, wheelSpeedY, correctionTurnSpeed));
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-rampSpeed-.75, wheelSpeedY, correctionTurnSpeed));
                     }
                     if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
                         m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));

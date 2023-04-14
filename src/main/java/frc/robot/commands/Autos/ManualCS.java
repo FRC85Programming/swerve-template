@@ -12,10 +12,10 @@ public class ManualCS extends SequentialCommandGroup {
     public ManualCS(DrivetrainSubsystem driveTrain, VisionTracking vision, IntakeSubsystem intake, RobotContainer robotContainer) {
         addCommands(  
             new zeroWheels(driveTrain),
-            new DriveDistance(driveTrain, vision, 0, 5.0, 0.0, 3, 0, false),
-            new DriveDistance(driveTrain, vision, 5, 0, 0, 2, 0, false),
+            new DriveDistance(driveTrain, vision, 0, 5.0, 0.0, 3, 0, false, 0.0),
+            new DriveDistance(driveTrain, vision, 5, 0, 0, 2, 0, false, 0.0),
             new WaitCommand(.3),
-            new DriveDistance(driveTrain, vision, 0, -5, 0, 2, 0, false),
+            new DriveDistance(driveTrain, vision, 0, -5, 0, 2, 0, false, 0.0),
             new AutoLevelCommand(driveTrain)
         );
     }

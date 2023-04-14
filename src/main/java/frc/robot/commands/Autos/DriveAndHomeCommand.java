@@ -10,9 +10,9 @@ import frc.robot.subsystems.VisionTracking;
 
 public class DriveAndHomeCommand extends ParallelCommandGroup {
 
-    public DriveAndHomeCommand(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target, double speed, Boolean useRamp){
+    public DriveAndHomeCommand(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target, double speed, Boolean useRamp, Double rampSpeed){
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, speed, 0, target, 0, useRamp),
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, speed, 0, target, 0, useRamp, rampSpeed),
             new HomeExtendCommand(m_ExtendoSubsystem)
         );
     }
