@@ -22,7 +22,7 @@ public class RotateAndIntakePosition extends ParallelCommandGroup {
 
         if (gamePiece.toLowerCase().equals("cube")) {
             addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0, turnSpeed, 0, 180, false),
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0, turnSpeed, 0, 183, false),
             new AutoIntakeCube(m_ExtendoSubsystem)
         );  
         } else if (gamePiece.toLowerCase().equals("cone")) {

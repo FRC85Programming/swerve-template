@@ -36,13 +36,14 @@ public class DriveDistance extends CommandBase
     double startDegrees;
     double avgEncoderDistance = 0;
     Timer m_timer;
-    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
+    Boolean useRamp;
+    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean useRamp) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
         m_frontRightModule = m_drivetrainSubsystem.getFrontRight();
         m_backRightModule = m_drivetrainSubsystem.getBackRight();
         m_backLeftModule = m_drivetrainSubsystem.getBackLeft();
-        this.track = track;
+        this.useRamp = useRamp;
         wheelSpeedX = speedX;
         wheelSpeedY = speedY;
         turnSpeed = rotateSpeed;
@@ -130,20 +131,22 @@ public class DriveDistance extends CommandBase
             
             DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ") with correction " + correctionTurnSpeed, false);
             // If first 10% or more than 3/4 of the way through the drive, start rampdown
-            if (wheelSpeedX > 0) {
-                if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.75+.75, wheelSpeedY, correctionTurnSpeed));
+            if (useRamp == true) {
+                if (wheelSpeedX > 0) {
+                    if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*0.75+.75, wheelSpeedY, correctionTurnSpeed));
+                    }
+                    if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+                    }
                 }
-                if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
-                }
-            }
-            if (wheelSpeedX < 0) {
-                if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.75-.75, wheelSpeedY, correctionTurnSpeed));
-                }
-                if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+                if (wheelSpeedX < 0) {
+                    if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-0.75-.75, wheelSpeedY, correctionTurnSpeed));
+                    }
+                    if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+                    }
                 }
             } else {
                 m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
@@ -159,11 +162,7 @@ public class DriveDistance extends CommandBase
             // Only rotate if driveforward and side speeds are zero
             if (wheelSpeedX == 0 && wheelSpeedY == 0) {
                 DriverStation.reportWarning("Turning", false);
-                if (degrees360 - targetAngle <= 10) {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed/2));
-                } else {
-                    m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
-                }
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, turnSpeed));
             } 
         }
             
@@ -172,7 +171,7 @@ public class DriveDistance extends CommandBase
         return encoderResetDone && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
     }
     private boolean turnFinished() {
-        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -1 && degrees360 - targetAngle <= 1;
+        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -2 && degrees360 - targetAngle <= 2;
     }
 
     @Override

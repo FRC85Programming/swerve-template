@@ -28,7 +28,7 @@ public class ScoreConeMidAndPickupCubeNoVision extends SequentialCommandGroup {
             new AutoScoreExtend(extendo, "cone middle"),
             new TimedIntakeCommand(intake, true, 1.5, 0.8),
             new DriveDistance(driveTrain, vision, strafeSpeed, 0, 0, 0.3, 0, false),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5, -2.5),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5, -2.5, true),
             new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side, "cube"),
             new ScoreLineup(driveTrain, vision, robotContainer, true),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 1.3, "cube"),

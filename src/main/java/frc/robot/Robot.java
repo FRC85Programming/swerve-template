@@ -82,6 +82,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putBoolean("Operator", m_robotContainer.checkOpController());
+    SmartDashboard.putBoolean("Drive", m_robotContainer.checkDriveController());
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
     // commands, running already-scheduled commands, removing finished or

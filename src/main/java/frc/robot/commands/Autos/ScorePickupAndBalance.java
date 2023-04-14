@@ -22,13 +22,14 @@ public class ScorePickupAndBalance extends SequentialCommandGroup{
             new HomeExtendCommand(extendo),
             new zeroWheels(driveTrain),
             new TimedIntakeCommand(intake, false, .5, 0.4),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 3.5, -5),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 4.3, -1.3, false),
             new WaitCommand(0.2),
-            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, Alliance.Blue, "cube"),
+            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, Alliance.Blue, "cone"),
+            new DriveDistance(driveTrain, vision, -0.5, 0, 0, 0.2, 0, false),
             //new zeroWheels(driveTrain),
             new WaitCommand(0.2),
-            new DriveAndIntake(driveTrain, vision, extendo, intake, 1.4, "cube"),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -2.7, -3),
+            new DriveAndIntake(driveTrain, vision, extendo, intake, 1.2, "cone"),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -3.4, -1.3, false),
             new AutoLevelPIDCommand(driveTrain)
         );
     }

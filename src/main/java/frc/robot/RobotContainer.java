@@ -197,11 +197,11 @@ public class RobotContainer {
     // -> -60.5));
 
     new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashPositionHold", false))
-        .whileTrue(new ExtendAndIntakeCommand(m_extendoSubsystem, m_IntakeSubsystem,
+        .whileTrue(new ExtendCommand(m_extendoSubsystem,
         () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
         () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-        () -> SmartDashboard.getNumber("DesiredWristPosition", 0),
-        () -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
+        () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+        //() -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
 
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
@@ -211,12 +211,6 @@ public class RobotContainer {
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
-
-    new Trigger(m_operatorController::getYButton)
-        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
-
-    new Trigger(m_operatorController::getBButton)
-        .whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
@@ -232,6 +226,14 @@ public class RobotContainer {
     // new Trigger(m_controller::getYButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
+  }
+
+  public boolean checkOpController() {
+    return m_operatorController.getXButton();
+  }
+
+  public boolean checkDriveController() {
+    return m_operatorController.getXButton();
   }
 
     public VisionTracking getVision() {

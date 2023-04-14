@@ -29,7 +29,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final PIDController extendoPID = new PIDController(0, 0, 0);
     private final double extendSpeedScaleSafe = 0.4;
     private final double extendSpeedScale = 1;
-    private final double pivotSpeedScaleSafe = 0.2;
+    private final double pivotSpeedScaleSafe = 0.20;
     private final double pivotSpeedScale = 1;
     public static final double maxPivot = 80;
     public static final double maxExtend = 210;

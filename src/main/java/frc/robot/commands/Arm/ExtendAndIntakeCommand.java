@@ -9,5 +9,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ExtendAndIntakeCommand extends ParallelCommandGroup {
     public ExtendAndIntakeCommand(ExtendoSubsystem extendo, IntakeSubsystem intake, DoubleSupplier extendPosition, DoubleSupplier pivotPosition, DoubleSupplier wristPosition, DoubleSupplier rollerSpeed) {
         addCommands(new ExtendCommand(extendo, extendPosition, pivotPosition, wristPosition), new IntakeCommand(intake, rollerSpeed));
+
     }
 }

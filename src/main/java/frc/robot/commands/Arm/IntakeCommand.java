@@ -22,6 +22,11 @@ public class IntakeCommand extends CommandBase {
     }
 
     @Override
+    public boolean isFinished() {
+        return m_Speed.getAsDouble() == 0;
+    }
+
+    @Override
     public void end(boolean interrupted) {
         m_intake.StopRollers();
     }
