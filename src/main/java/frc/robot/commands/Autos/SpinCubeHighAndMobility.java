@@ -12,7 +12,8 @@ import frc.robot.commands.Arm.TimedIntakeCommand;
 
 public class SpinCubeHighAndMobility extends SequentialCommandGroup {
 
-    public SpinCubeHighAndMobility(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance side) {
+    public SpinCubeHighAndMobility(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake) {
+        Alliance side = DriverStation.getAlliance();
         addCommands(  
             new HomeExtendCommand(extendo),
             new ZeroGyroscopeCommand(driveTrain, 180),
