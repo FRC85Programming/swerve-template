@@ -11,8 +11,8 @@ public class StrafeIntoDrive extends SequentialCommandGroup {
 
     public StrafeIntoDrive(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, double target){
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 1, 1, 0, 0.50, 0, false),
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, -1.5, 0, 1.5, 0, false)
+            new DriveDistance(m_DrivetrainSubsystem, vision, 1, 1, 0, 0.50, 0, false, 0.0),
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, -1.5, 0, 1.5, 0, false, 0.0)
         );
     }
 

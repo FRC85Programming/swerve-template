@@ -26,9 +26,9 @@ public class ScoreAndBalance  extends SequentialCommandGroup{
                     new AutoScoreExtend(extendo, scorePosition),
                     new TimedIntakeCommand(intake, false, .5, 0.8),
                     new HomeExtendCommand(extendo),
-                    new DriveDistance(driveTrain, vision, 0, -1.25, 0, 3.8, 0, false),
+                    new DriveDistance(driveTrain, vision, 0, -1.25, 0, 3.8, 0, false, 0.0),
                     new WaitCommand(0.1),
-                    new DriveDistance(driveTrain, vision, 0, 1.4, 0, -2.18, 0, false),
+                    new DriveDistance(driveTrain, vision, 0, 1.4, 0, -2.18, 0, false, 0.0),
                     new AutoLevelPIDCommand(driveTrain),
                     new BrakeWheelsCommand(driveTrain)
 

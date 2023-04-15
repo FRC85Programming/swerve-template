@@ -2,6 +2,7 @@ package frc.robot.commands.Arm;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendoSubsystem;
 
@@ -11,6 +12,7 @@ public class ExtendCommand extends CommandBase {
     private final DoubleSupplier m_PivotAngle;
     private final DoubleSupplier m_IntakeWrist;
     private final double tolerancePivot = 1;
+
     private final double tolerancePivotSlow = 10;
     private final double toleranceExtend = 1;
     private final double toleranceExtendSlow = 12;
@@ -21,7 +23,7 @@ public class ExtendCommand extends CommandBase {
     private final double pivotFastSpeed = 1;
     private final double intakePivotSpeed = 1;
     private final double wristSlowSpeed = 0.25;
-    private final double pivotSlowSpeed = 0.2;
+    private final double pivotSlowSpeed = 0.4;
     private boolean m_enableZeroing = false;
     private boolean m_endCommandWhenPositionMet = true;
 
@@ -46,21 +48,27 @@ public class ExtendCommand extends CommandBase {
     @Override
     public void execute() {
 
-        double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = m_IntakeWrist.getAsDouble();
+        double desiredPivotAngle = m_PivotAngle.getAsDouble();
+        double desiredIntakeWrist = m_IntakeWrist.getAsDouble();
+
+        double currentPivot = m_ExtendoSubsystem.getPivotAngle();
+        double currentWrist = m_ExtendoSubsystem.getIntakeWrist();
+
+        boolean atDesiredPivot = currentPivot > desiredPivotAngle - tolerancePivotSlow && currentPivot < desiredPivotAngle + tolerancePivotSlow;
+        boolean atDesiredWrist = currentWrist > desiredIntakeWrist - toleranceWristSlow && currentWrist < desiredIntakeWrist + toleranceWristSlow;
 
         double pivotSpeed;
-        if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
-                && m_ExtendoSubsystem.getPivotAngle() < pivotAngle + tolerancePivot) {
+        if (m_ExtendoSubsystem.getPivotAngle() > desiredPivotAngle - tolerancePivot
+                && m_ExtendoSubsystem.getPivotAngle() < desiredPivotAngle + tolerancePivot) {
             pivotSpeed = 0;
-        } else if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivotSlow
-                && m_ExtendoSubsystem.getPivotAngle() < pivotAngle + tolerancePivotSlow) {
+        } else if (m_ExtendoSubsystem.getPivotAngle() > desiredPivotAngle - tolerancePivotSlow
+                && m_ExtendoSubsystem.getPivotAngle() < desiredPivotAngle + tolerancePivotSlow) {
             pivotSpeed = pivotSlowSpeed;
         } else {
             pivotSpeed = pivotFastSpeed;
         }
 
-        if (m_ExtendoSubsystem.getPivotAngle() > pivotAngle) {
+        if (m_ExtendoSubsystem.getPivotAngle() > desiredPivotAngle) {
             m_ExtendoSubsystem.Pivot(-pivotSpeed, 0.0, m_enableZeroing);
         } else {
             m_ExtendoSubsystem.Pivot(pivotSpeed, 0.0, m_enableZeroing);
@@ -81,7 +89,7 @@ public class ExtendCommand extends CommandBase {
 
             if (m_ExtendoSubsystem.getExtendPosition() > extendPosition) {
                 m_ExtendoSubsystem.ExtendTelescope(-extendSpeed, 0.0, m_enableZeroing);
-            } else {
+            } else if (atDesiredWrist && atDesiredPivot){
                 m_ExtendoSubsystem.ExtendTelescope(extendSpeed, 0.0, m_enableZeroing);
             }
         } else {
@@ -89,17 +97,17 @@ public class ExtendCommand extends CommandBase {
         }
 
         double wristSpeed;
-        if (m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWrist
-                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWrist) {
+        if (m_ExtendoSubsystem.getIntakeWrist() > desiredIntakeWrist - toleranceWrist
+                && m_ExtendoSubsystem.getIntakeWrist() < desiredIntakeWrist + toleranceWrist) {
             wristSpeed = 0;
-        } else if (m_ExtendoSubsystem.getIntakeWrist() > intakeWrist - toleranceWristSlow
-                && m_ExtendoSubsystem.getIntakeWrist() < intakeWrist + toleranceWristSlow) {
+        } else if (m_ExtendoSubsystem.getIntakeWrist() > desiredIntakeWrist - toleranceWristSlow
+                && m_ExtendoSubsystem.getIntakeWrist() < desiredIntakeWrist + toleranceWristSlow) {
             wristSpeed = wristSlowSpeed;
         } else {
             wristSpeed = intakePivotSpeed;
         }
 
-        if (m_ExtendoSubsystem.getIntakeWrist() > intakeWrist) {
+        if (m_ExtendoSubsystem.getIntakeWrist() > desiredIntakeWrist) {
             m_ExtendoSubsystem.Wrist(-wristSpeed, 0.0, m_enableZeroing);
         } else {
             m_ExtendoSubsystem.Wrist(wristSpeed, 0.0, m_enableZeroing);
@@ -108,8 +116,8 @@ public class ExtendCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        double pivotAngle = m_PivotAngle.getAsDouble();
-        double intakeWrist = Math.abs(m_IntakeWrist.getAsDouble());
+        double desiredPivotAngle = m_PivotAngle.getAsDouble();
+        double desiredIntakeWrist = Math.abs(m_IntakeWrist.getAsDouble());
         boolean extendFinsished = false;
         if (m_ExtendPosition != null) {
             double extendPosition = m_ExtendPosition.getAsDouble();
@@ -123,13 +131,13 @@ public class ExtendCommand extends CommandBase {
             extendFinsished = true;
         }
 
-        if (pivotAngle > ExtendoSubsystem.maxPivot) {
-            pivotAngle = ExtendoSubsystem.maxPivot;
+        if (desiredPivotAngle > ExtendoSubsystem.maxPivot) {
+            desiredPivotAngle = ExtendoSubsystem.maxPivot;
         }
 
         double wristMax = Math.abs(ExtendoSubsystem.maxWrist);
-        if (intakeWrist > wristMax) {
-            intakeWrist = wristMax;
+        if (desiredIntakeWrist > wristMax) {
+            desiredIntakeWrist = wristMax;
         }
 
         double currentWrist = Math.abs(m_ExtendoSubsystem.getIntakeWrist());
@@ -138,11 +146,11 @@ public class ExtendCommand extends CommandBase {
         }
 
         return m_endCommandWhenPositionMet
-                && currentWrist > intakeWrist - toleranceWrist
-                && currentWrist < intakeWrist + toleranceWrist
+                && currentWrist > desiredIntakeWrist - toleranceWrist
+                && currentWrist < desiredIntakeWrist + toleranceWrist
                 && extendFinsished
-                && m_ExtendoSubsystem.getPivotAngle() > pivotAngle - tolerancePivot
-                && m_ExtendoSubsystem.getPivotAngle() < pivotAngle + tolerancePivot;
+                && m_ExtendoSubsystem.getPivotAngle() > desiredPivotAngle - tolerancePivot
+                && m_ExtendoSubsystem.getPivotAngle() < desiredPivotAngle + tolerancePivot;
     }
 
     @Override

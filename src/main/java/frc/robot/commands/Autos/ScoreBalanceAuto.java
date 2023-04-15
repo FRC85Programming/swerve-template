@@ -22,7 +22,7 @@ public class ScoreBalanceAuto extends SequentialCommandGroup {
             new AutoScore(extendo, "cube high"),
             new AutoScoreExtend(extendo, "cube high"),
             new TimedIntakeCommand(intake, false, 1.5, 0.8),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 2.4),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, 2.4, -2.5, false, 0.0),
             new AutoLevelPIDCommand(driveTrain)
         );
     }

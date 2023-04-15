@@ -12,8 +12,8 @@ public class RotateMoveIntakeDrive extends ParallelCommandGroup {
     public RotateMoveIntakeDrive(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem){
 
         addCommands(
-            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 2, -2, 1.5, 180, false),
-            new AutoIntakeCube(m_ExtendoSubsystem, m_IntakeSubsystem)
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 2, -2, 1.5, 180, false, 0.0),
+            new AutoIntakeCube(m_ExtendoSubsystem)
         );
     }
 

@@ -26,7 +26,7 @@ public class CubeHighBalanceNoMobility  extends SequentialCommandGroup{
                     new AutoScoreExtend(extendo, scorePosition),
                     new TimedIntakeCommand(intake, false, .5, 1),
                     new HomeExtendCommand(extendo),
-                    new DriveDistance(driveTrain, vision, 0, -1.4, 0, 1.5, 0, false),
+                    new DriveDistance(driveTrain, vision, 0, -1.4, 0, 1.5, 0, false, 0.0),
                     new WaitCommand(0.1),
                     new AutoLevelPIDCommand(driveTrain),
                     new BrakeWheelsCommand(driveTrain)

@@ -2,6 +2,7 @@ package frc.robot.commands.Chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionTracking;
@@ -34,22 +35,27 @@ public class DriveDistance extends CommandBase
     double degrees360;
     double startDegrees;
     double avgEncoderDistance = 0;
-    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean track) {
+    Timer m_timer;
+    Boolean useRamp;
+    Double rampSpeed;
+    public DriveDistance(DrivetrainSubsystem driveTrain, VisionTracking vision, double speedY, double speedX, double rotateSpeed, double driveTarget, double angleTarget, Boolean useRamp, Double rampSpeed) {
         m_drivetrainSubsystem = driveTrain;
         m_frontLeftModule = m_drivetrainSubsystem.getFrontLeft();
         m_frontRightModule = m_drivetrainSubsystem.getFrontRight();
         m_backRightModule = m_drivetrainSubsystem.getBackRight();
         m_backLeftModule = m_drivetrainSubsystem.getBackLeft();
-        this.track = track;
+        this.useRamp = useRamp;
         wheelSpeedX = speedX;
         wheelSpeedY = speedY;
         turnSpeed = rotateSpeed;
         encoderTarget = driveTarget;
         this.angleTarget = angleTarget;
+        this.rampSpeed = rampSpeed;
         init();
         addRequirements(m_drivetrainSubsystem);        
         instanceCount++;
         SmartDashboard.putNumber("instance count", instanceCount);
+        m_timer = new Timer();
     }
 
     private void init() {
@@ -66,6 +72,8 @@ public class DriveDistance extends CommandBase
         if (encoderResetTrigger == false) {
             DriverStation.reportWarning("Reseting Encoders", false);
             m_drivetrainSubsystem.resetDriveEncoders();
+            m_timer.reset();
+            m_timer.start();
             // Sample equation  target = 10.5+5, target = 15.5, 5 more than the first value assuming the specified distance is 5
             encoderResetTrigger = true;
         }
@@ -115,15 +123,36 @@ public class DriveDistance extends CommandBase
 
         if (!driveDone && (wheelSpeedX != 0 || wheelSpeedY != 0)) {
             double correctionTurnSpeed = 0;
-            if (degrees360 > startDegrees + 1) {
-                correctionTurnSpeed = -0.3;
-            } else if (degrees360 < startDegrees - 1) {
-                correctionTurnSpeed = 0.3;
+            if (Math.abs(wheelSpeedX) > 0.7 || Math.abs(wheelSpeedY) > 0.7) {
+                if (degrees360 > startDegrees + 1) {
+                    correctionTurnSpeed = -0.3;
+                } else if (degrees360 < startDegrees - 1) {
+                    correctionTurnSpeed = 0.3;
+                }
             }
             
-            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ")", false);
+            DriverStation.reportWarning("Driving (" + wheelSpeedX + ", " + wheelSpeedY + ") with correction " + correctionTurnSpeed, false);
             // If first 10% or more than 3/4 of the way through the drive, start rampdown
-            m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+            if (useRamp == true) {
+                if (wheelSpeedX > 0) {
+                    if (m_frontLeftModule.getDriveVelocity() < wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*rampSpeed+.75, wheelSpeedY, correctionTurnSpeed));
+                    }
+                    if (m_frontLeftModule.getDriveVelocity() >= wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+                    }
+                }
+                if (wheelSpeedX < 0) {
+                    if (m_frontLeftModule.getDriveVelocity() > wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(m_timer.get()*-rampSpeed-.75, wheelSpeedY, correctionTurnSpeed));
+                    }
+                    if (m_frontLeftModule.getDriveVelocity() <= wheelSpeedX) {
+                        m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+                    }
+                }
+            } else {
+                m_drivetrainSubsystem.drive(new ChassisSpeeds(wheelSpeedX, wheelSpeedY, correctionTurnSpeed));
+            }
             // if (encoderTarget / 4 > encoderTarget - avgEncoderDistance || 0.9 * encoderTarget < encoderTarget - avgEncoderDistance) {
             //     m_drivetrainSubsystem.setOpenloopRate(0.8);
             // } else {
@@ -144,7 +173,7 @@ public class DriveDistance extends CommandBase
         return encoderResetDone && Math.abs(avgEncoderDistance) >= Math.abs(encoderTarget);
     }
     private boolean turnFinished() {
-        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -3 && degrees360 - targetAngle <= 3;
+        return turnDone || turnSpeed == 0 || degrees360 - targetAngle >= -2 && degrees360 - targetAngle <= 2;
     }
 
     @Override
@@ -158,5 +187,6 @@ public class DriveDistance extends CommandBase
         DriverStation.reportWarning("DriveDistance command end", false);
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0,0, 0));
         m_drivetrainSubsystem.setOpenloopRate(0);
+        m_timer.reset();
     }
 }

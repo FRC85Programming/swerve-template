@@ -29,9 +29,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.Arm.ExtendAndIntakeCommand;
 import frc.robot.commands.Arm.ExtendCommand;
-import frc.robot.commands.Arm.ExtendPauseCommand;
 import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.IntakeCommand;
 import frc.robot.commands.Arm.ManualExtendoCommand;
@@ -46,10 +44,8 @@ import frc.robot.commands.Autos.SpinCubeHighAndMobility;
 import frc.robot.commands.Chassis.AutoLevelPIDCommand;
 import frc.robot.commands.Chassis.BrakeWheelsCommand;
 import frc.robot.commands.Chassis.DefaultDriveCommand;
-import frc.robot.commands.Chassis.HalfSpeedCommand;
 import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
 import frc.robot.commands.Chassis.ZeroPitchRollCommand;
-import frc.robot.commands.Chassis.zeroWheels;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -198,22 +194,19 @@ public class RobotContainer {
         .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // // Cuts robot speed in half
-    new Trigger(() -> m_controller.getPOV() == 270)
-        .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+    // new Trigger(() -> m_controller.getPOV() == 270)
+    //     .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // new Trigger(m_operatorController::getBButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
 
-    new Trigger(m_controller::getYButton)
-        .whileTrue(new ExtendPauseCommand(m_extendoSubsystem));
-
     new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashHoldPosition", false))
-        .whileTrue(new ExtendAndIntakeCommand(m_extendoSubsystem, m_IntakeSubsystem,
+        .whileTrue(new ExtendCommand(m_extendoSubsystem,
         () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
         () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-        () -> SmartDashboard.getNumber("DesiredWristPosition", 0),
-        () -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
+        () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+        //() -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
 
     new Trigger(m_controller::getLeftBumper)
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
@@ -223,13 +216,6 @@ public class RobotContainer {
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
-
-    new Trigger(m_operatorController::getYButton)
-        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
-
-    new Trigger(m_operatorController::getBButton)
-        .whileTrue(new zeroWheels(m_drivetrainSubsystem));
-        //.whileTrue(new DriveDistance(m_drivetrainSubsystem, vision, 0 ,0 ,1.5  ,0 ,180 , null));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
@@ -245,6 +231,14 @@ public class RobotContainer {
     // new Trigger(m_controller::getYButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
+  }
+
+  public boolean checkOpController() {
+    return m_operatorController.getXButton();
+  }
+
+  public boolean checkDriveController() {
+    return m_operatorController.getXButton();
   }
 
     public VisionTracking getVision() {
