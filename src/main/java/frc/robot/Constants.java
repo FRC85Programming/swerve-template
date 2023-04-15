@@ -44,22 +44,22 @@ public final class Constants {
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3;
 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(224);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -3.799670;
 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 12;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 13;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(126);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -2.722816;
 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21;
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 22;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 23;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(0.08);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -3.187612;
 
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 31;
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 32;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 33;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(210);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -3.574175;
 
     public static final int EXTEND_MOTOR = 51;
     public static final int PIVOT_MOTOR = 52;
@@ -74,6 +74,10 @@ public final class Constants {
 
     public static final int PDP_PORT_WRIST = 3;
     public static final int PDP_PORT_INTAKE = 13;
+    public static final int PDP_PORT_DRIVE_FL = 14;
+    public static final int PDP_PORT_DRIVE_FR = 1;
+    public static final int PDP_PORT_DRIVE_BL = 12;
+    public static final int PDP_PORT_DRIVE_BR = 0;
 
     public static final String Backup = "Backup";
     public static final String CS = "CS";
@@ -93,9 +97,9 @@ public final class Constants {
         new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
 );
 
-      public static final double kPXController = 1;
-      public static final double kPYController = 1;
-      public static final double kPThetaController = 1;
+      public static final double kPXController = 4;
+      public static final double kPYController = 4;
+      public static final double kPThetaController = 0.2;
       public static final double kPhysicalMaxSpeedMetersPerSecond = 5880.0 / 60.0 * SdsModuleConfigurations.MK4_L1.getDriveReduction() * SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;;
       public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;

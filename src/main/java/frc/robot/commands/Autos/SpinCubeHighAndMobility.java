@@ -23,7 +23,7 @@ public class SpinCubeHighAndMobility extends SequentialCommandGroup {
             new TimedIntakeCommand(intake, false, 1.5, 0.8),
             new HomeExtendCommand(extendo),
             new DriveDistance(driveTrain, vision, 0, -1, 0.0, 3.8, 0, false),
-            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side)
+            new RotateAndIntakePosition(driveTrain, vision, extendo, intake, side, "cube")
         );
     }
 }

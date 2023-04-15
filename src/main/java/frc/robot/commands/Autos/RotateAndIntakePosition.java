@@ -10,7 +10,8 @@ import frc.robot.subsystems.VisionTracking;
 
 public class RotateAndIntakePosition extends ParallelCommandGroup {
 
-    public RotateAndIntakePosition(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, Alliance side){
+
+    public RotateAndIntakePosition(DrivetrainSubsystem m_DrivetrainSubsystem, VisionTracking vision, ExtendoSubsystem m_ExtendoSubsystem, IntakeSubsystem m_IntakeSubsystem, Alliance side, String gamePiece){
         double turnSpeed;
         if (side == Alliance.Blue){
             turnSpeed = -2.5;
@@ -18,10 +19,19 @@ public class RotateAndIntakePosition extends ParallelCommandGroup {
         {
             turnSpeed = 2.5;
         }
-        addCommands(
+
+        if (gamePiece.toLowerCase().equals("cube")) {
+            addCommands(
             new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0, turnSpeed, 0, 180, false),
             new AutoIntakeCube(m_ExtendoSubsystem, m_IntakeSubsystem)
-        );
+        );  
+        } else if (gamePiece.toLowerCase().equals("cone")) {
+            addCommands(
+            new DriveDistance(m_DrivetrainSubsystem, vision, 0, 0, turnSpeed, 0, 187.5, false),
+            new AutoIntakeCone(m_ExtendoSubsystem)
+        ); 
+        }
+        
     }
 
 }

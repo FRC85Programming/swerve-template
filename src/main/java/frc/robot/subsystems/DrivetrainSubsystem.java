@@ -47,9 +47,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -159,7 +159,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Swerve Calibrate", false);
 
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    //ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    SmartDashboard.putBoolean("Set drive current limits", false);
+    SmartDashboard.putNumber("Drive current limit stall", 80);
+    SmartDashboard.putNumber("Drive current limit free", 20);
 
     m_frontLeftModule = new MkSwerveModuleBuilder(MkModuleConfiguration.getDefaultSteerNEO())
         .withDriveMotor(MotorType.NEO, FRONT_LEFT_MODULE_DRIVE_MOTOR)
@@ -220,16 +223,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     this.zeroGyroscope(0);
 
-    tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
-    tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
-    tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+    //tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+    //tab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
+    //tab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
 
-    SmartDashboard.putNumber("SwerveDrive P", getDrivePID().getP());
-    SmartDashboard.putNumber("SwerveDrive I", getDrivePID().getI());
-    SmartDashboard.putNumber("SwerveDrive D", getDrivePID().getD());
+    SmartDashboard.putNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+    SmartDashboard.putNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+    SmartDashboard.putNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
     SmartDashboard.putBoolean("Set drive PID", false);
+    SmartDashboard.putBoolean("Set front right drive PID", false);
 
-  SmartDashboard.putBoolean("Swerve testing", swerveTesting);
+    SmartDashboard.putNumber("SwerveSteer P", getPID(m_frontLeftModule.getSteerMotor()).getP());
+    SmartDashboard.putNumber("SwerveSteer I", getPID(m_frontLeftModule.getSteerMotor()).getI());
+    SmartDashboard.putNumber("SwerveSteer D", getPID(m_frontLeftModule.getSteerMotor()).getD());
+    SmartDashboard.putBoolean("Set steer PID", false);
+
+    SmartDashboard.putBoolean("Swerve testing", swerveTesting);
   }
 
   /**
@@ -321,6 +330,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     ((CANSparkMax) m_frontRightModule.getDriveMotor()).setOpenLoopRampRate(rate); 
   }
 
+  public void setSmartCurrentLimits(int stallLimit, int freeLimit) {
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit);
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).setSmartCurrentLimit(stallLimit, freeLimit); 
+  }
+
   public void resetOdometry(Pose2d pose) {
     // Resets the gyro
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
@@ -331,20 +347,56 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Sets the desired states of the modules (this is where the error is)
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
-    setDesiredState(desiredStates[0], m_frontLeftModule);
-    setDesiredState(desiredStates[1], m_frontRightModule);
-    setDesiredState(desiredStates[2], m_backLeftModule);
-    setDesiredState(desiredStates[3], m_backRightModule);
+
+    DriverStation.reportWarning("FL State: " + desiredStates[0], null);
+    DriverStation.reportWarning("FR State: " + desiredStates[1], null);
+    DriverStation.reportWarning("FL State: " + desiredStates[2], null);
+    DriverStation.reportWarning("FL State: " + desiredStates[3], null);
+
+    setFLDesiredState(desiredStates[0]);
+    setFRDesiredState(desiredStates[1]);
+    setBLDesiredState(desiredStates[2]);
+    setBRDesiredState(desiredStates[3]);
   }
 
-  public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+  public void setFLDesiredState(SwerveModuleState state) {
     if (Math.abs(state.speedMetersPerSecond) < 0.001) {
       stop();
       return;
     }
-    state = SwerveModuleState.optimize(state, getState(module).angle);
-    module.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition(module), state.angle.getRadians()));
+    state = SwerveModuleState.optimize(state, getState(m_frontLeftModule).angle);
+    m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_frontLeftModule), state.angle.getRadians()));
+  }
+
+  public void setFRDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_frontRightModule).angle);
+    m_frontRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_frontRightModule), state.angle.getRadians()));
+  }
+
+  public void setBLDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState( m_backLeftModule).angle);
+    m_backLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition( m_backLeftModule), state.angle.getRadians()));
+  }
+
+  public void setBRDesiredState(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_backRightModule).angle);
+    m_backRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
+        turningPidController.calculate(getTurningPosition(m_backRightModule), state.angle.getRadians()));
   }
 
   public SwerveModuleState getState(SwerveModule module) {
@@ -384,7 +436,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumber("Speeds", m_backLeftModule.getDriveDistance());
 
-    SmartDashboard.getBoolean("Swerve testing", swerveTesting);
+    swerveTesting = SmartDashboard.getBoolean("Swerve testing", false);
 
     if (swerveTesting){
     SmartDashboard.putNumber("Front Left Steer Absolute Angle",
@@ -404,11 +456,32 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     if (SmartDashboard.getBoolean("Set drive PID", false)) {
-      double p = SmartDashboard.getNumber("SwerveDrive P", getDrivePID().getP());
-      double i = SmartDashboard.getNumber("SwerveDrive I", getDrivePID().getI());
-      double d = SmartDashboard.getNumber("SwerveDrive D", getDrivePID().getD());
-      setDrivePID(p, i, d);
+      double p = SmartDashboard.getNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
+      setAllDrivePIDs(p, i, d);
       SmartDashboard.putBoolean("Set drive PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set front right drive PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveDrive P", getPID(m_frontLeftModule.getDriveMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveDrive I", getPID(m_frontLeftModule.getDriveMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveDrive D", getPID(m_frontLeftModule.getDriveMotor()).getD());
+      setPID(m_frontRightModule.getDriveMotor(), p, i, d);
+      SmartDashboard.putBoolean("Set front right drive PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set steer PID", false)) {
+      double p = SmartDashboard.getNumber("SwerveSteer P", getPID(m_frontLeftModule.getSteerMotor()).getP());
+      double i = SmartDashboard.getNumber("SwerveSteer I", getPID(m_frontLeftModule.getSteerMotor()).getI());
+      double d = SmartDashboard.getNumber("SwerveSteer D", getPID(m_frontLeftModule.getSteerMotor()).getD());
+      setAllSteerPIDs(p, i, d);
+      SmartDashboard.putBoolean("Set steer PID", false);
+    }
+
+    if (SmartDashboard.getBoolean("Set drive current limits", false)) {
+      setSmartCurrentLimits((int)SmartDashboard.getNumber("Drive current limit stall", 80), (int)SmartDashboard.getNumber("Drive current limit free", 20));
+      SmartDashboard.putBoolean("Set drive current limits", false);
     }
   }
 
@@ -572,29 +645,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
     ((CANSparkMax) m_backRightModule.getDriveMotor()).getEncoder().setPosition(0);
   }
 
-  public SparkMaxPIDController getDrivePID() {
-    return ((CANSparkMax) m_frontLeftModule.getDriveMotor()).getPIDController();
+  public SparkMaxPIDController getPID(MotorController controller) {
+    return ((CANSparkMax) controller).getPIDController();
+  }
+  
+  public void setAllDrivePIDs(double p, double i, double d) {
+    setPID(m_frontLeftModule.getDriveMotor(), p, i, d);
+    setPID(m_frontRightModule.getDriveMotor(), p, i, d);
+    setPID(m_backLeftModule.getDriveMotor(), p, i, d);
+    setPID(m_backRightModule.getDriveMotor(), p, i, d);
   }
 
-  public void setDrivePID(double p, double i, double d) {
-    CANSparkMax frontLeft = (CANSparkMax) m_frontLeftModule.getDriveMotor();
-    frontLeft.getPIDController().setP(p);
-    frontLeft.getPIDController().setI(i);
-    frontLeft.getPIDController().setD(d);
+  public void setAllSteerPIDs(double p, double i, double d) {
+    setPID(m_frontLeftModule.getSteerMotor(), p, i, d);
+    setPID(m_frontRightModule.getSteerMotor(), p, i, d);
+    setPID(m_backLeftModule.getSteerMotor(), p, i, d);
+    setPID(m_backRightModule.getSteerMotor(), p, i, d);
+  }
 
-    CANSparkMax frontRight = (CANSparkMax) m_frontRightModule.getDriveMotor();
-    frontRight.getPIDController().setP(p);
-    frontRight.getPIDController().setI(i);
-    frontRight.getPIDController().setD(d);
-
-    CANSparkMax backRight = (CANSparkMax) m_backRightModule.getDriveMotor();
-    backRight.getPIDController().setP(p);
-    backRight.getPIDController().setI(i);
-    backRight.getPIDController().setD(d);
-
-    CANSparkMax backLeft = (CANSparkMax) m_backLeftModule.getDriveMotor();
-    backLeft.getPIDController().setP(p);
-    backLeft.getPIDController().setI(i);
-    backLeft.getPIDController().setD(d);
+  public void setPID(MotorController controller, double p, double i, double d) {
+    CANSparkMax spark = (CANSparkMax) controller;
+    spark.getPIDController().setP(p);
+    spark.getPIDController().setI(i);
+    spark.getPIDController().setD(d);
   }
 }

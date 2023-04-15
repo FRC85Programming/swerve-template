@@ -18,7 +18,7 @@ public class ScoreLineup extends CommandBase {
     double area2;
     // PID values that adjust the distance from the offset
     double headingError;
-    double Kp = -0.15;
+    double Kp = -0.05;
     double steering_adjust;
     // Switch boolean that makes sure we only set the pipline once
     boolean lineSwitched = false;
@@ -60,23 +60,7 @@ public class ScoreLineup extends CommandBase {
 
     public void setCorrectionValues() {
         // Sets the values that will be driven in proportion to feedback
-        if (tx1 != 0 && tx2 == 0) {
-            if (leftCamUse == false) {
-                headingError = tx1;
-                rightCamUse = true;
-            }
-        }
-        else if (tx1 == 0 && tx2 != 0) {
-            if (rightCamUse == false) {
-                headingError = tx2;
-                leftCamUse = true;
-            }
-        }
-        else if (tx1 != 0 && tx2 != 0) {
-            if (rightCamUse == false && leftCamUse == false) {
-                headingError = tx1;
-            }
-        }
+        headingError = tx1; 
 
         steering_adjust = Kp * (headingError);
     }
@@ -95,7 +79,7 @@ public class ScoreLineup extends CommandBase {
     public boolean isFinished() {
         if (endWhenFound == true) {
             // Latency window of x to be lined up
-            return -2.5 < headingError && headingError < 1.2;
+            return 0 < Math.abs(headingError) && Math.abs(headingError) < 2.5;
         } else {
             return false;
         }

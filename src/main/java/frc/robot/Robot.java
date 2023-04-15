@@ -33,6 +33,10 @@ public class Robot extends TimedRobot {
   private PowerDistribution m_pd = new PowerDistribution(Constants.PDP_ID, ModuleType.kCTRE);
   private double m_maxWristCurrent;
   private double m_maxIntakeCurrent;
+  private double m_maxDriveCurrentFL;
+  private double m_maxDriveCurrentFR;
+  private double m_maxDriveCurrentBL;
+  private double m_maxDriveCurrentBR;
 
   Trajectory trajectory = new Trajectory();
   NetworkTableInstance inst;
@@ -149,6 +153,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double wristCurrent = m_pd.getCurrent(Constants.PDP_PORT_WRIST);
     double intakeCurrent = m_pd.getCurrent(Constants.PDP_PORT_INTAKE);
+    double frontLeft = m_pd.getCurrent(Constants.PDP_PORT_DRIVE_FL);
+    double frontRight = m_pd.getCurrent(Constants.PDP_PORT_DRIVE_FR);
+    double backLeft = m_pd.getCurrent(Constants.PDP_PORT_DRIVE_BL);
+    double backRight = m_pd.getCurrent(Constants.PDP_PORT_DRIVE_BR);
+    
     if (wristCurrent > m_maxWristCurrent) {
       m_maxWristCurrent = wristCurrent;
       SmartDashboard.putNumber("Max current wrist", m_maxWristCurrent);
@@ -157,6 +166,30 @@ public class Robot extends TimedRobot {
     if (intakeCurrent > m_maxIntakeCurrent) {
       m_maxIntakeCurrent = intakeCurrent;
       SmartDashboard.putNumber("Max current intake", m_maxIntakeCurrent);
+    }
+
+    if (frontLeft > m_maxDriveCurrentFL)
+    {
+      m_maxDriveCurrentFL = frontLeft;
+      SmartDashboard.putNumber("Max current drive FL", m_maxDriveCurrentFL);
+    }
+
+    if (frontRight > m_maxDriveCurrentFR)
+    {
+      m_maxDriveCurrentFR = frontRight;
+      SmartDashboard.putNumber("Max current drive FR", m_maxDriveCurrentFR);
+    }
+
+    if (backLeft > m_maxDriveCurrentBL)
+    {
+      m_maxDriveCurrentBL = backLeft;
+      SmartDashboard.putNumber("Max current drive BL", m_maxDriveCurrentBL);
+    }
+
+    if (backRight > m_maxDriveCurrentBR)
+    {
+      m_maxDriveCurrentBR = backRight;
+      SmartDashboard.putNumber("Max current drive BR", m_maxDriveCurrentBR);
     }
 
     SmartDashboard.putNumber("BobDashMatchTime", DriverStation.getMatchTime());
