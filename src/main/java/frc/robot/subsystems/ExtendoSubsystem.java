@@ -15,7 +15,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final CANSparkMax wristMotor = new CANSparkMax(Constants.INTAKE_PIVOT_MOTOR, MotorType.kBrushless);
     private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.WRIST_LIMIT_SWITCH);
     private final PIDController wristPID = new PIDController(0, 0, 0);
-    private final double wristSpeedScale = 0.80;
+    private final double wristSpeedScale = 1;
 
     // extendo pivot
     private final CANSparkMax extendMotor = new CANSparkMax(Constants.EXTEND_MOTOR,
@@ -33,7 +33,7 @@ public class ExtendoSubsystem extends SubsystemBase {
     private final double pivotSpeedScale = 1;
     public static final double maxPivot = 80;
     public static final double maxExtend = 210;
-    public static final double maxWrist = -64;
+    public static final double maxWrist = -60;
     private double pivotSafeZoneDown = 20;
     private double pivotSafeZoneUp = 50;
     private double extendSafeZoneIn = 30;

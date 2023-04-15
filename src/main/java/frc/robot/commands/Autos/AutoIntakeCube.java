@@ -11,7 +11,7 @@ public class AutoIntakeCube extends ExtendCommand
 
     public AutoIntakeCube(ExtendoSubsystem extendo)
     {
-        super(extendo, () -> 75, () -> 21, () -> -22, false, true);
+        super(extendo, () -> 75, () -> 20, () -> -18, false, true);
        // m_extendoSubsystem = extendo;
         
         //addRequirements(extendo);

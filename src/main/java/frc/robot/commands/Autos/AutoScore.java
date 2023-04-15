@@ -21,12 +21,12 @@ public class AutoScore extends CommandBase
     public void execute()
     {
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
-            if (m_extendoSubsystem.getPivotAngle() <= 70) {
+            if (m_extendoSubsystem.getPivotAngle() <= 60) {
                 m_extendoSubsystem.Pivot(1, 0);
             } else {
                 m_extendoSubsystem.Pivot(0, 0);
             }
-            if (m_extendoSubsystem.getIntakeWrist() >= -30) {
+            if (m_extendoSubsystem.getIntakeWrist() >= -23) {
                 m_extendoSubsystem.Wrist(-0.7, 0);
             } else {
                 m_extendoSubsystem.Wrist(0,0);
@@ -60,7 +60,7 @@ public class AutoScore extends CommandBase
 
     public boolean isFinished() {                       
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
-            return m_extendoSubsystem.getPivotAngle() >= 65 && m_extendoSubsystem.getIntakeWrist() <= -33;
+            return m_extendoSubsystem.getPivotAngle() >= 60 && m_extendoSubsystem.getIntakeWrist() <= -23;
         }
         if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             return m_extendoSubsystem.getPivotAngle() >= 7 && m_extendoSubsystem.getIntakeWrist() <= -7;

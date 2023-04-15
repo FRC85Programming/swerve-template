@@ -28,7 +28,7 @@ public class ScorePickupAndBalance extends SequentialCommandGroup{
             new WaitCommand(0.2),
             new DriveAndIntake(driveTrain, vision, extendo, intake, 0.6, "cone"),
             new zeroWheels(driveTrain),
-            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -3.2, -1.4, false, 0.75),
+            new DriveAndHomeCommand(driveTrain, vision, extendo, intake, -3.05, -1.4, false, 0.75),
             new AutoLevelPIDCommand(driveTrain)
         );
     }

@@ -21,7 +21,7 @@ public class AutoScoreExtend extends CommandBase
     public void execute()
     {
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
-            if (m_extendoSubsystem.getExtendPosition() <= 60) {
+            if (m_extendoSubsystem.getExtendPosition() <= 109) {
                 m_extendoSubsystem.ExtendTelescope(1, 0);
             } else {
                 m_extendoSubsystem.ExtendTelescope(0, 0);
@@ -45,7 +45,7 @@ public class AutoScoreExtend extends CommandBase
 
     public boolean isFinished() {
         if (gamePiecePosition.toLowerCase().equals("cube high")) {
-            return m_extendoSubsystem.getExtendPosition() >= 53;
+            return m_extendoSubsystem.getExtendPosition() >= 109;
         }
         if (gamePiecePosition.toLowerCase().equals("cube middle")) {
             return m_extendoSubsystem.getExtendPosition() >= 0;

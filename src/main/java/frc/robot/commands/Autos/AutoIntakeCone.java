@@ -11,7 +11,7 @@ public class AutoIntakeCone extends ExtendCommand
 
     public AutoIntakeCone(ExtendoSubsystem extendo)
     {
-        super(extendo, () -> 107, () -> 21.8, () -> -39.3, false, true);
+        super(extendo, () -> 115, () -> 24, () -> -32, false, true);
        // m_extendoSubsystem = extendo;
         
         //addRequirements(extendo);

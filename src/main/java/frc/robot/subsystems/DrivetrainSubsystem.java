@@ -582,7 +582,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       drive(new ChassisSpeeds(x, -y, 0));
     } else {
       drive(new ChassisSpeeds(0, 0, 0));
-      if (m_timer.get() >= 0.13) {
+      if (m_timer.get() >= 0.9) {
         m_timer.reset();
         timerStart = false;
       }
