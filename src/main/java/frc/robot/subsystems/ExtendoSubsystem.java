@@ -96,6 +96,8 @@ public class ExtendoSubsystem extends SubsystemBase {
                     extendMotor.getEncoder().setPosition(0);
                 }
                 extendMotor.stopMotor();
+            } else if (extendMotor.getEncoder().getPosition() < extendSafeZoneIn) {
+                extendMotor.set(speed * extendSpeedScaleSafe);
             } else {
                 extendMotor.set(speed);
             }

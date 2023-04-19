@@ -213,6 +213,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     setOpenloopRate(0);
 
+    burnDriveAndSteerFlash();
+
     turningPidController = new PIDController(Constants.kPTurning, 0, 0);
     turningPidController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -230,6 +232,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Set drive PID", false);
 
   SmartDashboard.putBoolean("Swerve testing", swerveTesting);
+  }
+
+  public void burnDriveAndSteerFlash() {
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).burnFlash();
+     ((CANSparkMax) m_frontRightModule.getDriveMotor()).burnFlash();
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).burnFlash();
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).burnFlash();
+    ((CANSparkMax) m_frontLeftModule.getSteerMotor()).burnFlash();
+     ((CANSparkMax) m_frontRightModule.getSteerMotor()).burnFlash();
+    ((CANSparkMax) m_backLeftModule.getSteerMotor()).burnFlash();
+    ((CANSparkMax) m_backRightModule.getSteerMotor()).burnFlash();
   }
 
   /**
