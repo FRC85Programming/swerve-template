@@ -50,6 +50,7 @@ import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PathSwerveSubsystem;
 import frc.robot.subsystems.VisionTracking;
 
 /**
@@ -64,6 +65,7 @@ import frc.robot.subsystems.VisionTracking;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final PathSwerveSubsystem m_PathSwerveSubsystem = new PathSwerveSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
@@ -110,7 +112,7 @@ public class RobotContainer {
 
     m_autoCommands = new HashMap<String, Command>();
     m_autoCommands.put("Basic Path", 
-        getAutonomousCommand());
+        calculateAndDrivePath());
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -265,51 +267,46 @@ public class RobotContainer {
 
   }
 
-  public Command getAutonomousCommand() {
-      // Resets wheels so they don't fight each other
-      //m_drivetrainSubsystem.zeroWheels();
-      // Configures kinematics so the driving is accurate 
-      TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-        Constants.kMaxSpeedMetersPerSecond,
-        Constants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.kKinematics);
-      
-      // This sets the trajectory points that will be used as a backup if it can not load the original
-      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(
-          //Go to these locations:
-          new Translation2d(1, 0),
-          new Translation2d(1, 1)),
-          new Pose2d(0, 0, Rotation2d.fromDegrees /*spin*/ (0)),
-        trajectoryConfig);
+  public Command calculateAndDrivePath() {
+    // 1. Create trajectory settings
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+      Constants.kMaxSpeedMetersPerSecond,
+      Constants.kMaxAccelerationMetersPerSecondSquared)
+              .setKinematics(m_drivetrainSubsystem.getKinematics());
 
-      // Sets up PID to stay on the trajectory
+      // 2. Generate trajectory
+      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(
+                    new Translation2d(1, 0),
+                    new Translation2d(1, -1)),
+            new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
+            trajectoryConfig);
+
+      // 3. Define PID controllers for tracking trajectory
       PIDController xController = new PIDController(Constants.kPXController, 0, 0);
       PIDController yController = new PIDController(Constants.kPYController, 0, 0);
       ProfiledPIDController thetaController = new ProfiledPIDController(
-          Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+            Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-      // This is what actually drives the bot. It is run in a SequentialCommandGroup
+      // 4. Construct command to follow trajectory
       SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-          trajectory,
-          m_drivetrainSubsystem::getPose,
-          Constants.kKinematics,
-          xController,
-          yController,
-          thetaController,
-          m_drivetrainSubsystem::setModuleStates,
-          m_drivetrainSubsystem);
+                trajectory,
+                m_PathSwerveSubsystem::getPose,
+                m_drivetrainSubsystem.getKinematics(),
+                xController,
+                yController,
+                thetaController,
+                m_PathSwerveSubsystem::setModuleStates,
+                m_PathSwerveSubsystem);
 
-
+      // 5. Add some init and wrap-up, and return everything
       return new SequentialCommandGroup(
-                  new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-                  swerveControllerCommand,
-                  // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
-                  new InstantCommand(() -> m_drivetrainSubsystem.stop()));
-
-  }
+            new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
+            swerveControllerCommand,
+            new InstantCommand(() -> m_drivetrainSubsystem.stopModules()));
+      }
 
   /**
    * 
