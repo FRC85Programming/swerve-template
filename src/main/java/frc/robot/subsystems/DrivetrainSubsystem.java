@@ -283,6 +283,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return m_backLeftModule;
   }
 
+  public SwerveDriveKinematics getKinematics() {
+    return m_kinematics;
+  }
+
+  public void stopModules() {
+    m_frontLeftModule.set(0, 0);
+    m_frontRightModule.set(0, 0);
+    m_backLeftModule.set(0, 0);
+    m_backRightModule.set(0, 0);
+
+  }
+
   // sets all wheel positions to 45 degrees to prevent movement
   // public void brakeWheels(){
 
@@ -326,65 +338,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition() };
     odometry.resetPosition(getRotation2d(), positions, pose);
-  }
-
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    // Sets the desired states of the modules (this is where the error is)
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
-
-    DriverStation.reportWarning("FL State: " + desiredStates[0], null);
-    DriverStation.reportWarning("FR State: " + desiredStates[1], null);
-    DriverStation.reportWarning("FL State: " + desiredStates[2], null);
-    DriverStation.reportWarning("FL State: " + desiredStates[3], null);
-
-    setFLDesiredState(desiredStates[0]);
-    setFRDesiredState(desiredStates[1]);
-    setBLDesiredState(desiredStates[2]);
-    setBRDesiredState(desiredStates[3]);
-  }
-
-  public void setFLDesiredState(SwerveModuleState state) {
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
-    state = SwerveModuleState.optimize(state, getState(m_frontLeftModule).angle);
-    m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition(m_frontLeftModule), state.angle.getRadians()));
-  }
-
-  public void setFRDesiredState(SwerveModuleState state) {
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
-    state = SwerveModuleState.optimize(state, getState(m_frontRightModule).angle);
-    m_frontRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition(m_frontRightModule), state.angle.getRadians()));
-  }
-
-  public void setBLDesiredState(SwerveModuleState state) {
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
-    state = SwerveModuleState.optimize(state, getState( m_backLeftModule).angle);
-    m_backLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition( m_backLeftModule), state.angle.getRadians()));
-  }
-
-  public void setBRDesiredState(SwerveModuleState state) {
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
-    state = SwerveModuleState.optimize(state, getState(m_backRightModule).angle);
-    m_backRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond,
-        turningPidController.calculate(getTurningPosition(m_backRightModule), state.angle.getRadians()));
-  }
-
-  public SwerveModuleState getState(SwerveModule module) {
-    return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
   }
 
   public double getTurningPosition(SwerveModule module) {
@@ -486,6 +439,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public double getBackRightCalibration() {
     return _backRightCalibrationValue;
+  }
+
+  public Pigeon2 getGyro() {
+    return m_pigeon;
   }
 
   public void brakeState() {
