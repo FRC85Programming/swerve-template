@@ -203,11 +203,15 @@ public class RobotContainer {
         () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
         //() -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
 
+    new Trigger(m_controller::getYButton)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 116, () -> 23, () -> -33, false, false));
     new Trigger(m_controller::getLeftBumper)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 43, () -> 66, () -> -54, false, false));
+    new Trigger(m_controller::getRightBumper)
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 205, () -> 77, () -> -55, false, false));
 
-    new Trigger(m_controller::getAButton)
-        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
+      new Trigger(m_controller::getAButton)
+        .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
