@@ -27,7 +27,7 @@ public class PathSwerveSubsystem extends SubsystemBase {
         Constants.kFrontLeftDriveEncoderReversed,
         Constants.kFrontLeftTurningEncoderReversed,
         // Find out what absolute encoder ID's are
-        Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
+        Constants.CANCODER_FL_ID,
         Constants.FRONT_LEFT_MODULE_STEER_OFFSET,
         Constants.kFrontLeftDriveAbsoluteEncoderReversed);
 
@@ -36,7 +36,7 @@ public class PathSwerveSubsystem extends SubsystemBase {
         Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
         Constants.kFrontRightDriveEncoderReversed,
         Constants.kFrontRightTurningEncoderReversed,
-        Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
+        Constants.CANCODER_FR_ID,
         Constants.FRONT_RIGHT_MODULE_STEER_OFFSET,
         Constants.kFrontRightDriveAbsoluteEncoderReversed);
 
@@ -45,7 +45,7 @@ public class PathSwerveSubsystem extends SubsystemBase {
         Constants.BACK_LEFT_MODULE_STEER_MOTOR,
         Constants.kBackLeftDriveEncoderReversed,
         Constants.kBackLeftTurningEncoderReversed,
-        Constants.BACK_LEFT_MODULE_STEER_MOTOR,
+        Constants.CANCODER_BL_ID,
         Constants.BACK_LEFT_MODULE_STEER_OFFSET,
         Constants.kBackLeftDriveAbsoluteEncoderReversed);
 
@@ -54,7 +54,7 @@ public class PathSwerveSubsystem extends SubsystemBase {
         Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
         Constants.kBackRightDriveEncoderReversed,
         Constants.kBackRightTurningEncoderReversed,
-        Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
+        Constants.CANCODER_BR_ID,
         Constants.BACK_RIGHT_MODULE_STEER_OFFSET,
         Constants.kBackRightDriveAbsoluteEncoderReversed);
 

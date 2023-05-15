@@ -70,6 +70,11 @@ public final class Constants {
     public static final int EXTEND_LIMIT_SWITCH = 1;
     public static final int PIVOT_LIMIT_SWITCH = 0;
 
+    public static final int CANCODER_FL_ID = 0;
+    public static final int CANCODER_FR_ID = 0;
+    public static final int CANCODER_BL_ID = 0;
+    public static final int CANCODER_BR_ID = 0;
+
     // Path modules constants
     public static final double kWheelDiameterMeters = Units.inchesToMeters(4);
         public static final double kDriveMotorGearRatio = 1 / 5.8462;
@@ -79,9 +84,9 @@ public final class Constants {
         public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60;
         public static final double kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60;
         public static final double kPTurning = 0.5;
-        public static final double kTrackWidth = Units.inchesToMeters(21);
+        public static final double kTrackWidth = .4953;
         // Distance between right and left wheels
-        public static final double kWheelBase = Units.inchesToMeters(25.5);
+        public static final double kWheelBase = Units.inchesToMeters(24);
 
         public static final boolean kFrontLeftTurningEncoderReversed = true;
         public static final boolean kBackLeftTurningEncoderReversed = true;
