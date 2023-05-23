@@ -207,7 +207,7 @@ public class RobotContainer {
         .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
 
     new Trigger(m_controller::getAButton)
-        .whileTrue(new ScoreLineup(m_drivetrainSubsystem, vision, this, false));
+        .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
 
     new Trigger(m_operatorController::getAButton)
         .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
