@@ -25,6 +25,11 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
@@ -53,8 +58,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * Ashley is not a cool human being
@@ -341,7 +349,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public double getTurningPosition(SwerveModule module) {
-    return module.getSteerAngle();
+    return module.getSteerEncoder().getAbsoluteAngle();
   }
 
   public double getTurningVelocity(SwerveModule module) {
@@ -610,4 +618,71 @@ public class DrivetrainSubsystem extends SubsystemBase {
     frontRight.getPIDController().setI(steerI);
     frontRight.getPIDController().setD(steerD);
   }
+
+  public SwerveModuleState getState(SwerveModule module) {
+    return new SwerveModuleState(getDriveVelocity(module), new Rotation2d(getTurningPosition(module)));
+  }
+
+  public void setDesiredStateFL(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        stop();
+        return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_frontLeftModule).angle);
+    m_frontLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(m_frontLeftModule), state.angle.getRadians()));
+  }
+  public void setDesiredStateFR(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        stop();
+        return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_frontRightModule).angle);
+    m_frontRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(m_frontRightModule), state.angle.getRadians()));
+  }
+  public void setDesiredStateBR(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        stop();
+        return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_backRightModule).angle);
+    m_backRightModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(m_backRightModule), state.angle.getRadians()));
+  }
+  public void setDesiredStateBL(SwerveModuleState state) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        stop();
+        return;
+    }
+    state = SwerveModuleState.optimize(state, getState(m_backLeftModule).angle);
+    m_backLeftModule.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(getTurningPosition(m_backLeftModule), state.angle.getRadians()));
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
+    setDesiredStateFL(desiredStates[0]);
+    setDesiredStateFR(desiredStates[1]);
+    setDesiredStateBL(desiredStates[2]);
+    setDesiredStateBR(desiredStates[3]);
+}
+
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+         new InstantCommand(() -> {
+           // Reset odometry for the first path you run during auto
+           if(isFirstPath){
+               this.resetOdometry(traj.getInitialHolonomicPose());
+           }
+         }),
+         new PPSwerveControllerCommand(
+             traj, //done
+             this::getPose, // Pose supplier //done
+             m_kinematics, // SwerveDriveKinematics // done
+             new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards. DONE
+             new PIDController(0, 0, 0), // Y controller (usually the same values as X controller) DONE
+             new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards. DONE
+             this::setModuleStates, // Module states consumer // WORKING
+             false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+             this // Requires this drive subsystem
+         )
+     );
+ }
 }
