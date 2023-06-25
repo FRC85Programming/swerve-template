@@ -108,6 +108,9 @@ public class RobotContainer {
         () -> modifyAxis(-m_operatorController.getRightY()),
         () -> getWristAxis()));
 
+    //This generates a PathPlanner path that will make the robot move diagnally and rotate 45 degrees by the end
+    // This needs to be working before we can generate our own paths
+
     PathPlannerTrajectory basicTrajectory = PathPlanner.generatePath(
           new PathConstraints(4, 3), 
           new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
@@ -121,6 +124,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_autoCommands = new HashMap<String, Command>();
+    // RUN THIS AUTO TO TEST THE PATH
     m_autoCommands.put("Basic Path", 
         followTrajectoryCommand(basicTrajectory, true));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
@@ -282,6 +286,7 @@ public class RobotContainer {
          new InstantCommand(() -> {
            // Reset odometry for the first path you run during auto
            if(isFirstPath){
+              // If we are running our first path of the auto it will set an origin point to where are robot starts at the beggining of the auto
                m_drivetrainSubsystem.resetOdometry(traj.getInitialHolonomicPose());
            }
          }),
