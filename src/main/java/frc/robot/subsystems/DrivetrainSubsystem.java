@@ -25,6 +25,7 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.PathPlanner;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
@@ -84,6 +85,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean xLevel = false;
   private Boolean swerveTesting = false;
   private final Field2d m_field = new Field2d();
+  PathPlanner pathPlanner = new PathPlanner();
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -286,6 +288,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public SwerveDriveKinematics getKinematics() {
     return m_kinematics;
   }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    setDesiredState(desiredStates[1], m_frontLeftModule);
+    setDesiredState(desiredStates[2], m_frontRightModule);
+    setDesiredState(desiredStates[3], m_backLeftModule);
+    setDesiredState(desiredStates[4], m_backRightModule);
+  }
+
+  public void setDesiredState(SwerveModuleState state, SwerveModule module) {
+    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        stop();
+        return;
+    }
+    state = SwerveModuleState.optimize(state, state.angle);
+    module.set(state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond, turningPidController.calculate(module.getSteerAngle(), state.angle.getRadians()));
+}
 
   public void stopModules() {
     m_frontLeftModule.set(0, 0);

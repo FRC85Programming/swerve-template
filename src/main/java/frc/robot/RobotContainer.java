@@ -8,6 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -50,7 +56,6 @@ import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExtendoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PathSwerveSubsystem;
 import frc.robot.subsystems.VisionTracking;
 
 /**
@@ -65,7 +70,6 @@ import frc.robot.subsystems.VisionTracking;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final PathSwerveSubsystem m_PathSwerveSubsystem = new PathSwerveSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
@@ -104,6 +108,12 @@ public class RobotContainer {
         () -> modifyAxis(-m_operatorController.getRightY()),
         () -> getWristAxis()));
 
+    PathPlannerTrajectory basicTrajectory = PathPlanner.generatePath(
+          new PathConstraints(4, 3), 
+          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
+          new PathPoint(new Translation2d(3.0, 3.0), Rotation2d.fromDegrees(45)) // position, heading
+    );
+
     // m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
 
@@ -112,7 +122,7 @@ public class RobotContainer {
 
     m_autoCommands = new HashMap<String, Command>();
     m_autoCommands.put("Basic Path", 
-        calculateAndDrivePath());
+        followTrajectoryCommand(basicTrajectory, true));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -267,46 +277,29 @@ public class RobotContainer {
 
   }
 
-  public Command calculateAndDrivePath() {
-    // 1. Create trajectory settings
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-      Constants.kMaxSpeedMetersPerSecond,
-      Constants.kMaxAccelerationMetersPerSecondSquared)
-              .setKinematics(m_drivetrainSubsystem.getKinematics());
-
-      // 2. Generate trajectory
-      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(
-                    new Translation2d(1, 0),
-                    new Translation2d(1, -1)),
-            new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
-            trajectoryConfig);
-
-      // 3. Define PID controllers for tracking trajectory
-      PIDController xController = new PIDController(Constants.kPXController, 0, 0);
-      PIDController yController = new PIDController(Constants.kPYController, 0, 0);
-      ProfiledPIDController thetaController = new ProfiledPIDController(
-            Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
-      thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-      // 4. Construct command to follow trajectory
-      SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
-                m_PathSwerveSubsystem::getPose,
-                m_drivetrainSubsystem.getKinematics(),
-                xController,
-                yController,
-                thetaController,
-                m_PathSwerveSubsystem::setModuleStates,
-                m_PathSwerveSubsystem);
-
-      // 5. Add some init and wrap-up, and return everything
-      return new SequentialCommandGroup(
-            new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-            swerveControllerCommand,
-            new InstantCommand(() -> m_drivetrainSubsystem.stopModules()));
-      }
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+         new InstantCommand(() -> {
+           // Reset odometry for the first path you run during auto
+           if(isFirstPath){
+               m_drivetrainSubsystem.resetOdometry(traj.getInitialHolonomicPose());
+           }
+         }),
+         new PPSwerveControllerCommand(
+             traj, 
+             // Note: the :: as opposed to . when calling a function means that it is refrencing the function, but not running it, as the 
+             //PPSwerveControllerCommand will run it in its own code from pathplanner when the followTrajectoryCommand is run.
+             m_drivetrainSubsystem::getPose, // Supplies command with the function to get the robot's position
+             m_drivetrainSubsystem.getKinematics(), // Wheelbase, tracklength, and other variables
+             new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+             new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+             new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+             m_drivetrainSubsystem::setModuleStates, // This function is most likley where broken code would be that causes the robot to not move at all
+             false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+             m_drivetrainSubsystem // Requires this drive subsystem
+         )
+     );
+ }
 
   /**
    * 
