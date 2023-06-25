@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -15,7 +12,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeRollerMotor = new CANSparkMax(Constants.INTAKE_ROLLERS_MOTOR, MotorType.kBrushless);
 
     public IntakeSubsystem() {
-        
+
     }
 
     public void setRollerSpeed(DoubleSupplier speed) {
@@ -27,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
 
     }
 }

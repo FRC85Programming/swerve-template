@@ -14,6 +14,9 @@
     "**/.factorypath": true,
     "**/*~": true
   },
+  "java.project.referencedLibraries": [
+      "libs/swerve-template.jar"
+  ],
   "java.test.config": [
     {
       "name": "WPIlibUnitTests",
@@ -25,5 +28,7 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests"
+  "java.test.defaultConfig": "WPIlibUnitTests",
+  "wpilib.stopSimulationOnEntry": true,
+  "wpilib.selectDefaultSimulateExtension": true
 }
