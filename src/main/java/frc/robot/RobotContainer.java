@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
-import com.pathplanner.lib.*;
-
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,9 +17,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +27,30 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.*;
-import frc.robot.commands.*;
+import frc.robot.commands.Arm.ExtendAndIntakeCommand;
+import frc.robot.commands.Arm.ExtendCommand;
+import frc.robot.commands.Arm.HomeExtendCommand;
+import frc.robot.commands.Arm.IntakeCommand;
+import frc.robot.commands.Arm.ManualExtendoCommand;
+import frc.robot.commands.Autos.CubeHighBalanceNoMobility;
+import frc.robot.commands.Autos.ManualMobility;
+import frc.robot.commands.Autos.ScoreAndBalance;
+import frc.robot.commands.Autos.ScoreConeMidAndPickupCubeNoVision;
+import frc.robot.commands.Autos.ScoreCubeHighAndPickupConeNoVision;
+import frc.robot.commands.Autos.ScoreLineup;
+import frc.robot.commands.Autos.ScorePickupAndBalance;
+import frc.robot.commands.Autos.SpinCubeHighAndMobility;
+import frc.robot.commands.Chassis.AutoLevelPIDCommand;
+import frc.robot.commands.Chassis.BrakeWheelsCommand;
+import frc.robot.commands.Chassis.DefaultDriveCommand;
+import frc.robot.commands.Chassis.DriveDistance;
+import frc.robot.commands.Chassis.HalfSpeedCommand;
+import frc.robot.commands.Chassis.ZeroGyroscopeCommand;
+import frc.robot.commands.Chassis.ZeroPitchRollCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.ExtendoSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionTracking;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -47,6 +68,13 @@ public class RobotContainer {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
+  private final VisionTracking vision = new VisionTracking();
+  HolonomicDriveController controller = new HolonomicDriveController(
+      new PIDController(1, 0, 0), new PIDController(1, 0, 0),
+      new ProfiledPIDController(1, 0, 0,
+        new TrapezoidProfile.Constraints(6.28, 3.14)));
+
+  private HashMap<String, Command> m_autoCommands;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -79,6 +107,45 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    m_autoCommands = new HashMap<String, Command>();
+    m_autoCommands.put("Basic Path", 
+        getAutonomousCommand());
+    m_autoCommands.put("Bump-MidCone-Pickup-Red", 
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+    m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("Bump-MidCone-Pickup-Red-No-Vision", 
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+    m_autoCommands.put("Bump-MidCone-Pickup-Cube-Blue-No-Vision", 
+      new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Blue-NoVision",
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Blue));
+    m_autoCommands.put("Bump-CubeHigh-Pickup-Cone-Red-NoVision",
+      new ScoreCubeHighAndPickupConeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
+    // m_autoCommands.put("Bump-HighCube-Mobility",
+    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    //   m_autoCommands.put("Bump-MidCube-Mobility",
+    //   new CubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("HighCube-Mobility-Spin",
+      new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("MidCube-Mobility-Spin",
+      new SpinCubeHighAndMobility(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("Center-HighCube-Mobility-Balance",
+      new ScoreAndBalance(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
+    m_autoCommands.put("Center-HighCube-Balance",
+      new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cube high"));
+    m_autoCommands.put("Center-MidCone-Balance",
+      new CubeHighBalanceNoMobility(m_drivetrainSubsystem, vision, m_extendoSubsystem, m_IntakeSubsystem, "cone middle"));
+    m_autoCommands.put("Mobility-NoScore", 
+      new ManualMobility(m_drivetrainSubsystem, vision, m_IntakeSubsystem, this));
+    // m_autoCommands.put("Bump-MidCone-Mobility", 
+    //   new ConeMidAndMobility(m_drivetrainSubsystem, vision, null, m_extendoSubsystem, m_IntakeSubsystem));
+    m_autoCommands.put("ScorePickUpandBalance",
+      new ScorePickupAndBalance(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem));
+
+    Set<String> autoKeys = m_autoCommands.keySet();
+    SmartDashboard.putStringArray("AutoModes", autoKeys.toArray(new String[autoKeys.size()]));
   }
 
   /**
@@ -122,38 +189,56 @@ public class RobotContainer {
         .whileTrue(new BrakeWheelsCommand(m_drivetrainSubsystem));
 
     // // Cuts robot speed in half
-    new Trigger(() -> m_controller.getPOV() == 270)
-        .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
+    // new Trigger(() -> m_controller.getPOV() == 270)
+    //     .whileTrue(new HalfSpeedCommand(m_drivetrainSubsystem));
 
     // new Trigger(m_operatorController::getBButton)
     // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
     // -> -60.5));
 
-    new Trigger(m_controller::getXButton)
+    new Trigger(() -> m_controller.getXButton() || SmartDashboard.getBoolean("BobDashPositionHold", false))
         .whileTrue(new ExtendCommand(m_extendoSubsystem,
-            () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
-            () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+        () -> SmartDashboard.getNumber("DesiredExtendPosition", 0),
+        () -> SmartDashboard.getNumber("DesiredPivotPosition", 0),
+        () -> SmartDashboard.getNumber("DesiredWristPosition", 0)));
+        //() -> SmartDashboard.getNumber("DesiredRollerSpeed", 0)));
 
     new Trigger(m_controller::getLeftBumper)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0, false, false));
+
+    new Trigger(m_controller::getAButton)
+        .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
 
     new Trigger(m_operatorController::getAButton)
-        .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0));
+        .whileTrue(new HomeExtendCommand(m_extendoSubsystem));
 
     // cube pick up position
     // new Trigger(m_controller::getAButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, () -> -23.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 47.0, () -> 30.0, ()
+    // -> -23.0));
 
     // cone pick up position (Tipped)
     // new Trigger(m_controller::getXButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, () -> -44.0));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 52.0, () -> 34.0, ()
+    // -> -44.0));
 
     // // cone pick up position (Upright)
     // new Trigger(m_controller::getYButton)
-    //     .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, () -> -60.5));
+    // .whileTrue(new ExtendCommand(m_extendoSubsystem, () -> 23.0, () -> 69.0, ()
+    // -> -60.5));
   }
 
+  public boolean checkOpController() {
+    return m_operatorController.getXButton();
+  }
+
+  public boolean checkDriveController() {
+    return m_operatorController.getXButton();
+  }
+
+    public VisionTracking getVision() {
+      return vision;
+    }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -161,91 +246,77 @@ public class RobotContainer {
    */
   public Command getAuto() {
     String autoMode = SmartDashboard.getString("BobDashAutoMode", "None");
-    if (autoMode.equals("Manual OnePlace")) {
-      return new ManualOnePlace(m_drivetrainSubsystem, this, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Balance")) { 
-      return new BalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Score and Engage")) {
-      return new ScoreBalanceAuto(m_drivetrainSubsystem, m_extendoSubsystem, m_IntakeSubsystem);
-    } else if (autoMode.equals("Manual Mobility")) {
-      return new ManualMobility(m_drivetrainSubsystem, this);
-    } else if (autoMode.equals("CS")) {
-      return new CS(m_drivetrainSubsystem, this);
-    } else if (autoMode.equals("Normal Follow")) {
-     return getAutonomousCommand();
+    if (m_autoCommands.containsKey(autoMode)) {
+      return m_autoCommands.get(autoMode);
     } else {
-      return new ExtendCommand(m_extendoSubsystem, () -> 0, () -> 0, () -> 0);
-    } 
+      return new HomeExtendCommand(m_extendoSubsystem);
+    }
   }
 
-  public Command getAutonomousCommand(/* String auto */) {
-    // Resets wheels so they don't fight each other
-    // m_drivetrainSubsystem.zeroWheels();
-    // Configures kinematics so the driving is accurate
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+  public double getLeftY() {
+    return -modifyAxis(m_controller.getLeftY());
+  }
+
+  public void writeDriveSpeeds() {
+    SmartDashboard.putNumber("FL Drive Speed", m_drivetrainSubsystem.getFrontLeft().getDriveMotor().get());
+    SmartDashboard.putNumber("FR Drive Speed", m_drivetrainSubsystem.getFrontRight().getDriveMotor().get());
+    SmartDashboard.putNumber("BL Drive Speed", m_drivetrainSubsystem.getBackLeft().getDriveMotor().get());
+    SmartDashboard.putNumber("BR Drive Speed", m_drivetrainSubsystem.getBackRight().getDriveMotor().get());
+
+  }
+
+  public Command getAutonomousCommand() {
+      // Resets wheels so they don't fight each other
+      //m_drivetrainSubsystem.zeroWheels();
+      // Configures kinematics so the driving is accurate 
+      TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
         Constants.kMaxSpeedMetersPerSecond,
         Constants.kMaxAccelerationMetersPerSecondSquared)
-        .setKinematics(Constants.kDriveKinematics);
-
-    // This sets the trajectory points that will be used as a backup if it can not
-    // load the original
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                .setKinematics(Constants.kKinematics);
+      
+      // This sets the trajectory points that will be used as a backup if it can not load the original
+      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            // Go to these locations:
-            new Translation2d(5, 0),
-            new Translation2d(1, -1)),
-        new Pose2d(2, -1, Rotation2d.fromDegrees /* spin 180 */ (180)),
+          //Go to these locations:
+          new Translation2d(1, 0),
+          new Translation2d(1, 1)),
+          new Pose2d(0, 0, Rotation2d.fromDegrees /*spin*/ (0)),
         trajectoryConfig);
 
-    // Setting up trajectory variables
-    /*
-     * String trajectoryJSON = "output/" + auto + ".wpilib.json";
-     * Trajectory temp;
-     * 
-     * //Load command and select backup if needed
-     * try{
-     * if(auto.startsWith("PW_")){
-     * Path trajectoryPath =
-     * Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-     * temp = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-     * }else{
-     * temp = PathPlanner.loadPath(auto, Constants.kPhysicalMaxSpeedMetersPerSecond,
-     * Constants.kMaxAccelerationMetersPerSecondSquared);
-     * }
-     * }catch(Exception e){
-     * DriverStation.reportWarning("Error loading path:" + auto +
-     * ". Loading backup....", e.getStackTrace());
-     * temp = trajectory;
-     * }
-     */
-    // Sets up PID to stay on the trajectory
-    PIDController xController = new PIDController(Constants.kPXController, 0, 0);
-    PIDController yController = new PIDController(Constants.kPYController, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+      // Sets up PID to stay on the trajectory
+      PIDController xController = new PIDController(Constants.kPXController, 0, 0);
+      PIDController yController = new PIDController(Constants.kPYController, 0, 0);
+      ProfiledPIDController thetaController = new ProfiledPIDController(
+          Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // This is what actually drives the bot. It is run in a SequentialCommandGroup
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
-        m_drivetrainSubsystem::getPose,
-        Constants.kDriveKinematics,
-        xController,
-        yController,
-        thetaController,
-        m_drivetrainSubsystem::setModuleStates,
-        m_drivetrainSubsystem);
+      // This is what actually drives the bot. It is run in a SequentialCommandGroup
+      SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+          trajectory,
+          m_drivetrainSubsystem::getPose,
+          Constants.kKinematics,
+          xController,
+          yController,
+          thetaController,
+          m_drivetrainSubsystem::setModuleStates,
+          m_drivetrainSubsystem);
 
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
-        swerveControllerCommand,
-        // You have to add stop modules for this error. Look at this code and copy and
-        // paste:
-        // https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
-        new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+
+      return new SequentialCommandGroup(
+                  new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry(trajectory.getInitialPose())),
+                  swerveControllerCommand,
+                  // You have to add stop modules for this error. Look at this code and copy and paste: https://github.com/SeanSun6814/FRC0ToAutonomous/tree/master/%236%20Swerve%20Drive%20Auto/src/main/java/frc/robot
+                  new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+
   }
 
+  /**
+   * 
+   * @param value
+   * @param deadband
+   * @return
+   */
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.00) {
@@ -258,6 +329,11 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * 
+   * @param value
+   * @return
+   */
   private double getWristAxis() {
     if (m_operatorController.getRightBumper()) {
       return 1;
@@ -278,12 +354,20 @@ public class RobotContainer {
     return value;
   }
 
+  /**
+   * 
+   * @return the controller object
+   */
   public XboxController getController() {
     return m_controller;
   }
 
   public void checkCalibration() {
     m_drivetrainSubsystem.checkCalibration();
+  }
+
+  public void zeroEncoders() {
+    m_extendoSubsystem.zeroEncodersIfLimits();
   }
 
 }
