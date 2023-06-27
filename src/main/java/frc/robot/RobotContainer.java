@@ -109,15 +109,19 @@ public class RobotContainer {
         () -> getWristAxis()));
 
     //This generates a PathPlanner path that will make the robot move diagnally and rotate 45 degrees by the end
-    // This needs to be working before we can generate our own paths
+    // This needs to be working before we can generate our own path
 
     PathPlannerTrajectory basicTrajectory = PathPlanner.generatePath(
           new PathConstraints(4, 3), 
           new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
-          new PathPoint(new Translation2d(3.0, 3.0), Rotation2d.fromDegrees(45)) // position, heading
+          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(180)) // position, heading
     );
 
     PathPlannerTrajectory TwoPiece = PathPlanner.loadPath("TwoPiece", new PathConstraints(4, 3));
+
+    PathPlannerTrajectory OneMDiag = PathPlanner.loadPath("1MDiag", new PathConstraints(6, 3));
+
+    PathPlannerTrajectory Rotate180 = PathPlanner.loadPath("Rotate180", new PathConstraints(4, 3));
 
     // m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -128,7 +132,7 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
     m_autoCommands.put("Basic Path", 
-        followTrajectoryCommand(basicTrajectory, true));
+        followTrajectoryCommand(OneMDiag, true));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 

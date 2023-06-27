@@ -34,11 +34,11 @@ public class ExtendoSubsystem extends SubsystemBase {
     public static final double maxPivot = 80;
     public static final double maxExtend = 210;
     public static final double maxWrist = -60;
-    private double pivotSafeZoneDown = 20;
+    private double pivotSafeZoneDown = 10;
     private double pivotSafeZoneUp = 50;
     private double extendSafeZoneIn = 30;
     private double extendSafeZoneOut = 190;
-    private double wristSafeZone = -15;
+    private double wristSafeZone = -40;
     private double wristSafeSpeed = 0.5;
 
     public ExtendoSubsystem() {
