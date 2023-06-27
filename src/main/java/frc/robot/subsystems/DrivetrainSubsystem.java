@@ -242,6 +242,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double pitchOffset;
   public double rollOffset;
 
+
   public void zeroGyroscope(double angle) {
     m_pigeon.setYaw(angle);
     odometry.resetPosition(Rotation2d.fromDegrees(m_pigeon.getCompassHeading()), new SwerveModulePosition[] {
@@ -291,15 +292,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Command used by PathFollower to acually set speeds and angles
-    setDesiredState(desiredStates[1], m_frontLeftModule);
-    setDesiredState(desiredStates[2], m_frontRightModule);
-    setDesiredState(desiredStates[3], m_backLeftModule);
-    setDesiredState(desiredStates[4], m_backRightModule);
+    setDesiredState(desiredStates[0], m_frontLeftModule);
+    setDesiredState(desiredStates[1], m_frontRightModule);
+    setDesiredState(desiredStates[2], m_backLeftModule);
+    setDesiredState(desiredStates[3], m_backRightModule);
   }
 
   public void setDesiredState(SwerveModuleState state, SwerveModule module) {
     if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-        stop();
+        module.set(0, state.angle.getRadians());
         return;
     }
     // I have a theory that this line may be what causes the violent shaking of the wheels
