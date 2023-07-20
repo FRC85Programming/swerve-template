@@ -117,9 +117,17 @@ public class RobotContainer {
           new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(180)) // position, heading
     );
 
+    PathPlannerTrajectory LeftAndForward = PathPlanner.generatePath(
+          new PathConstraints(4, 3), 
+          new PathPoint(new Translation2d(100, 0), Rotation2d.fromDegrees(0)), // position, heading
+          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)) // position, heading
+    );
+
     PathPlannerTrajectory TwoPiece = PathPlanner.loadPath("TwoPiece", new PathConstraints(4, 3));
 
     PathPlannerTrajectory OneMDiag = PathPlanner.loadPath("1MDiag", new PathConstraints(6, 3));
+
+    PathPlannerTrajectory OneMStraight = PathPlanner.loadPath("1MStraight", new PathConstraints(4, 3));
 
     PathPlannerTrajectory Rotate180 = PathPlanner.loadPath("Rotate180", new PathConstraints(4, 3));
 
@@ -132,7 +140,7 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
     m_autoCommands.put("Basic Path", 
-        followTrajectoryCommand(OneMDiag, true));
+        followTrajectoryCommand(OneMStraight, true));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 

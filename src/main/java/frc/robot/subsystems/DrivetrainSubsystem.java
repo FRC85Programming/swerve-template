@@ -380,6 +380,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+
     SmartDashboard.putData("Field", m_field);
     m_field.setRobotPose(getOdo().getPoseMeters());
     SwerveModulePosition positions[] = { m_backLeftModule.getPosition(), m_backRightModule.getPosition(),
@@ -387,6 +389,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     odometry.update(getRotation2d(), positions);
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+
+    SmartDashboard.putNumber("Front Left Position", positions[0].distanceMeters);
+    SmartDashboard.putNumber("Front Right Position", positions[1].distanceMeters);
+    SmartDashboard.putNumber("Back Left Position", positions[2].distanceMeters);
+    SmartDashboard.putNumber("Back Right Position", positions[3].distanceMeters);
+
     if (brakeLock) {
       brakeState();
     } else if (halfSpeedLock == true) {
