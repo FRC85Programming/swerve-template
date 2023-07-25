@@ -291,24 +291,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    // Command used by PathFollower to acually set speeds and angles
-    setDesiredState(desiredStates[0], m_frontLeftModule);
-    setDesiredState(desiredStates[1], m_frontRightModule);
-    setDesiredState(desiredStates[2], m_backLeftModule);
-    setDesiredState(desiredStates[3], m_backRightModule);
-  }
 
-  public void setDesiredState(SwerveModuleState state, SwerveModule module) {
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-        module.set(0, state.angle.getRadians());
-        return;
-    }
-    // I have a theory that this line may be what causes the violent shaking of the wheels
-    // You can remove it if it happens again to test
-    state = SwerveModuleState.optimize(state, state.angle);
-    // Actually sets the module to a speed and angle from what the array of module states that path follower produces is
-    module.set(state.speedMetersPerSecond, state.angle.getRadians());
-}
+    ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
+    drive(speeds);
+
+
+  }
 
   public void stopModules() {
     m_frontLeftModule.set(0, 0);
