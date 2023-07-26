@@ -291,11 +291,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
+    Timer rotationTimer = new Timer();
+    rotationTimer.start();
 
     ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
-    drive(speeds);
+
+    Double angle = speeds.omegaRadiansPerSecond * rotationTimer.get();
+
+    Rotation2d fieldAngle = Rotation2d.fromRadians(angle);
+
+    ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, fieldAngle);
 
 
+    drive(fieldOriSpeeds);
   }
 
   public void stopModules() {
