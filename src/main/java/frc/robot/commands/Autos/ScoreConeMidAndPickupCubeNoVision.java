@@ -12,7 +12,6 @@ import frc.robot.commands.Arm.HomeExtendCommand;
 import frc.robot.commands.Arm.TimedIntakeCommand;
 
 public class ScoreConeMidAndPickupCubeNoVision extends SequentialCommandGroup {
-
     public ScoreConeMidAndPickupCubeNoVision(DrivetrainSubsystem driveTrain, VisionTracking vision, RobotContainer robotContainer, ExtendoSubsystem extendo, IntakeSubsystem intake, Alliance side) {
         double strafeSpeed;
         if (side == Alliance.Blue){
@@ -22,6 +21,7 @@ public class ScoreConeMidAndPickupCubeNoVision extends SequentialCommandGroup {
         }
         
         addCommands(
+
             new ZeroGyroscopeCommand(driveTrain, 180),
             new HomeExtendCommand(extendo),
             new AutoScore(extendo, "cone middle"),

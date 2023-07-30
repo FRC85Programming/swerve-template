@@ -24,8 +24,10 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,12 +77,15 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(1);
   private final ExtendoSubsystem m_extendoSubsystem = new ExtendoSubsystem();
   private final VisionTracking vision = new VisionTracking();
+  
   HolonomicDriveController controller = new HolonomicDriveController(
       new PIDController(1, 0, 0), new PIDController(1, 0, 0),
       new ProfiledPIDController(1, 0, 0,
         new TrapezoidProfile.Constraints(6.28, 3.14)));
 
   private HashMap<String, Command> m_autoCommands;
+  public PathPlannerTrajectory usedTrajectory;
+  Timer pathTimer = new Timer();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -134,6 +139,8 @@ public class RobotContainer {
     PathPlannerTrajectory Crazy = PathPlanner.loadPath("New New New Path", new PathConstraints(4, 3));
 
     PathPlannerTrajectory DosCube = PathPlanner.loadPath("DosCube", new PathConstraints(4, 3));
+
+
 
     // m_drivetrainSubsystem.zeroGyroscope();
     m_drivetrainSubsystem.zeroPitchRoll();
@@ -300,6 +307,8 @@ public class RobotContainer {
   }
 
   public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    usedTrajectory = traj;
+    pathTimer.start();
     return new SequentialCommandGroup(
          new InstantCommand(() -> {
            // Reset odometry for the first path you run during auto
@@ -308,6 +317,7 @@ public class RobotContainer {
                m_drivetrainSubsystem.resetOdometry(traj.getInitialHolonomicPose());
            }
          }),
+         
          new PPSwerveControllerCommand(
              traj, 
              // Note: the :: as opposed to . when calling a function means that it is refrencing the function, but not running it, as the 
@@ -322,7 +332,18 @@ public class RobotContainer {
              m_drivetrainSubsystem // Requires this drive subsystem
          )
      );
- }
+  }
+
+  public PathPlannerTrajectory getTraj() {
+    return usedTrajectory;
+  }
+
+  public Rotation2d getAutoFieldRot() {
+    State pathState = getTraj().sample(pathTimer.get());
+    Rotation2d autoAngle = pathState.poseMeters.getRotation();
+
+    return autoAngle;
+  }
 
   /**
    * 

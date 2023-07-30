@@ -83,6 +83,8 @@ public class ScoreLineup extends CommandBase {
         } else {
             return false;
         }
+
+
     }
 
     @Override

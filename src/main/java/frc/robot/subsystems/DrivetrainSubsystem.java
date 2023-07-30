@@ -56,6 +56,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 /**
  * Ashley is not a cool human being
@@ -86,6 +87,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean swerveTesting = false;
   private final Field2d m_field = new Field2d();
   PathPlanner pathPlanner = new PathPlanner();
+  private final RobotContainer m_robotContainer = new RobotContainer();
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -291,16 +293,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    Timer rotationTimer = new Timer();
+    /*Timer rotationTimer = new Timer();
     rotationTimer.start();
 
     ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
 
     Double angle = speeds.omegaRadiansPerSecond * rotationTimer.get();
 
-    Rotation2d fieldAngle = Rotation2d.fromRadians(angle);
+    Rotation2d fieldAngle = Rotation2d.fromRadians(angle);*/
 
-    ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, fieldAngle);
+    ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
+
+    ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, m_robotContainer.getAutoFieldRot());
 
 
     drive(fieldOriSpeeds);

@@ -9,7 +9,6 @@ import frc.robot.commands.Chassis.ZeroPitchRollCommand;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-
 public class ScoreBalanceAuto extends SequentialCommandGroup {
     public ScoreBalanceAuto(DrivetrainSubsystem driveTrain, VisionTracking vision, ExtendoSubsystem extendo, IntakeSubsystem intake) {
         addCommands(

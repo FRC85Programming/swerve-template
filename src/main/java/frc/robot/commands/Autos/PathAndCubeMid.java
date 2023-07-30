@@ -1,6 +1,7 @@
 package frc.robot.commands.Autos;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.RobotContainer;
@@ -17,6 +18,7 @@ public class PathAndCubeMid extends ParallelCommandGroup {
             new FollowPathCommand(m_robotContainer, path, isFirstPath),
             new AutoScore(m_ExtendoSubsystem, "cube middle")
         );
+
     }
 
 }

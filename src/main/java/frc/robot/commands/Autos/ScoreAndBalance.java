@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class ScoreAndBalance  extends SequentialCommandGroup{
 
         public String scorePosition;
-    
+        
         public ScoreAndBalance(DrivetrainSubsystem driveTrain, VisionTracking vision, ExtendoSubsystem extendo, IntakeSubsystem intake, String scorePosition) {
 
             addCommands(
