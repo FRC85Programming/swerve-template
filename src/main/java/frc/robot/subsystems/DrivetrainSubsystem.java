@@ -87,7 +87,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean swerveTesting = false;
   private final Field2d m_field = new Field2d();
   PathPlanner pathPlanner = new PathPlanner();
-  private final RobotContainer m_robotContainer = new RobotContainer();
+  private final RobotContainer m_robotContainer;
 
   // The formula for calculating the theoretical maximum velocity is:
   // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
@@ -147,7 +147,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-  public DrivetrainSubsystem() {
+  public DrivetrainSubsystem(RobotContainer robotContainer) {
+    m_robotContainer = robotContainer;
     _frontLeftCalibration = _calibration.getEntry("FrontLeft");
     _frontRightCalibration = _calibration.getEntry("FrontRight");
     _backLeftCalibration = _calibration.getEntry("BackLeft");
