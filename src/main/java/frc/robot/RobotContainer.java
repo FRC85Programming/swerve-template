@@ -8,14 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 import com.pathplanner.lib.commands.*;
+import com.pathplanner.lib.auto.*;
+import com.pathplanner.lib.path.*;
+import com.pathplanner.lib.util.*;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.PIDController; 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -115,8 +114,7 @@ public class RobotContainer {
     //This generates a PathPlanner path that will make the robot move diagnally and rotate 45 degrees by the end
     // This needs to be working before we can generate our own path
 
-    
-    PathPlannerPath path = PathPlannerPath.fromPathFile("1MStraight");
+  
 
 
 
@@ -128,8 +126,8 @@ public class RobotContainer {
 
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
-    m_autoCommands.put("Basic Path", 
-        followPathCommand(path));
+    /*m_autoCommands.put("Basic Path", 
+        followPathCommand(path1));*/
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -283,7 +281,6 @@ public class RobotContainer {
     SmartDashboard.putNumber("BR Drive Speed", m_drivetrainSubsystem.getBackRight().getDriveMotor().get());
 
   }
-
   public Command followPathCommand(PathPlannerPath traj){
     // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
     return new FollowPathWithEvents(
@@ -293,8 +290,8 @@ public class RobotContainer {
             m_drivetrainSubsystem::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             m_drivetrainSubsystem::setModuleStates, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(0.0, 0.0, 0.0), // Rotation PID constants
                 4.5, // Max module speed, in m/s
                 0.4, // Drive base radius in meters. Distance from robot center to furthest module.
                 new ReplanningConfig() // Default path replanning config. See the API for the options here

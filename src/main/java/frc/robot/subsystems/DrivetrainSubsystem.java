@@ -362,6 +362,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition() };
     odometry.resetPosition(getRotation2d(), positions, pose);
   }
+  
 
   public double getTurningPosition(SwerveModule module) {
     return module.getSteerAngle();
