@@ -114,7 +114,9 @@ public class RobotContainer {
     //This generates a PathPlanner path that will make the robot move diagnally and rotate 45 degrees by the end
     // This needs to be working before we can generate our own path
 
-  
+    PathPlannerPath safeTwoCube = PathPlannerPath.fromPathFile("SafeTwoCube");
+
+    PathPlannerPath OneMStraight = PathPlannerPath.fromPathFile("1MStraight");
 
 
 
@@ -126,8 +128,8 @@ public class RobotContainer {
 
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
-    /*m_autoCommands.put("Basic Path", 
-        followPathCommand(path1));*/
+    m_autoCommands.put("Basic Path", 
+        followPathCommand(OneMStraight));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -281,6 +283,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("BR Drive Speed", m_drivetrainSubsystem.getBackRight().getDriveMotor().get());
 
   }
+
+
   public Command followPathCommand(PathPlannerPath traj){
     // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
     return new FollowPathWithEvents(
