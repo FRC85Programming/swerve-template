@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.commands.*;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -84,7 +84,6 @@ public class RobotContainer {
         new TrapezoidProfile.Constraints(6.28, 3.14)));
 
   private HashMap<String, Command> m_autoCommands;
-  public PathPlannerTrajectory usedTrajectory;
   Timer pathTimer = new Timer();
 
   /**
@@ -116,31 +115,8 @@ public class RobotContainer {
     //This generates a PathPlanner path that will make the robot move diagnally and rotate 45 degrees by the end
     // This needs to be working before we can generate our own path
 
-    PathPlannerTrajectory basicTrajectory = PathPlanner.generatePath(
-          new PathConstraints(4, 3), 
-          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
-          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(180)) // position, heading
-    );
-
-    PathPlannerTrajectory LeftAndForward = PathPlanner.generatePath(
-          new PathConstraints(4, 3), 
-          new PathPoint(new Translation2d(100, 0), Rotation2d.fromDegrees(0)), // position, heading
-          new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)) // position, heading
-    );
-
-    PathPlannerTrajectory TwoPiece = PathPlanner.loadPath("TwoPiece", new PathConstraints(4, 3));
-
-    PathPlannerTrajectory OneMDiag = PathPlanner.loadPath("1MDiag", new PathConstraints(6, 3));
-
-    PathPlannerTrajectory OneMStraight = PathPlanner.loadPath("1MStraight", new PathConstraints(.5, .5));
-
-    PathPlannerTrajectory OneMStraightCopy = PathPlanner.loadPath("1MStraightCopy", new PathConstraints(.05, .5));
-
-    PathPlannerTrajectory Rotate180 = PathPlanner.loadPath("Rotate180", new PathConstraints(4, 3));
-
-    PathPlannerTrajectory Crazy = PathPlanner.loadPath("New New New Path", new PathConstraints(4, 3));
-
-    PathPlannerTrajectory DosCube = PathPlanner.loadPath("DosCube", new PathConstraints(.5, 3));
+    
+    PathPlannerPath path = PathPlannerPath.fromPathFile("1MStraight");
 
 
 
@@ -153,7 +129,7 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
     m_autoCommands.put("Basic Path", 
-        followTrajectoryCommand(OneMStraightCopy, true));
+        followPathCommand(path));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -308,37 +284,27 @@ public class RobotContainer {
 
   }
 
-  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-    usedTrajectory = traj;
-    pathTimer.start();
-    return new SequentialCommandGroup(
-         new InstantCommand(() -> {
-           // Reset odometry for the first path you run during auto
-           if(isFirstPath){
-              // If we are running our first path of the auto it will set an origin point to where are robot starts at the beggining of the auto
-               m_drivetrainSubsystem.resetOdometry(traj.getInitialHolonomicPose());
-           }
-         }),
-         
-         new PPSwerveControllerCommand(
-             traj, 
-             // Note: the :: as opposed to . when calling a function means that it is refrencing the function, but not running it, as the 
-             //PPSwerveControllerCommand will run it in its own code from pathplanner when the followTrajectoryCommand is run.
-             m_drivetrainSubsystem::NewGetPose, // Supplies command with the function to get the robot's position
-             m_drivetrainSubsystem.getKinematics(), // Wheelbase, tracklength, and other variables
-             new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-             new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
-             new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-             m_drivetrainSubsystem::setModuleStates, // This function is most likley where broken code would be that causes the robot to not move at all
-             false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-             m_drivetrainSubsystem // Requires this drive subsystem
-         )
-     );
-  }
-
-  public PathPlannerTrajectory getTraj() {
-    return usedTrajectory;
-  }
+  public Command followPathCommand(PathPlannerPath traj){
+    // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
+    return new FollowPathWithEvents(
+        new FollowPathHolonomic(
+            traj,
+            m_drivetrainSubsystem::NewGetPose, // Robot pose supplier
+            m_drivetrainSubsystem::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            m_drivetrainSubsystem::setModuleStates, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                4.5, // Max module speed, in m/s
+                0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            m_drivetrainSubsystem // Reference to this subsystem to set requirements
+        ),
+        traj, // FollowPathWithEvents also requires the path
+        m_drivetrainSubsystem::NewGetPose // FollowPathWithEvents also requires the robot pose supplier
+    );
+}
 
   /*public Rotation2d getAutoFieldRot() {
     State pathState = getTraj().sample(pathTimer.get());

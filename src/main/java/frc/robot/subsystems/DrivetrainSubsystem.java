@@ -25,7 +25,6 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
 
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.pathplanner.lib.PathPlanner;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
@@ -86,7 +85,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Boolean xLevel = false;
   private Boolean swerveTesting = false;
   private final Field2d m_field = new Field2d();
-  PathPlanner pathPlanner = new PathPlanner();
   private final RobotContainer m_robotContainer;
 
   // The formula for calculating the theoretical maximum velocity is:
@@ -293,21 +291,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return m_kinematics;
   }
 
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    /*Timer rotationTimer = new Timer();
-    rotationTimer.start();
-
-    ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
-
-    Double angle = speeds.omegaRadiansPerSecond * rotationTimer.get();
-
-    Rotation2d fieldAngle = Rotation2d.fromRadians(angle);*/
-
-    ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
-
-    //ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, m_robotContainer.getAutoFieldRot());
-
-
+  public void setModuleStates(ChassisSpeeds speeds) {
     drive(speeds);
   }
 
@@ -389,6 +373,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public double getDriveVelocity(SwerveModule module) {
     return module.getDriveVelocity();
+  }
+
+  public ChassisSpeeds getSpeeds() {
+    return m_chassisSpeeds;
   }
 
   private boolean brakeLock = false;
