@@ -305,10 +305,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     ChassisSpeeds speeds = m_kinematics.toChassisSpeeds(desiredStates);
 
-    ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, m_robotContainer.getAutoFieldRot());
+    //ChassisSpeeds fieldOriSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, m_robotContainer.getAutoFieldRot());
 
 
-    drive(fieldOriSpeeds);
+    drive(speeds);
   }
 
   public void stopModules() {
@@ -350,6 +350,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public Pose2d NewGetPose() {
+    // Old getPose function gives rotation based off odometry, but we want to get it via the pigeon
+    Rotation2d newYaw = Rotation2d.fromDegrees(m_pigeon.getYaw());
+    // Get old x and y poses based off odometry
+    double newX = getPose().getX();
+    double newY = getPose().getY();
+
+    // Creates new pose2d with the collected values
+    Pose2d newPose = new Pose2d(newX, newY, newYaw);
+
+    return newPose;
+
+
+  }
+
   public void setOpenloopRate(double rate) {
     ((CANSparkMax) m_backLeftModule.getDriveMotor()).setOpenLoopRampRate(rate);
     ((CANSparkMax) m_backRightModule.getDriveMotor()).setOpenLoopRampRate(rate);
@@ -389,6 +404,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_frontLeftModule.getPosition(), m_frontRightModule.getPosition() };
     odometry.update(getRotation2d(), positions);
     SmartDashboard.putNumber("Robot Heading", getHeading());
+    //SmartDashboard.putNumber("Pigeon heading", m_pigeon.gethea());
     SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
 
     SmartDashboard.putNumber("Front Left Position", positions[0].distanceMeters);

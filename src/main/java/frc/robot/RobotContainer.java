@@ -132,13 +132,15 @@ public class RobotContainer {
 
     PathPlannerTrajectory OneMDiag = PathPlanner.loadPath("1MDiag", new PathConstraints(6, 3));
 
-    PathPlannerTrajectory OneMStraight = PathPlanner.loadPath("1MStraight", new PathConstraints(4, 3));
+    PathPlannerTrajectory OneMStraight = PathPlanner.loadPath("1MStraight", new PathConstraints(.5, .5));
+
+    PathPlannerTrajectory OneMStraightCopy = PathPlanner.loadPath("1MStraightCopy", new PathConstraints(.05, .5));
 
     PathPlannerTrajectory Rotate180 = PathPlanner.loadPath("Rotate180", new PathConstraints(4, 3));
 
     PathPlannerTrajectory Crazy = PathPlanner.loadPath("New New New Path", new PathConstraints(4, 3));
 
-    PathPlannerTrajectory DosCube = PathPlanner.loadPath("DosCube", new PathConstraints(4, 3));
+    PathPlannerTrajectory DosCube = PathPlanner.loadPath("DosCube", new PathConstraints(.5, 3));
 
 
 
@@ -151,7 +153,7 @@ public class RobotContainer {
     m_autoCommands = new HashMap<String, Command>();
     // RUN THIS AUTO TO TEST THE PATH
     m_autoCommands.put("Basic Path", 
-        followTrajectoryCommand(DosCube, true));
+        followTrajectoryCommand(OneMStraightCopy, true));
     m_autoCommands.put("Bump-MidCone-Pickup-Red", 
       new ScoreConeMidAndPickupCubeNoVision(m_drivetrainSubsystem, vision, this, m_extendoSubsystem, m_IntakeSubsystem, Alliance.Red));
     m_autoCommands.put("Bump-MidCone-Pickup-Blue", 
@@ -322,7 +324,7 @@ public class RobotContainer {
              traj, 
              // Note: the :: as opposed to . when calling a function means that it is refrencing the function, but not running it, as the 
              //PPSwerveControllerCommand will run it in its own code from pathplanner when the followTrajectoryCommand is run.
-             m_drivetrainSubsystem::getPose, // Supplies command with the function to get the robot's position
+             m_drivetrainSubsystem::NewGetPose, // Supplies command with the function to get the robot's position
              m_drivetrainSubsystem.getKinematics(), // Wheelbase, tracklength, and other variables
              new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
              new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
@@ -338,12 +340,13 @@ public class RobotContainer {
     return usedTrajectory;
   }
 
-  public Rotation2d getAutoFieldRot() {
+  /*public Rotation2d getAutoFieldRot() {
     State pathState = getTraj().sample(pathTimer.get());
-    Rotation2d autoAngle = pathState.poseMeters.getRotation();
+    Rotation2d autoAngle = pathState.();
+
 
     return autoAngle;
-  }
+  }*/
 
   /**
    * 
